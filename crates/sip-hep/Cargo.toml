@@ -14,10 +14,10 @@ bytes.workspace     = true
 tracing.workspace   = true
 once_cell.workspace = true
 
-# The hep-rs crate lives in its own repo (github.com/thevoiceguy/hep-rs).
+# The hep-rs crate lives in its own repo (github.com/feryx-io/hep-rs).
 # Git-pinned for the dev cycle; will move to a crates.io version once
 # hep-rs publishes a stable release.
-hep-rs = { git = "https://github.com/thevoiceguy/hep-rs", branch = "main" }
+hep-rs = { git = "https://github.com/feryx-io/hep-rs", branch = "main" }
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "sync", "time", "net"] }

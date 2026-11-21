@@ -37,7 +37,7 @@ tokio = { workspace = true }
 bytes = { workspace = true }
 tokio-tungstenite = { version = "0.21" }
 tempfile = "3"
-hep-rs = { git = "https://github.com/thevoiceguy/hep-rs", branch = "main" }
+hep-rs = { git = "https://github.com/feryx-io/hep-rs", branch = "main" }
 # Self-signed cert generation for the swappable-TLS-config test.
 # Pure Rust, no openssl dep at test time.
 rcgen = "0.13"
