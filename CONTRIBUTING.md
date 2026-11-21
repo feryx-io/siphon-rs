@@ -43,7 +43,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ```bash
 # Clone your fork
-git clone https://github.com/thevoiceguy/siphon-rs.git
+git clone https://github.com/feryx-io/siphon-rs.git
 cd siphon-rs
 
 # Build the project
@@ -190,8 +190,8 @@ Use proptest for parser and state machine tests. See existing property tests in:
 
 ## Questions?
 
-- Open a [GitHub Discussion](https://github.com/thevoiceguy/siphon-rs/discussions) for questions
-- Check [existing issues](https://github.com/thevoiceguy/siphon-rs/issues) for similar topics
+- Open a [GitHub Discussion](https://github.com/feryx-io/siphon-rs/discussions) for questions
+- Check [existing issues](https://github.com/feryx-io/siphon-rs/issues) for similar topics
 - Read the [architecture documentation](CLAUDE.md)
 
 ## License

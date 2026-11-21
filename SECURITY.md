@@ -10,7 +10,7 @@ workspace. Older versions are not guaranteed to receive security updates.
 Please report security issues privately to the maintainers.
 
 - Preferred: Open a GitHub Security Advisory at
-  https://github.com/thevoiceguy/siphon-rs/security/advisories/new
+  https://github.com/feryx-io/siphon-rs/security/advisories/new
 If you cannot use GitHub advisories, please contact the maintainers directly
 via email at ferrous.communications@gmail.com.
 

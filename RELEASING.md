@@ -114,7 +114,7 @@ Consumers depend on siphon-rs via git dependencies and should pin tags, not
 branches:
 
 ```toml
-sip-uac = { git = "https://github.com/thevoiceguy/siphon-rs", tag = "v2026.08.19" }
+sip-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "v2026.08.19" }
 ```
 
 - **Pin every `sip-*` crate in a consumer to the same tag.** Different refs of
