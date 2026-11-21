@@ -136,7 +136,7 @@ sip-hep 0.0.1, sip-identity 0.3.0, and siphond 0.7.2 are unchanged.)
 
 This release routes every message the transaction manager sends through the
 application's `TransportDispatcher`
-([#158](https://github.com/thevoiceguy/siphon-rs/issues/158)).
+([#158](https://github.com/feryx-io/siphon-rs/issues/158)).
 
 Breaking changes: the transaction manager now sends TCP with no stream (a new
 outbound connection) through the application's `TransportDispatcher`, where it
@@ -144,7 +144,7 @@ used to bypass it for the manager's own `ConnectionPool`. A dispatcher must now
 send these itself, for example with `pool.send_tcp(ctx.peer(), payload)`. A
 dispatcher that rejects stream-less TCP will start failing those sends. No public
 signature changed.
-([#158](https://github.com/thevoiceguy/siphon-rs/issues/158))
+([#158](https://github.com/feryx-io/siphon-rs/issues/158))
 
 ### Fixed
 
@@ -156,7 +156,7 @@ signature changed.
   through. To get them, share that pool via `TransactionManager::new_with_pool`
   and call `set_inbound_tx`, or set the channel on the dispatcher's pool. siphond
   already does the latter.
-  ([#158](https://github.com/thevoiceguy/siphon-rs/issues/158))
+  ([#158](https://github.com/feryx-io/siphon-rs/issues/158))
 
 ## [2026-10-22.2] — workspace release
 
@@ -167,7 +167,7 @@ sip-observe 0.3.0, sip-ratelimit 0.3.0, sip-testkit 0.1.1, sip-proxy 0.3.0,
 sip-hep 0.0.1, and sip-identity 0.3.0 are unchanged.)
 
 This release fixes the findings of the review behind 2026-10-22.1
-([#144](https://github.com/thevoiceguy/siphon-rs/issues/144)–[#150](https://github.com/thevoiceguy/siphon-rs/issues/150)).
+([#144](https://github.com/feryx-io/siphon-rs/issues/144)–[#150](https://github.com/feryx-io/siphon-rs/issues/150)).
 CI now also lints feature-gated code (`clippy --all-features`).
 
 Breaking changes: none. Every bump is a patch, and no public signature or field
@@ -189,7 +189,7 @@ changes are worth knowing:
   Terminated, a 2xx is passed up only when the transaction's own final was a 2xx
   (its retransmissions and forks). The server INVITE transaction likewise sends one
   final: a second final from the TU in Completed or Confirmed, e.g. a 200 racing the
-  487 for a CANCEL, is no longer sent. ([#149](https://github.com/thevoiceguy/siphon-rs/issues/149))
+  487 for a CANCEL, is no longer sent. ([#149](https://github.com/feryx-io/siphon-rs/issues/149))
 
 - **sip-transaction 0.7.3**: a client transaction's `on_terminated` is called at most
   once. Since 0.7.1 an INVITE's `Terminate` notifies the TU even when another task
@@ -200,13 +200,13 @@ changes are worth knowing:
   reaches `on_transport_error`), and the TU's `on_terminated` sits behind a
   per-transaction once-flag. A non-INVITE `Terminate` now also reaches the TU when the
   entry was already reaped, as an INVITE's does.
-  ([#149](https://github.com/thevoiceguy/siphon-rs/issues/149))
+  ([#149](https://github.com/feryx-io/siphon-rs/issues/149))
 
 - **sip-transaction 0.7.3**: only a provisional that carries `Require: 100rel` and an
   RSeq draws a PRACK (RFC 3262 §4), and a 100 never does (§3). Any 1xx with an RSeq
   and no `Require` header — or with `Supported: 100rel` — was PRACKed, and the callee
   answered the unrequested PRACK with 481.
-  ([#145](https://github.com/thevoiceguy/siphon-rs/issues/145), in part)
+  ([#145](https://github.com/feryx-io/siphon-rs/issues/145), in part)
 
 - **sip-transport 0.7.1**: a connection the peer closes at once no longer stays
   pooled. A pooled connection's reader was spawned before its entry was inserted,
@@ -215,19 +215,19 @@ changes are worth knowing:
   socket. The insert now sees that the connection has ended and removes the entry
   again (TCP, TLS and WS). Regression tests: `an_entry_ended_before_its_insert_is_not_pooled`,
   `a_connection_closed_at_once_never_stays_pooled`
-  ([#144](https://github.com/thevoiceguy/siphon-rs/issues/144)).
+  ([#144](https://github.com/feryx-io/siphon-rs/issues/144)).
 
 - **sip-transport 0.7.1**: a send that finds its pooled connection dead, or whose
   first send on a new one fails, removes that connection only. It removed whatever
   was pooled under the peer's key, which could be a newer connection a concurrent
   send had just opened. Regression test: `a_failed_send_removes_only_its_own_connection`
-  ([#144](https://github.com/thevoiceguy/siphon-rs/issues/144)).
+  ([#144](https://github.com/feryx-io/siphon-rs/issues/144)).
 
 - **sip-transport 0.7.1**: a send parked on a full connection (a peer that stopped
   reading) no longer holds the pool's shard lock while it waits. Readers' and
   supervisors' removals, the idle sweep and `TlsPool::close_all` blocked worker
   threads on it meanwhile. Regression test: `a_parked_send_does_not_lock_the_pool`
-  ([#144](https://github.com/thevoiceguy/siphon-rs/issues/144)).
+  ([#144](https://github.com/feryx-io/siphon-rs/issues/144)).
 
 - **sip-transport 0.7.1**: `TlsPool::close_all` no longer reports each connection it
   closes as a `ConnectionEvent::Failed` ("writer cancelled"), which a reconnect
@@ -235,12 +235,12 @@ changes are worth knowing:
   `set_ingress_rate_exemption` predicate is now asked outside the exemption's
   lock, so a predicate that sets the exemption no longer deadlocks. `bind_tcp`
   documents that it must be called within a tokio runtime
-  ([#144](https://github.com/thevoiceguy/siphon-rs/issues/144)).
+  ([#144](https://github.com/feryx-io/siphon-rs/issues/144)).
 
 - **sip-transport 0.7.1**: `cargo clippy --all-features -- -D warnings` passes again;
   the WS upgrade callback's large `Err` (`clippy::result_large_err`) is a type
   tungstenite fixes, so the lint is allowed there
-  ([#150](https://github.com/thevoiceguy/siphon-rs/issues/150)).
+  ([#150](https://github.com/feryx-io/siphon-rs/issues/150)).
 
 - **siphond 0.7.2**: in B2BUA mode, the ACK, the BYE and a bridged re-INVITE reach the
   callee over the transport it registered with, as its INVITE has since 7d24265 (UDP
@@ -251,7 +251,7 @@ changes are worth knowing:
   throwaway UDP one with a TCP fallback. In proxy mode, a forwarded INVITE and its
   CANCEL to a TCP contact go through the connection pool, whose replies are read; on
   the ad hoc connections they used, the callee's responses were lost
-  ([#148](https://github.com/thevoiceguy/siphon-rs/issues/148)).
+  ([#148](https://github.com/feryx-io/siphon-rs/issues/148)).
 
 - **sip-uac 0.9.3**: an INVITE's `InviteOptions::destination` is honoured beside an
   outbound proxy, and over TLS is verified against a name. With an outbound proxy
@@ -260,7 +260,7 @@ changes are worth knowing:
   given as an IP with no TLS name of its own was dialled with the IP as SNI and failed a
   carrier's hostname-only certificate; it now takes `tls_server_name` when configured,
   else the Request-URI's host (RFC 5922 §4).
-  ([#146](https://github.com/thevoiceguy/siphon-rs/issues/146))
+  ([#146](https://github.com/feryx-io/siphon-rs/issues/146))
 
 - **sip-uac 0.9.3**: `IntegratedUAC::send_request` keeps a request in a dialog (its To
   has a tag) off the outbound proxy: it goes to its target with the caller's Routes, the
@@ -272,7 +272,7 @@ changes are worth knowing:
   a panic; a REGISTER's authenticated retry advances its refresh series, so the next
   refresh does not reuse its CSeq (§10.2). `send_request` documents that a challenged
   retry spends CSeq+1, which the returned response's CSeq shows.
-  ([#147](https://github.com/thevoiceguy/siphon-rs/issues/147))
+  ([#147](https://github.com/feryx-io/siphon-rs/issues/147))
 
 - **sip-uac 0.9.3**: an INVITE's transaction PRACKs a reliable provisional only when its
   RSeq is one more than the last it PRACKed in that early dialog — any for the first
@@ -280,7 +280,7 @@ changes are worth knowing:
   reaches it, and each retransmission drew a new PRACK with a new CSeq, answered 481.
   The early dialogs a `CallHandle` keeps now carry the CSeq a PRACK spent, so an UPDATE
   or early BYE built from `get_early_dialogs()` goes higher than the PRACK's.
-  ([#145](https://github.com/thevoiceguy/siphon-rs/issues/145))
+  ([#145](https://github.com/feryx-io/siphon-rs/issues/145))
 
 ## [2026-10-22.1] — workspace release
 
@@ -569,7 +569,7 @@ sip-parse 0.3.4, sip-proxy 0.3.0, sip-hep 0.0.1, and sip-identity 0.3.0
 are unchanged.)
 
 Breaking changes: none. sip-transport and sip-transaction take minor bumps
-for additive public API ([#130](https://github.com/thevoiceguy/siphon-rs/pull/130));
+for additive public API ([#130](https://github.com/feryx-io/siphon-rs/pull/130));
 every existing signature is unchanged and a listener that never asked for
 a client certificate behaves exactly as before. Downstream absorbs this by
 bumping the tag alone; to *use* mutual TLS, copy
@@ -580,7 +580,7 @@ inbound dispatch loop and build the listener config with
 ### Added
 
 - **Mutual TLS for SIP over TLS: client certificates, server-side verification, and peer
-  identity on the transport context** ([#129](https://github.com/thevoiceguy/siphon-rs/issues/129)).
+  identity on the transport context** ([#129](https://github.com/feryx-io/siphon-rs/issues/129)).
   A SIP peer that reaches a listener over mTLS can now be *identified* by the transaction
   user rather than merely encrypted to: the connection proves who is calling before a single
   SIP message is read, which is what a trunk INVITE that bypasses per-user checks (PIN, lock,
@@ -641,7 +641,7 @@ sip-identity 0.3.0, and siphond 0.6.0 are unchanged.)
 
 Breaking changes: **sip-uas 0.5.0** — `UasRequestHandler::on_register`
 now takes `ctx: &TransportContext` like `on_invite`/`on_bye`
-([#127](https://github.com/thevoiceguy/siphon-rs/pull/127)); trait
+([#127](https://github.com/feryx-io/siphon-rs/pull/127)); trait
 implementors add the parameter (the default body ignores it and still
 405s). Downstream absorbs this with a one-line signature change per
 `on_register` override.
