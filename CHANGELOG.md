@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026-11-21] — workspace release
+
+Crate versions in this release: every crate is unchanged.
+
+No breaking changes. This release exists so consumers can pin a tag whose
+manifests name the repositories' new home.
+
+### Changed
+
+- **The repository moved to the `feryx-io` organization**:
+  `github.com/feryx-io/siphon-rs`. Repository metadata, docs and links follow
+  it (#167). The old `thevoiceguy/siphon-rs` URL redirects, but Cargo treats
+  the two URLs as different sources, so a consumer should switch every
+  `sip-*` git dependency to the new URL in one change.
+- **sip-hep, sip-transport**: `hep-rs` is taken from
+  `github.com/feryx-io/hep-rs`, where that repository moved (#168). A
+  workspace that also depends on `hep-rs` directly must name the same URL, or
+  Cargo builds two copies of it. No crate version changes: the code is the
+  same.
+
 ## [2026-11-10] — workspace release
 
 Crate versions in this release: sip-uac 0.9.6. (Every other crate is unchanged.)
