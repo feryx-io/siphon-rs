@@ -265,7 +265,7 @@ fn is_token_char(c: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use sip_core::ViaHeader;
+/// use siphon_core::ViaHeader;
 ///
 /// // Create a Via header
 /// let via = ViaHeader::new("UDP", "host.example.com:5060").unwrap();
@@ -307,7 +307,7 @@ impl ViaHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ViaHeader;
+    /// use siphon_core::ViaHeader;
     ///
     /// let via = ViaHeader::new("UDP", "host.example.com:5060").unwrap();
     /// assert_eq!(via.transport(), "UDP");
@@ -340,7 +340,7 @@ impl ViaHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ViaHeader;
+    /// use siphon_core::ViaHeader;
     ///
     /// let via = ViaHeader::parse("SIP/2.0/UDP host:5060;branch=z9hG4bK776").unwrap();
     /// assert_eq!(via.transport(), "UDP");
@@ -472,7 +472,7 @@ impl ViaHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ViaHeader;
+    /// use siphon_core::ViaHeader;
     ///
     /// let via = ViaHeader::parse("SIP/2.0/UDP host:5060;branch=z9hG4bK776").unwrap();
     /// assert!(via.param("branch").is_some());

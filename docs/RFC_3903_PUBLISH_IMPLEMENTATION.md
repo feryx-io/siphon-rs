@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the implementation of RFC 3903 ("Session Initiation Protocol (SIP) Extension for Event State Publication") in the sip-core crate.
+This document describes the implementation of RFC 3903 ("Session Initiation Protocol (SIP) Extension for Event State Publication") in the siphon-core crate.
 
 ## RFC Implemented
 
@@ -138,7 +138,7 @@ Content-Length: 0
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, EventHeader, PresenceDocument, SipETagHeader};
+use siphon_core::{Request, Method, EventHeader, PresenceDocument, SipETagHeader};
 
 // Create PUBLISH request
 let mut publish = Request::new(
@@ -200,7 +200,7 @@ Expires: 1800
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, SipIfMatchHeader};
+use siphon_core::{Request, Method, SipIfMatchHeader};
 
 // Retrieve stored entity-tag
 let etag = retrieve_entity_tag("alice@example.com");
@@ -255,7 +255,7 @@ Expires: 1800
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, SipIfMatchHeader, PresenceDocument, BasicStatus, Tuple};
+use siphon_core::{Request, Method, SipIfMatchHeader, PresenceDocument, BasicStatus, Tuple};
 
 // Retrieve stored entity-tag
 let etag = retrieve_entity_tag("alice@example.com");
@@ -314,7 +314,7 @@ Expires: 0
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, SipIfMatchHeader};
+use siphon_core::{Request, Method, SipIfMatchHeader};
 
 // Retrieve stored entity-tag
 let etag = retrieve_entity_tag("alice@example.com");
@@ -393,7 +393,7 @@ Content-Length: 0
 ### Event State Compositor (ESC)
 
 ```rust
-use sip_core::{Request, Response, Method, SipETagHeader, SipIfMatchHeader};
+use siphon_core::{Request, Response, Method, SipETagHeader, SipIfMatchHeader};
 use std::collections::HashMap;
 
 struct Publication {
@@ -579,7 +579,7 @@ fn extract_presentity(uri: &Uri) -> String {
 PUBLISH works with the SIP Events framework:
 
 ```rust
-use sip_core::{EventHeader, SubscriptionState};
+use siphon_core::{EventHeader, SubscriptionState};
 
 // When state changes via PUBLISH, notify subscribers
 fn notify_subscribers(presentity: &str, publication: &Publication) {
@@ -690,7 +690,7 @@ The implementation includes 13 comprehensive tests covering:
 ### Running Tests
 
 ```bash
-cargo test --package sip-core sip_etag
+cargo test --package siphon-core sip_etag
 ```
 
 All 13 tests pass successfully.
@@ -698,8 +698,8 @@ All 13 tests pass successfully.
 ## Complete Example: Presence Publication Flow
 
 ```rust
-use sip_core::{Request, Response, Method, EventHeader, PresenceDocument, BasicStatus, Tuple};
-use sip_core::{SipETagHeader, SipIfMatchHeader};
+use siphon_core::{Request, Response, Method, EventHeader, PresenceDocument, BasicStatus, Tuple};
+use siphon_core::{SipETagHeader, SipIfMatchHeader};
 
 struct PresenceAgent {
     entity_tag: Option<SipETagHeader>,
@@ -861,7 +861,7 @@ async fn main() {
 
 ## Module Exports
 
-The following types are exported from sip-core:
+The following types are exported from siphon-core:
 
 ```rust
 pub use sip_etag::{SipETagHeader, SipIfMatchHeader};

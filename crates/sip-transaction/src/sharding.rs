@@ -2,7 +2,7 @@
 // Copyright (C) 2025 James Ferris <ferrous.communications@gmail.com>
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use sip_core::Headers;
+use siphon_core::Headers;
 use smol_str::SmolStr;
 use std::hash::{Hash, Hasher};
 

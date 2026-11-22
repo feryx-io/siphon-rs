@@ -13,11 +13,11 @@
 /// Also handles in-dialog re-INVITE for session modification.
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_dialog::{Dialog, DialogId};
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_dialog::{Dialog, DialogId};
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use smol_str::SmolStr;
 use std::time::Duration;
 use tracing::{info, warn};
@@ -32,7 +32,7 @@ impl InviteHandler {
         Self
     }
 
-    fn dialog_id_key(id: &sip_dialog::DialogId) -> String {
+    fn dialog_id_key(id: &siphon_dialog::DialogId) -> String {
         format!("{}:{}:{}", id.call_id(), id.local_tag(), id.remote_tag())
     }
 
@@ -53,7 +53,7 @@ impl InviteHandler {
         info!(call_id, "B2BUA: Processing re-INVITE for hold/resume");
 
         // Send 100 Trying immediately
-        let trying = sip_uas::UserAgentServer::create_trying(request);
+        let trying = siphon_uas::UserAgentServer::create_trying(request);
         handle.send_provisional(trying).await;
 
         // Try to find which leg this re-INVITE belongs to
@@ -137,12 +137,12 @@ impl InviteHandler {
         }
 
         // Parse B2BUA URI for creating UAC
-        let b2bua_contact_uri = sip_core::SipUri::parse(&services.config.local_uri)
+        let b2bua_contact_uri = siphon_core::SipUri::parse(&services.config.local_uri)
             .map_err(|_| anyhow!("Invalid local_uri"))?;
 
         // Create UAC for outgoing re-INVITE (use B2BUA as both local and contact)
         let uac =
-            sip_uac::UserAgentClient::new(b2bua_contact_uri.clone(), b2bua_contact_uri.clone());
+            siphon_uac::UserAgentClient::new(b2bua_contact_uri.clone(), b2bua_contact_uri.clone());
 
         // Create outgoing re-INVITE using the other dialog
         let outgoing_reinvite = uac.create_reinvite(other_dialog, sdp_str);
@@ -163,7 +163,7 @@ impl InviteHandler {
 
         // Over the transport the other party's contact names (UDP unless it
         // says otherwise), as the call's INVITE went.
-        let payload = sip_parse::serialize_request(&outgoing_reinvite);
+        let payload = siphon_parse::serialize_request(&outgoing_reinvite);
         crate::proxy_utils::send_to_contact(
             services,
             other_dialog.remote_target(),
@@ -180,7 +180,7 @@ impl InviteHandler {
         // Send 200 OK response back to the original sender
         // For a full B2BUA, we should wait for the other leg's response first,
         // but for basic hold/resume support, we can accept immediately
-        let mut response_headers = sip_core::Headers::new();
+        let mut response_headers = siphon_core::Headers::new();
 
         // Copy essential headers
         if let Some(via) = header(request.headers(), "Via") {
@@ -212,8 +212,8 @@ impl InviteHandler {
             let _ = response_headers.push("Content-Length", "0");
         }
 
-        let response = sip_core::Response::new(
-            sip_core::StatusLine::new(200, "OK").expect("valid status line"),
+        let response = siphon_core::Response::new(
+            siphon_core::StatusLine::new(200, "OK").expect("valid status line"),
             response_headers,
             request.body().clone(), // Echo back the SDP
         )
@@ -238,7 +238,7 @@ impl InviteHandler {
         services: &ServiceRegistry,
         call_id: &str,
     ) -> Result<()> {
-        use sip_uac::UserAgentClient;
+        use siphon_uac::UserAgentClient;
 
         // Check if this is a re-INVITE (in-dialog request)
         if self.is_in_dialog(request, services) {
@@ -250,7 +250,7 @@ impl InviteHandler {
         info!(call_id, "B2BUA MODE: Bridging call between users");
 
         // Send 100 Trying to caller immediately
-        let trying = sip_uas::UserAgentServer::create_trying(request);
+        let trying = siphon_uas::UserAgentServer::create_trying(request);
         handle.send_provisional(trying).await;
 
         // Extract target URI from Request-URI
@@ -318,8 +318,8 @@ impl InviteHandler {
 
         if bindings.is_empty() {
             warn!(call_id, target = %target_uri.as_str(), "Callee not found");
-            let response = sip_core::Response::new(
-                sip_core::StatusLine::new(404, "Not Found").expect("valid status line"),
+            let response = siphon_core::Response::new(
+                siphon_core::StatusLine::new(404, "Not Found").expect("valid status line"),
                 request.headers().clone(),
                 bytes::Bytes::new(),
             )
@@ -330,7 +330,7 @@ impl InviteHandler {
 
         // Parse callee's contact URI
         let callee_contact_str = bindings[0].contact();
-        let callee_contact = sip_core::SipUri::parse(callee_contact_str)
+        let callee_contact = siphon_core::SipUri::parse(callee_contact_str)
             .map_err(|_| anyhow!("Invalid contact URI: {}", callee_contact_str))?;
 
         info!(call_id, callee = %callee_contact.as_str(), "Found callee, creating outgoing INVITE");
@@ -353,11 +353,11 @@ impl InviteHandler {
             from_header.split(';').next().unwrap_or(from_header).trim()
         };
 
-        let caller_uri = sip_core::SipUri::parse(from_uri)
+        let caller_uri = siphon_core::SipUri::parse(from_uri)
             .map_err(|_| anyhow!("Invalid From URI: {}", from_uri))?;
 
         // Parse B2BUA URI for Contact (responses should route back to B2BUA)
-        let b2bua_contact_uri = sip_core::SipUri::parse(&services.config.local_uri)
+        let b2bua_contact_uri = siphon_core::SipUri::parse(&services.config.local_uri)
             .map_err(|_| anyhow!("Invalid local_uri"))?;
 
         // Create UAC for outgoing leg
@@ -488,7 +488,7 @@ impl InviteHandler {
         )
         .parse::<std::net::SocketAddr>()?;
 
-        let payload = sip_parse::serialize_request(&outgoing_invite);
+        let payload = siphon_parse::serialize_request(&outgoing_invite);
         crate::proxy_utils::send_to_contact(services, &callee_contact, callee_addr, payload)
             .await?;
 
@@ -510,9 +510,9 @@ impl InviteHandler {
     async fn transform_response_for_caller(
         services: &ServiceRegistry,
         outgoing_call_id: &str,
-        callee_response: &sip_core::Response,
-    ) -> Option<sip_core::Response> {
-        use sip_parse::header;
+        callee_response: &siphon_core::Response,
+    ) -> Option<siphon_core::Response> {
+        use siphon_parse::header;
 
         // Look up the call leg pair
         let call_leg = services.b2bua_state.find_call_leg(outgoing_call_id)?;
@@ -540,7 +540,7 @@ impl InviteHandler {
         let caller_cseq = header(call_leg.caller_request.headers(), "CSeq")?;
 
         // Build transformed response headers
-        let mut new_headers = sip_core::Headers::new();
+        let mut new_headers = siphon_core::Headers::new();
 
         // Copy all Via headers from caller's original request (critical for routing)
         for via in call_leg
@@ -603,7 +603,7 @@ impl InviteHandler {
                                 .unwrap_or(from_hdr.as_str())
                                 .trim()
                         };
-                        sip_core::SipUri::parse(from_uri).ok()
+                        siphon_core::SipUri::parse(from_uri).ok()
                     } else {
                         None
                     };
@@ -621,13 +621,13 @@ impl InviteHandler {
                     } else {
                         contact.split(';').next().unwrap_or(contact.as_str()).trim()
                     };
-                    sip_core::SipUri::parse(contact_uri).ok()
+                    siphon_core::SipUri::parse(contact_uri).ok()
                 } else {
                     None
                 };
 
                 if let (Some(local), Some(remote)) = (local_uri, remote_uri) {
-                    if let Some(uac_dialog) = sip_dialog::Dialog::new_uac(
+                    if let Some(uac_dialog) = siphon_dialog::Dialog::new_uac(
                         &call_leg.outgoing_invite,
                         callee_response,
                         local.clone(),
@@ -659,8 +659,8 @@ impl InviteHandler {
 
                 // Also create UAS dialog (Bob → B2BUA) for handling re-INVITEs from Bob
                 // We need to create a response that matches the transformed one we're sending
-                let uas_response = sip_core::Response::new(
-                    sip_core::StatusLine::new(200, "OK").expect("valid status line"),
+                let uas_response = siphon_core::Response::new(
+                    siphon_core::StatusLine::new(200, "OK").expect("valid status line"),
                     new_headers.clone(),
                     callee_response.body().clone(),
                 )
@@ -681,10 +681,10 @@ impl InviteHandler {
                         .trim()
                 };
 
-                if let Ok(caller_uri) = sip_core::SipUri::parse(caller_uri_str) {
-                    let b2bua_uri = sip_core::SipUri::parse(&services.config.local_uri);
+                if let Ok(caller_uri) = siphon_core::SipUri::parse(caller_uri_str) {
+                    let b2bua_uri = siphon_core::SipUri::parse(&services.config.local_uri);
                     if let Ok(b2bua_uri) = b2bua_uri {
-                        if let Some(uas_dialog) = sip_dialog::Dialog::new_uas(
+                        if let Some(uas_dialog) = siphon_dialog::Dialog::new_uas(
                             &call_leg.caller_request,
                             &uas_response,
                             b2bua_uri,
@@ -761,7 +761,7 @@ impl InviteHandler {
             // Rewrite Content-Length we already pushed, drop the body.
             let _ = new_headers.set_or_push("Content-Length", "0");
             (
-                sip_core::StatusLine::new(502, "Bad Gateway").expect("valid status line"),
+                siphon_core::StatusLine::new(502, "Bad Gateway").expect("valid status line"),
                 bytes::Bytes::new(),
             )
         } else {
@@ -772,7 +772,7 @@ impl InviteHandler {
         };
 
         let transformed =
-            sip_core::Response::new(start_line, new_headers, body).expect("valid response");
+            siphon_core::Response::new(start_line, new_headers, body).expect("valid response");
 
         tracing::debug!(
             outgoing_call_id,
@@ -811,13 +811,13 @@ impl InviteHandler {
         services: &ServiceRegistry,
         call_id: &str,
     ) -> Result<()> {
-        use sip_parse::serialize_request;
-        use sip_proxy::ProxyHelpers;
+        use siphon_parse::serialize_request;
+        use siphon_proxy::ProxyHelpers;
 
         info!(call_id, "PROXY MODE: Processing INVITE for forwarding");
 
         // Send 100 Trying immediately
-        let trying = sip_uas::UserAgentServer::create_trying(request);
+        let trying = siphon_uas::UserAgentServer::create_trying(request);
         handle.send_provisional(trying).await;
 
         // Clone request for modification
@@ -826,8 +826,8 @@ impl InviteHandler {
         // Step 1: Check Max-Forwards
         if let Err(e) = ProxyHelpers::check_max_forwards(&mut proxied_req) {
             warn!(call_id, error = %e, "Max-Forwards exhausted");
-            let response = sip_core::Response::new(
-                sip_core::StatusLine::new(483, "Too Many Hops").expect("valid status line"),
+            let response = siphon_core::Response::new(
+                siphon_core::StatusLine::new(483, "Too Many Hops").expect("valid status line"),
                 request.headers().clone(),
                 bytes::Bytes::new(),
             )
@@ -844,13 +844,13 @@ impl InviteHandler {
             .nth(1)
             .unwrap_or("localhost");
         let transport_name = match ctx.transport() {
-            sip_transaction::TransportKind::Udp => "UDP",
-            sip_transaction::TransportKind::Tcp => "TCP",
-            sip_transaction::TransportKind::Tls => "TLS",
-            sip_transaction::TransportKind::Ws => "WS",
-            sip_transaction::TransportKind::Wss => "WSS",
-            sip_transaction::TransportKind::Sctp => "SCTP",
-            sip_transaction::TransportKind::TlsSctp => "TLS-SCTP",
+            siphon_transaction::TransportKind::Udp => "UDP",
+            siphon_transaction::TransportKind::Tcp => "TCP",
+            siphon_transaction::TransportKind::Tls => "TLS",
+            siphon_transaction::TransportKind::Ws => "WS",
+            siphon_transaction::TransportKind::Wss => "WSS",
+            siphon_transaction::TransportKind::Sctp => "SCTP",
+            siphon_transaction::TransportKind::TlsSctp => "TLS-SCTP",
         };
         let branch = ProxyHelpers::add_via(&mut proxied_req, proxy_host, transport_name);
 
@@ -869,7 +869,7 @@ impl InviteHandler {
             });
 
         // Step 3: Add Record-Route (stay in signaling path)
-        if let Ok(proxy_uri) = sip_core::SipUri::parse(&services.config.local_uri) {
+        if let Ok(proxy_uri) = siphon_core::SipUri::parse(&services.config.local_uri) {
             ProxyHelpers::add_record_route(&mut proxied_req, &proxy_uri);
         }
 
@@ -927,8 +927,8 @@ impl InviteHandler {
 
         if bindings.is_empty() {
             warn!(call_id, target = %target_uri.as_str(), "User not found in location service");
-            let response = sip_core::Response::new(
-                sip_core::StatusLine::new(404, "Not Found").expect("valid status line"),
+            let response = siphon_core::Response::new(
+                siphon_core::StatusLine::new(404, "Not Found").expect("valid status line"),
                 request.headers().clone(),
                 bytes::Bytes::new(),
             )
@@ -942,7 +942,7 @@ impl InviteHandler {
         info!(call_id, contact = %contact_str, "Found registered contact, forwarding");
 
         // Parse contact URI
-        let contact_uri = sip_core::SipUri::parse(contact_str)
+        let contact_uri = siphon_core::SipUri::parse(contact_str)
             .map_err(|_| anyhow!("Invalid contact URI: {}", contact_str))?;
 
         // Step 5: Update Request-URI to registered contact
@@ -966,13 +966,13 @@ impl InviteHandler {
             .and_then(|v| v.as_ref());
         let transport_param = transport_param.map(|s| s.to_ascii_lowercase());
         let transport = match transport_param.as_deref() {
-            Some("udp") => sip_transaction::TransportKind::Udp,
-            Some("tcp") => sip_transaction::TransportKind::Tcp,
-            Some("tls") => sip_transaction::TransportKind::Tls,
-            Some("ws") => sip_transaction::TransportKind::Ws,
-            Some("wss") => sip_transaction::TransportKind::Wss,
-            _ if contact_uri.is_sips() => sip_transaction::TransportKind::Tls,
-            _ => sip_transaction::TransportKind::Udp,
+            Some("udp") => siphon_transaction::TransportKind::Udp,
+            Some("tcp") => siphon_transaction::TransportKind::Tcp,
+            Some("tls") => siphon_transaction::TransportKind::Tls,
+            Some("ws") => siphon_transaction::TransportKind::Ws,
+            Some("wss") => siphon_transaction::TransportKind::Wss,
+            _ if contact_uri.is_sips() => siphon_transaction::TransportKind::Tls,
+            _ => siphon_transaction::TransportKind::Udp,
         };
 
         // Kept so a CANCEL from the caller can be sent down this branch.
@@ -990,30 +990,30 @@ impl InviteHandler {
         }
 
         match transport {
-            sip_transaction::TransportKind::Udp => {
+            siphon_transaction::TransportKind::Udp => {
                 let socket = services
                     .udp_socket
                     .get()
                     .ok_or_else(|| anyhow!("UDP socket not available for proxy forwarding"))?;
-                sip_transport::send_udp(socket.as_ref(), &target_addr, &payload).await?;
+                siphon_transport::send_udp(socket.as_ref(), &target_addr, &payload).await?;
                 info!(call_id, "INVITE forwarded via UDP successfully");
             }
-            sip_transaction::TransportKind::Tcp => {
+            siphon_transaction::TransportKind::Tcp => {
                 crate::proxy_utils::send_tcp_pooled(services, target_addr, payload).await?;
                 info!(call_id, "INVITE forwarded via TCP successfully");
             }
-            sip_transaction::TransportKind::Tls => {
+            siphon_transaction::TransportKind::Tls => {
                 #[cfg(feature = "tls")]
                 {
                     let config = services
                         .tls_client_config
                         .get()
                         .ok_or_else(|| anyhow!("TLS client config not available"))?;
-                    let tls = sip_transport::TlsConfig::new(
+                    let tls = siphon_transport::TlsConfig::new(
                         contact_uri.host().to_string(),
                         config.clone(),
                     );
-                    sip_transport::send_tls(&target_addr, &payload, &tls).await?;
+                    siphon_transport::send_tls(&target_addr, &payload, &tls).await?;
                     info!(call_id, "INVITE forwarded via TLS successfully");
                 }
                 #[cfg(not(feature = "tls"))]
@@ -1021,20 +1021,20 @@ impl InviteHandler {
                     return Err(anyhow!("TLS proxy forwarding not enabled"));
                 }
             }
-            sip_transaction::TransportKind::Ws | sip_transaction::TransportKind::Wss => {
+            siphon_transaction::TransportKind::Ws | siphon_transaction::TransportKind::Wss => {
                 #[cfg(feature = "ws")]
                 {
-                    let scheme = if transport == sip_transaction::TransportKind::Wss {
+                    let scheme = if transport == siphon_transaction::TransportKind::Wss {
                         "wss"
                     } else {
                         "ws"
                     };
                     let ws_url =
                         format!("{}://{}:{}", scheme, contact_uri.host(), target_addr.port());
-                    if transport == sip_transaction::TransportKind::Wss {
-                        sip_transport::send_wss(&ws_url, payload).await?;
+                    if transport == siphon_transaction::TransportKind::Wss {
+                        siphon_transport::send_wss(&ws_url, payload).await?;
                     } else {
-                        sip_transport::send_ws(&ws_url, payload).await?;
+                        siphon_transport::send_ws(&ws_url, payload).await?;
                     }
                     info!(call_id, url = %ws_url, "INVITE forwarded via WS/WSS successfully");
                 }
@@ -1043,7 +1043,8 @@ impl InviteHandler {
                     return Err(anyhow!("WS/WSS proxy forwarding not enabled"));
                 }
             }
-            sip_transaction::TransportKind::Sctp | sip_transaction::TransportKind::TlsSctp => {
+            siphon_transaction::TransportKind::Sctp
+            | siphon_transaction::TransportKind::TlsSctp => {
                 return Err(anyhow!("SCTP proxy forwarding not implemented"));
             }
         }
@@ -1161,7 +1162,7 @@ impl RequestHandler for InviteHandler {
                 }
             };
 
-            let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+            let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
                 Ok(uri) => uri,
                 Err(_) => {
                     warn!("Invalid local_uri in config");
@@ -1186,7 +1187,7 @@ impl RequestHandler for InviteHandler {
             if services.config.features.enable_session_timers {
                 if let Some(session_expires) = dialog.session_expires() {
                     let is_refresher =
-                        matches!(dialog.refresher(), Some(sip_core::RefresherRole::Uac));
+                        matches!(dialog.refresher(), Some(siphon_core::RefresherRole::Uac));
                     services.session_timer_mgr.refresh_timer(
                         dialog.id().clone(),
                         session_expires,
@@ -1279,7 +1280,7 @@ impl RequestHandler for InviteHandler {
         }
 
         // Parse local and contact URIs early so we can use UAS for all responses
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!("Invalid local_uri in config: {}", services.config.local_uri);
@@ -1322,10 +1323,10 @@ impl RequestHandler for InviteHandler {
             if let Ok(offer_str) = std::str::from_utf8(request.body()) {
                 if let Err(e) = sdp_utils::generate_sdp_answer(&services.config, offer_str) {
                     warn!(call_id, error = %e, "SDP validation failed, rejecting with 488");
-                    let mut headers = sip_core::Headers::new();
+                    let mut headers = siphon_core::Headers::new();
                     copy_dialog_headers(request, &mut headers);
-                    let response = sip_core::Response::new(
-                        sip_core::StatusLine::new(488, "Not Acceptable Here")
+                    let response = siphon_core::Response::new(
+                        siphon_core::StatusLine::new(488, "Not Acceptable Here")
                             .expect("valid status line"),
                         headers,
                         bytes::Bytes::new(),
@@ -1427,10 +1428,10 @@ impl RequestHandler for InviteHandler {
                 Ok(offer) => Some(offer),
                 Err(e) => {
                     warn!(call_id, error = %e, "Failed to generate SDP offer");
-                    let mut headers = sip_core::Headers::new();
+                    let mut headers = siphon_core::Headers::new();
                     copy_dialog_headers(request, &mut headers);
-                    let response = sip_core::Response::new(
-                        sip_core::StatusLine::new(488, "Not Acceptable Here")
+                    let response = siphon_core::Response::new(
+                        siphon_core::StatusLine::new(488, "Not Acceptable Here")
                             .expect("valid status line"),
                         headers,
                         bytes::Bytes::new(),
@@ -1455,7 +1456,7 @@ impl RequestHandler for InviteHandler {
                     if !has_se {
                         let _ = response.headers_mut().push(
                             "Session-Expires",
-                            sip_dialog::session_timer_manager::DEFAULT_SESSION_EXPIRES
+                            siphon_dialog::session_timer_manager::DEFAULT_SESSION_EXPIRES
                                 .as_secs()
                                 .to_string(),
                         );
@@ -1467,7 +1468,7 @@ impl RequestHandler for InviteHandler {
 
                     if let Some(session_expires) = dialog.session_expires() {
                         let is_refresher =
-                            matches!(dialog.refresher(), Some(sip_core::RefresherRole::Uac));
+                            matches!(dialog.refresher(), Some(siphon_core::RefresherRole::Uac));
                         services.session_timer_mgr.start_timer(
                             dialog.id().clone(),
                             session_expires,
@@ -1530,8 +1531,8 @@ impl RequestHandler for InviteHandler {
 ///    it raises the bar from "know (call-id, to-tag, from-tag)" to "also
 ///    impersonate a participant's SIP URI".
 fn replaces_initiator_authorized(
-    request: &sip_core::Request,
-    target_dialog: &sip_dialog::Dialog,
+    request: &siphon_core::Request,
+    target_dialog: &siphon_dialog::Dialog,
     services: &ServiceRegistry,
 ) -> bool {
     let dialog_users: [Option<&str>; 2] = [
@@ -1544,7 +1545,7 @@ fn replaces_initiator_authorized(
         // the From user if the Authorization header isn't parseable — the
         // dispatcher already accepted it so the header must have verified,
         // but we double-check the username match here.
-        let auth_user = sip_auth::extract_auth_username(request.headers());
+        let auth_user = siphon_auth::extract_auth_username(request.headers());
         if let Some(user) = auth_user {
             return dialog_users
                 .iter()
@@ -1559,7 +1560,7 @@ fn replaces_initiator_authorized(
 
     // Auth disabled: use the new INVITE's From URI user-part as a weak
     // identity proxy. Parse the From header and extract the SIP URI user.
-    let Some(from_raw) = sip_parse::header(request.headers(), "From") else {
+    let Some(from_raw) = siphon_parse::header(request.headers(), "From") else {
         return false;
     };
     let Some(from_uri) = crate::sdp_utils::parse_name_addr_uri(from_raw.as_str()) else {
@@ -1615,7 +1616,7 @@ fn parse_replaces_dialog_id(value: &str) -> Option<DialogId> {
 }
 
 /// Copy dialog-forming headers from request to response headers
-fn copy_dialog_headers(request: &Request, headers: &mut sip_core::Headers) {
+fn copy_dialog_headers(request: &Request, headers: &mut siphon_core::Headers) {
     if let Some(via) = header(request.headers(), "Via") {
         let _ = headers.push("Via", via.clone());
     }
@@ -1639,9 +1640,9 @@ fn copy_dialog_headers(request: &Request, headers: &mut sip_core::Headers) {
 /// retry-after code path.
 async fn send_rate_limited(request: &Request, handle: ServerTransactionHandle) {
     use bytes::Bytes;
-    use sip_core::{Response, StatusLine};
+    use siphon_core::{Response, StatusLine};
 
-    let mut headers = sip_core::Headers::new();
+    let mut headers = siphon_core::Headers::new();
     copy_dialog_headers(request, &mut headers);
     let _ = headers.push("Retry-After", "30");
     let response = Response::new(

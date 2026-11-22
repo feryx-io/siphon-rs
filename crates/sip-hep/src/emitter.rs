@@ -94,13 +94,13 @@ static SIP_HEP: OnceCell<SipHepHandle> = OnceCell::new();
 
 /// Install the global emitter. Returns `true` on install, `false`
 /// when already configured — the second call doesn't replace the
-/// first (consistent with `sip-observe::set_transport_metrics`).
+/// first (consistent with `siphon-observe::set_transport_metrics`).
 #[must_use]
 pub fn set_emitter(handle: SipHepHandle) -> bool {
     if SIP_HEP.set(handle).is_ok() {
         true
     } else {
-        warn!("sip-hep emitter already configured");
+        warn!("siphon-hep emitter already configured");
         false
     }
 }

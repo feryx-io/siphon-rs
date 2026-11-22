@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the implementation of RFC 3860 ("Common Profile for Instant Messaging") and RFC 3862 ("Common Profile for Instant Messaging (CPIM) Message Format") in the sip-core crate.
+This document describes the implementation of RFC 3860 ("Common Profile for Instant Messaging") and RFC 3862 ("Common Profile for Instant Messaging (CPIM) Message Format") in the siphon-core crate.
 
 ## RFCs Implemented
 
@@ -170,7 +170,7 @@ Parses a CPIM message from a string.
 ### Creating a Simple Message
 
 ```rust
-use sip_core::{CpimMessage, parse_cpim};
+use siphon_core::{CpimMessage, parse_cpim};
 
 let msg = CpimMessage::new("text/plain", b"Hello, Bob!".to_vec())
     .with_from("Alice <im:alice@example.com>")
@@ -287,7 +287,7 @@ assert_eq!(parsed.get_header("Subject"), Some("Line 1\nLine 2\tTabbed"));
 CPIM is commonly used as the message body in SIP MESSAGE requests:
 
 ```rust
-use sip_core::{Request, Method, CpimMessage};
+use siphon_core::{Request, Method, CpimMessage};
 
 // Create CPIM message
 let cpim = CpimMessage::new("text/plain", b"Hello!".to_vec())
@@ -439,7 +439,7 @@ The implementation includes 15 comprehensive tests covering:
 ### Running Tests
 
 ```bash
-cargo test --package sip-core cpim
+cargo test --package siphon-core cpim
 ```
 
 All 15 tests pass successfully.
@@ -499,7 +499,7 @@ println!("{}", msg.to_string());
 
 ## Module Exports
 
-The following types are exported from sip-core:
+The following types are exported from siphon-core:
 
 ```rust
 pub use cpim::{

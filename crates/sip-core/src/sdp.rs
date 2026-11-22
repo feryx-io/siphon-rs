@@ -44,7 +44,7 @@
 //! # Examples
 //!
 //! ```
-//! use sip_core::sdp::{SdpSession, Origin, Connection, MediaDescription};
+//! use siphon_core::sdp::{SdpSession, Origin, Connection, MediaDescription};
 //!
 //! // Parse SDP
 //! let sdp_text = "v=0\r\n\

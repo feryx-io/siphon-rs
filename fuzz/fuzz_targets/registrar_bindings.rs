@@ -13,7 +13,7 @@
 #![no_main]
 use bytes::Bytes;
 use libfuzzer_sys::fuzz_target;
-use sip_registrar::{normalize_aor, Binding};
+use siphon_registrar::{normalize_aor, Binding};
 use smol_str::SmolStr;
 use std::time::Duration;
 
@@ -22,7 +22,7 @@ fuzz_target!(|data: &[u8]| {
         return;
     }
     let bytes = Bytes::copy_from_slice(data);
-    let Some(request) = sip_parse::parse_request(&bytes) else {
+    let Some(request) = siphon_parse::parse_request(&bytes) else {
         return;
     };
 
@@ -38,8 +38,8 @@ fuzz_target!(|data: &[u8]| {
     // ever does, and asserting it only fails on inputs nobody sends. The
     // fuzzer found that assertion within minutes, which is the target
     // being wrong rather than the code.
-    let to = sip_parse::header(request.headers(), "To")
-        .and_then(|to| sip_parse::parse_to_header(&to));
+    let to = siphon_parse::header(request.headers(), "To")
+        .and_then(|to| siphon_parse::parse_to_header(&to));
     let aor = to.as_ref().and_then(|to| {
         let uri = to.inner().uri();
         let first = normalize_aor(uri).ok()?;
@@ -64,14 +64,14 @@ fuzz_target!(|data: &[u8]| {
 
         // What the rest of the REGISTER says about this binding, each
         // through its own validator.
-        let binding = match sip_parse::header(request.headers(), "Call-ID") {
+        let binding = match siphon_parse::header(request.headers(), "Call-ID") {
             Some(call_id) => match binding.with_call_id(SmolStr::new(call_id.as_str())) {
                 Ok(binding) => binding,
                 Err(_) => continue,
             },
             None => binding,
         };
-        let cseq = sip_parse::header(request.headers(), "CSeq")
+        let cseq = siphon_parse::header(request.headers(), "CSeq")
             .and_then(|v| v.as_str().split_whitespace().next()?.parse::<u32>().ok())
             .unwrap_or(1);
         let Ok(binding) = binding.with_cseq(cseq) else {

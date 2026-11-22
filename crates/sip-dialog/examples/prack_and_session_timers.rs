@@ -15,13 +15,13 @@
 //! ```
 
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-use sip_dialog::prack_validator::{is_reliable_provisional, PrackValidator, RAck};
-use sip_dialog::session_timer_manager::{
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+use siphon_dialog::prack_validator::{is_reliable_provisional, PrackValidator, RAck};
+use siphon_dialog::session_timer_manager::{
     determine_refresher_role, negotiate_session_expires, SessionTimerEvent, SessionTimerManager,
     MIN_SESSION_EXPIRES,
 };
-use sip_dialog::DialogId;
+use siphon_dialog::DialogId;
 use smol_str::SmolStr;
 use std::time::Duration;
 

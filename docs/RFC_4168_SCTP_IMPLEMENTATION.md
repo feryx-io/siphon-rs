@@ -195,7 +195,7 @@ fn default_transport(uri: &SipUri) -> Transport {
 ### Parsing Transport from Via Header
 
 ```rust
-use sip_transport::TransportKind;
+use siphon_transport::TransportKind;
 
 // Parse transport from Via header
 let transport = TransportKind::parse("SCTP")?;
@@ -212,7 +212,7 @@ assert_eq!(tls_sctp.via_transport(), "TLS-SCTP");
 ### Transport Properties
 
 ```rust
-use sip_transport::TransportKind;
+use siphon_transport::TransportKind;
 
 let sctp = TransportKind::Sctp;
 
@@ -231,8 +231,8 @@ assert!(tls_sctp.is_stream_based());
 ### DNS Resolution with SCTP
 
 ```rust
-use sip_dns::{SipResolver, Transport};
-use sip_core::SipUri;
+use siphon_dns::{SipResolver, Transport};
+use siphon_core::SipUri;
 
 let resolver = SipResolver::from_system()?;
 
@@ -251,7 +251,7 @@ for target in targets {
 ### DNS Transport Methods
 
 ```rust
-use sip_dns::Transport;
+use siphon_dns::Transport;
 
 // Protocol string for SRV lookups
 assert_eq!(Transport::Sctp.as_proto_str(), "sctp");
@@ -335,7 +335,7 @@ assert_eq!(Transport::TlsSctp.as_via_str(), "TLS-SCTP");
 When an inbound SCTP message is received (via custom implementation):
 
 ```rust
-use sip_transport::{InboundPacket, TransportKind};
+use siphon_transport::{InboundPacket, TransportKind};
 use bytes::Bytes;
 
 let packet = InboundPacket {
@@ -354,7 +354,7 @@ transaction_layer.dispatch(packet).await?;
 When sending a message via SCTP:
 
 ```rust
-use sip_transport::TransportKind;
+use siphon_transport::TransportKind;
 
 let transport = TransportKind::parse(&via.transport)?;
 
@@ -370,8 +370,8 @@ if transport == TransportKind::Sctp {
 ### 3. Via Header Construction
 
 ```rust
-use sip_core::{Request, ViaHeader};
-use sip_transport::TransportKind;
+use siphon_core::{Request, ViaHeader};
+use siphon_transport::TransportKind;
 
 let transport = TransportKind::Sctp;
 let via = format!(
@@ -437,7 +437,7 @@ while let Some(stream) = listener.accept().await {
 ### Integration Pattern
 
 ```rust
-use sip_transport::{TransportKind, InboundPacket};
+use siphon_transport::{TransportKind, InboundPacket};
 use bytes::Bytes;
 use tokio::sync::mpsc;
 

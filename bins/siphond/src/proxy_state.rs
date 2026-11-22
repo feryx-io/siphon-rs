@@ -9,7 +9,7 @@
 /// - Correlates responses with forwarded requests
 /// - Enables stateful proxy behavior
 use dashmap::DashMap;
-use sip_transaction::TransportKind;
+use siphon_transaction::TransportKind;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -23,7 +23,7 @@ pub struct ProxyTransaction {
     /// The forwarded request's method. A response on this branch for
     /// another method answers a CANCEL this proxy sent down it (RFC 3261
     /// §16.10), and is this proxy's, not the caller's.
-    pub method: sip_core::Method,
+    pub method: siphon_core::Method,
 
     /// Original sender's address (where to forward responses)
     #[allow(dead_code)]
@@ -55,7 +55,7 @@ pub struct ProxyTransaction {
 #[derive(Clone, Debug)]
 pub struct ForwardedInvite {
     /// The INVITE as sent, with this proxy's Via on top.
-    pub request: sip_core::Request,
+    pub request: siphon_core::Request,
     pub target: SocketAddr,
     pub transport: TransportKind,
     /// The host a TLS connection names.

@@ -24,7 +24,7 @@
 //! # Examples
 //!
 //! ```
-//! use sip_core::{TokenList, AllowHeader};
+//! use siphon_core::{TokenList, AllowHeader};
 //!
 //! // Parse Allow header
 //! let allow = AllowHeader::parse("INVITE, ACK, OPTIONS, CANCEL, BYE").unwrap();
@@ -118,7 +118,7 @@ fn is_valid_token_char(c: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use sip_core::TokenList;
+/// use siphon_core::TokenList;
 ///
 /// // Parse from comma-separated string
 /// let list = TokenList::parse("INVITE, ACK, CANCEL").unwrap();
@@ -179,7 +179,7 @@ impl TokenList {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::TokenList;
+    /// use siphon_core::TokenList;
     ///
     /// let tokens = ["INVITE", "ACK", "BYE"];
     /// let list = TokenList::from_slice(&tokens).unwrap();
@@ -201,7 +201,7 @@ impl TokenList {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::TokenList;
+    /// use siphon_core::TokenList;
     ///
     /// let list = TokenList::parse("INVITE, ACK, OPTIONS").unwrap();
     /// assert_eq!(list.tokens().len(), 3);
@@ -290,7 +290,7 @@ impl fmt::Display for TokenList {
 /// # Example
 ///
 /// ```
-/// use sip_core::AllowHeader;
+/// use siphon_core::AllowHeader;
 ///
 /// let allow = AllowHeader::parse("INVITE, ACK, OPTIONS, CANCEL, BYE").unwrap();
 /// assert!(allow.contains("INVITE"));
@@ -311,7 +311,7 @@ pub type AllowHeader = TokenList;
 /// # Example
 ///
 /// ```
-/// use sip_core::SupportedHeader;
+/// use siphon_core::SupportedHeader;
 ///
 /// let supported = SupportedHeader::parse("timer, 100rel").unwrap();
 /// assert!(supported.contains("timer"));
@@ -330,7 +330,7 @@ pub type SupportedHeader = TokenList;
 /// # Example
 ///
 /// ```
-/// use sip_core::RequireHeader;
+/// use siphon_core::RequireHeader;
 ///
 /// let require = RequireHeader::from_tokens(vec!["100rel"]).unwrap();
 /// assert!(require.contains("100rel"));
@@ -348,7 +348,7 @@ pub type RequireHeader = TokenList;
 /// # Example
 ///
 /// ```
-/// use sip_core::ProxyRequireHeader;
+/// use siphon_core::ProxyRequireHeader;
 ///
 /// let proxy_require = ProxyRequireHeader::from_slice(&["path"]).unwrap();
 /// assert!(proxy_require.contains("path"));
@@ -366,7 +366,7 @@ pub type ProxyRequireHeader = TokenList;
 /// # Example
 ///
 /// ```
-/// use sip_core::UnsupportedHeader;
+/// use siphon_core::UnsupportedHeader;
 ///
 /// let unsupported = UnsupportedHeader::from_slice(&["unknown-feature"]).unwrap();
 /// assert!(unsupported.contains("unknown-feature"));

@@ -7,10 +7,10 @@
 /// Implements RFC 3262 reliable provisional response acknowledgement.
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use tracing::warn;
 
 use super::RequestHandler;
@@ -66,7 +66,7 @@ impl RequestHandler for PrackHandler {
             }
         };
 
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!(call_id, "Invalid local_uri, rejecting PRACK");

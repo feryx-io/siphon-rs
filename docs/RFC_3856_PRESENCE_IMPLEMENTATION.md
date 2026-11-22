@@ -96,7 +96,7 @@ Creates a new presence document for the given entity.
 
 **Example:**
 ```rust
-use sip_core::PresenceDocument;
+use siphon_core::PresenceDocument;
 
 let doc = PresenceDocument::new("pres:alice@example.com")?;
 ```
@@ -110,7 +110,7 @@ Returns an error if adding would exceed `MAX_TUPLES`.
 
 **Example:**
 ```rust
-use sip_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 
@@ -130,7 +130,7 @@ Returns an error if the note is invalid or exceeds `MAX_NOTES_PER_DOC`.
 
 **Example:**
 ```rust
-use sip_core::PresenceDocument;
+use siphon_core::PresenceDocument;
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 doc.add_note("Available")?;
@@ -174,7 +174,7 @@ Returns the basic status from the first tuple, if any.
 
 **Example:**
 ```rust
-use sip_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 doc.add_tuple(Tuple::new("t1")?.with_status(BasicStatus::Open))?;
@@ -190,7 +190,7 @@ Formats the presence document as application/pidf+xml.
 
 **Example:**
 ```rust
-use sip_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 doc.add_tuple(
@@ -234,7 +234,7 @@ Creates a new tuple with the given ID.
 
 **Example:**
 ```rust
-use sip_core::Tuple;
+use siphon_core::Tuple;
 
 let tuple = Tuple::new("t1")?;
 ```
@@ -247,7 +247,7 @@ Sets the basic status (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::{Tuple, BasicStatus};
+use siphon_core::{Tuple, BasicStatus};
 
 let tuple = Tuple::new("t1")?
     .with_status(BasicStatus::Open);
@@ -261,7 +261,7 @@ Sets the contact URI (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::Tuple;
+use siphon_core::Tuple;
 
 let tuple = Tuple::new("t1")?
     .with_contact("sip:alice@192.168.1.100")?;
@@ -275,7 +275,7 @@ Adds a note (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::Tuple;
+use siphon_core::Tuple;
 
 let tuple = Tuple::new("t1")?
     .with_note("Available")?
@@ -290,7 +290,7 @@ Sets the timestamp (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::Tuple;
+use siphon_core::Tuple;
 
 let tuple = Tuple::new("t1")?
     .with_timestamp("2023-11-21T12:00:00Z")?;
@@ -345,7 +345,7 @@ Returns the string representation for XML.
 
 **Example:**
 ```rust
-use sip_core::BasicStatus;
+use siphon_core::BasicStatus;
 
 assert_eq!(BasicStatus::Open.as_str(), "open");
 assert_eq!(BasicStatus::Closed.as_str(), "closed");
@@ -359,7 +359,7 @@ Parses a basic status from a string (case-insensitive).
 
 **Example:**
 ```rust
-use sip_core::BasicStatus;
+use siphon_core::BasicStatus;
 
 assert_eq!(BasicStatus::parse("open"), Some(BasicStatus::Open));
 assert_eq!(BasicStatus::parse("CLOSED"), Some(BasicStatus::Closed));
@@ -388,7 +388,7 @@ Input is capped at `MAX_PARSE_SIZE` (1MB).
 
 **Example:**
 ```rust
-use sip_core::parse_pidf;
+use siphon_core::parse_pidf;
 
 let xml = r#"<?xml version="1.0" encoding="UTF-8"?>
 <presence xmlns="urn:ietf:params:xml:ns:pidf" entity="pres:alice@example.com">
@@ -416,7 +416,7 @@ assert_eq!(doc.entity(), "pres:alice@example.com");
 Create a simple presence document:
 
 ```rust
-use sip_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, PresenceError, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 
@@ -450,7 +450,7 @@ Output:
 Report presence for multiple devices:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:alice@example.com")?;
 
@@ -485,7 +485,7 @@ let xml = doc.to_xml();
 Indicate availability with notes:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:bob@example.com")?;
 
@@ -504,7 +504,7 @@ let xml = doc.to_xml();
 Report offline/unavailable:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:carol@example.com")?;
 
@@ -521,7 +521,7 @@ let xml = doc.to_xml();
 Include temporal information:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 
 let mut doc = PresenceDocument::new("pres:dave@example.com")?;
 
@@ -541,7 +541,7 @@ let xml = doc.to_xml();
 Parse a NOTIFY body:
 
 ```rust
-use sip_core::{parse_pidf, BasicStatus, PresenceError};
+use siphon_core::{parse_pidf, BasicStatus, PresenceError};
 
 let xml = r#"<?xml version="1.0" encoding="UTF-8"?>
 <presence xmlns="urn:ietf:params:xml:ns:pidf" entity="pres:alice@example.com">
@@ -627,7 +627,7 @@ Content-Length: 312
 Presence agent implementation:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 use std::collections::HashMap;
 
 struct PresenceAgent {
@@ -671,7 +671,7 @@ impl PresenceAgent {
 UA updating presence:
 
 ```rust
-use sip_core::{PresenceDocument, Tuple, BasicStatus};
+use siphon_core::{PresenceDocument, Tuple, BasicStatus};
 
 struct UserAgent {
     entity: String,
@@ -710,7 +710,7 @@ impl UserAgent {
 Application watching presence:
 
 ```rust
-use sip_core::{parse_pidf, BasicStatus, PresenceError};
+use siphon_core::{parse_pidf, BasicStatus, PresenceError};
 
 struct PresenceWatcher {
     watched_entities: Vec<String>,
@@ -803,13 +803,13 @@ The presence implementation includes 19 comprehensive unit tests:
 
 ```bash
 # Run all presence tests
-cargo test --package sip-core presence
+cargo test --package siphon-core presence
 
 # Run specific test
-cargo test --package sip-core presence_document_creation
+cargo test --package siphon-core presence_document_creation
 
 # Run with output
-cargo test --package sip-core presence -- --nocapture
+cargo test --package siphon-core presence -- --nocapture
 ```
 
 ## Limitations and Future Work

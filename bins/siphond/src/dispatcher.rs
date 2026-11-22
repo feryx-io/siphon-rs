@@ -5,9 +5,9 @@
 /// Request dispatcher that routes SIP requests to appropriate handlers.
 use std::{collections::HashMap, sync::Arc};
 
-use sip_auth::Authenticator;
-use sip_core::{Method, Request};
-use sip_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_auth::Authenticator;
+use siphon_core::{Method, Request};
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
 use tracing::{info, warn};
 
 use crate::{
@@ -147,8 +147,8 @@ impl RequestDispatcher {
     /// response shape is consistent.
     async fn send_rate_limited(&self, request: &Request, handle: ServerTransactionHandle) {
         use bytes::Bytes;
-        use sip_core::{Headers, Response, StatusLine};
-        use sip_parse::header;
+        use siphon_core::{Headers, Response, StatusLine};
+        use siphon_parse::header;
 
         let mut headers = Headers::new();
         for name in ["Via", "From", "To", "Call-ID", "CSeq"] {
@@ -177,7 +177,7 @@ impl RequestDispatcher {
         handle: ServerTransactionHandle,
         ctx: &TransportContext,
     ) {
-        use sip_parse::header;
+        use siphon_parse::header;
 
         // RFC 3261 §8.1.1.3: Check Max-Forwards
         // If Max-Forwards is 0, respond with 483 Too Many Hops
@@ -214,7 +214,7 @@ impl RequestDispatcher {
                         "Handler failed to process request"
                     );
                     if method != &Method::Ack {
-                        let response = sip_uas::UserAgentServer::create_response(
+                        let response = siphon_uas::UserAgentServer::create_response(
                             request,
                             500,
                             "Server Internal Error",
@@ -233,8 +233,8 @@ impl RequestDispatcher {
     /// Send 483 Too Many Hops response (RFC 3261 §8.1.1.3)
     async fn send_too_many_hops(&self, request: &Request, handle: ServerTransactionHandle) {
         use bytes::Bytes;
-        use sip_core::{Headers, Response, StatusLine};
-        use sip_parse::header;
+        use siphon_core::{Headers, Response, StatusLine};
+        use siphon_parse::header;
 
         let mut headers = Headers::new();
 
@@ -267,8 +267,8 @@ impl RequestDispatcher {
     /// Send 501 Not Implemented response
     async fn send_not_implemented(&self, request: &Request, handle: ServerTransactionHandle) {
         use bytes::Bytes;
-        use sip_core::{Headers, Response, StatusLine};
-        use sip_parse::header;
+        use siphon_core::{Headers, Response, StatusLine};
+        use siphon_parse::header;
 
         let mut headers = Headers::new();
 

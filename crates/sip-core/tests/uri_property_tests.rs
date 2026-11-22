@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use proptest::prelude::*;
-use sip_core::SipUri;
+use siphon_core::SipUri;
 
 proptest! {
     /// Test that valid URIs can be parsed and reconstructed.

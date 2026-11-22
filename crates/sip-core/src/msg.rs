@@ -50,7 +50,7 @@ impl std::error::Error for MessageError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{RequestLine, Method, Uri};
+/// use siphon_core::{RequestLine, Method, Uri};
 ///
 /// let uri = Uri::parse("sip:bob@example.com").unwrap();
 /// let request_line = RequestLine::new(Method::Invite, uri);
@@ -123,7 +123,7 @@ impl RequestLine {
 /// # Examples
 ///
 /// ```
-/// use sip_core::StatusLine;
+/// use siphon_core::StatusLine;
 ///
 /// let status = StatusLine::new(200, "OK").unwrap();
 /// assert_eq!(status.code(), 200);
@@ -158,7 +158,7 @@ impl StatusLine {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::StatusLine;
+    /// use siphon_core::StatusLine;
     ///
     /// let status = StatusLine::new(200, "OK").unwrap();
     /// assert_eq!(status.code(), 200);
@@ -256,7 +256,7 @@ impl StatusLine {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Request, RequestLine, Method, Uri, Headers};
+/// use siphon_core::{Request, RequestLine, Method, Uri, Headers};
 /// use bytes::Bytes;
 ///
 /// let uri = Uri::parse("sip:bob@example.com").unwrap();
@@ -374,7 +374,7 @@ impl Request {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Response, StatusLine, Headers};
+/// use siphon_core::{Response, StatusLine, Headers};
 /// use bytes::Bytes;
 ///
 /// let status_line = StatusLine::new(200, "OK").unwrap();
@@ -511,7 +511,7 @@ impl Response {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{SipMessage, Request, RequestLine, Method, Uri, Headers};
+/// use siphon_core::{SipMessage, Request, RequestLine, Method, Uri, Headers};
 /// use bytes::Bytes;
 ///
 /// let uri = Uri::parse("sip:bob@example.com").unwrap();

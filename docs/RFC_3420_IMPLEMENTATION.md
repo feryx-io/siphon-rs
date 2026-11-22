@@ -270,7 +270,7 @@ let body = frag.to_string();  // "SIP/2.0 200 OK\r\n"
 ### Example 1: REFER Status Notification (Most Common)
 
 ```rust
-use sip_core::{SipFrag, Request, Method, RequestLine, Headers, Uri};
+use siphon_core::{SipFrag, Request, Method, RequestLine, Headers, Uri};
 use smol_str::SmolStr;
 use bytes::Bytes;
 
@@ -311,7 +311,7 @@ let notify = create_refer_notification(
 ### Example 2: Detailed Status with Headers
 
 ```rust
-use sip_core::{SipFrag, SipFragError};
+use siphon_core::{SipFrag, SipFragError};
 use smol_str::SmolStr;
 
 // Report call failure with additional context
@@ -329,7 +329,7 @@ let body = frag.to_string();
 ### Example 3: Request Fragment
 
 ```rust
-use sip_core::{SipFrag, RequestLine, Method, SipUri};
+use siphon_core::{SipFrag, RequestLine, Method, SipUri};
 
 let uri = SipUri::parse("sip:bob@example.com")?;
 let req_line = RequestLine::new(Method::Invite, uri);
@@ -348,7 +348,7 @@ let body = frag.to_string();
 ### Example 4: Headers-Only Fragment (S/MIME)
 
 ```rust
-use sip_core::{SipFrag, Headers};
+use siphon_core::{SipFrag, Headers};
 
 // Create fragment for cryptographic assertion
 let mut headers = Headers::new();
@@ -367,7 +367,7 @@ let body = frag.to_string();
 ### Example 5: Fragment with Body
 
 ```rust
-use sip_core::{SipFrag, SipFragError};
+use siphon_core::{SipFrag, SipFragError};
 use smol_str::SmolStr;
 
 let body_text = "Call completed successfully";
@@ -388,7 +388,7 @@ let body = frag.to_string();
 ### Example 6: Complete Response Fragment
 
 ```rust
-use sip_core::{SipFrag, Response, StatusLine, Headers};
+use siphon_core::{SipFrag, Response, StatusLine, Headers};
 use bytes::Bytes;
 
 let mut headers = Headers::new();
@@ -415,7 +415,7 @@ assert_eq!(frag.status_code(), Some(603));
 The most common use of message/sipfrag is with the REFER method:
 
 ```rust
-use sip_core::{SipFrag, Request, Method, Headers, RequestLine, Uri};
+use siphon_core::{SipFrag, Request, Method, Headers, RequestLine, Uri};
 use smol_str::SmolStr;
 use bytes::Bytes;
 
@@ -457,7 +457,7 @@ pub fn send_refer_notification(
 ### Call Transfer Status Updates
 
 ```rust
-use sip_core::{SipFrag, SipFragError};
+use siphon_core::{SipFrag, SipFragError};
 
 /// Track call transfer progress
 pub enum TransferStatus {
@@ -491,7 +491,7 @@ impl TransferStatus {
 ### Event Notifications
 
 ```rust
-use sip_core::{SipFrag, SipFragError};
+use siphon_core::{SipFrag, SipFragError};
 use smol_str::SmolStr;
 
 /// Generic event notification with sipfrag
@@ -542,13 +542,13 @@ All tests are in `sip-core/src/sipfrag.rs`:
 
 ```bash
 # Run all tests
-cargo test --package sip-core
+cargo test --package siphon-core
 
 # Run only sipfrag tests
-cargo test --package sip-core sipfrag
+cargo test --package siphon-core sipfrag
 
 # Run with output
-cargo test --package sip-core sipfrag -- --nocapture
+cargo test --package siphon-core sipfrag -- --nocapture
 ```
 
 ---

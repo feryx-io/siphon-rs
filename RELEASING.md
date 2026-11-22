@@ -10,10 +10,10 @@ into one:
 
 1. **Release tags are CalVer** (`v2026.08.19`). A tag names a *snapshot of the
    whole repository*. An aggregate of 18 crates cannot make a single honest
-   compatibility promise (one release may break sip-uas while sip-core gets a
+   compatibility promise (one release may break siphon-uas while siphon-core gets a
    patch fix), so the tag deliberately doesn't try — it's a pinnable,
    changelog-aligned name for a commit.
-2. **Crate versions are SemVer** (`sip-uac = 0.5.0`). Compatibility lives at
+2. **Crate versions are SemVer** (`siphon-uac = 0.5.0`). Compatibility lives at
    the crate level, and each crate's `Cargo.toml` version is where that signal
    is kept honest.
 
@@ -54,8 +54,12 @@ Notes:
 - Internal dependency migrations (e.g. a `rand` major bump) with no public API
   change do not by themselves require a bump; a major bump of a dependency
   whose types appear in public API does.
-- Inter-crate dependencies are `path`-only (no version requirements), so
-  bumping a crate never requires editing its dependents' manifests.
+- Inter-crate dependencies are declared once, in the root `Cargo.toml`'s
+  `[workspace.dependencies]`, as `path` + `version`. Bumping a crate means
+  updating its `version` there as well as in its own manifest; a patch bump
+  that leaves the requirement satisfied still builds, but keep the two equal.
+- Crate directories keep their original names (`crates/sip-core` holds the
+  `siphon-core` package).
 
 To audit what changed since a crate's last bump (the repo pre-dates tags, and
 tags don't record per-crate bump points):
@@ -114,12 +118,20 @@ Consumers depend on siphon-rs via git dependencies and should pin tags, not
 branches:
 
 ```toml
-sip-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "v2026.08.19" }
+siphon-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "vYYYY.MM.DD" }
+```
+
+Tags up to and including `v2026.11.22` carry the old package names
+(`sip-core`, `sip-uac`, …); the `siphon-` names start with the first tag after
+it. A consumer that wants to keep `use sip_uac::…` in its code can alias:
+
+```toml
+sip-uac = { package = "siphon-uac", git = "https://github.com/feryx-io/siphon-rs", tag = "vYYYY.MM.DD" }
 ```
 
 - **Pin every `sip-*` crate in a consumer to the same tag.** Different refs of
   the same repo are different sources to Cargo, which duplicates shared crates
-  (two `sip-core`s) and produces impossible type-mismatch errors. Defining the
+  (two `siphon-core`s) and produces impossible type-mismatch errors. Defining the
   pin once in the consumer's `[workspace.dependencies]` keeps it single-sourced.
 - Upgrading = bump the tag, `cargo update`, then work through that release's
   breaking-changes paragraph in the changelog.
@@ -127,9 +139,23 @@ sip-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "v2026.08.19" }
   from its pinned tag, cherry-pick, and tag the result with the same-day
   counter rule.
 
-## If crates are ever published to crates.io
+## Publishing to crates.io
 
-Per-crate SemVer becomes the real release mechanism: version requirements
-replace git pins, per-crate tags (`sip-uac-v0.5.0`) become meaningful, and
-tooling like `release-plz`/`cargo-release` can automate bumps. The dated
-workspace tags remain valid alongside — nothing above needs to be undone.
+The workspace is publishable as `siphon-*` (plus `siphond`). `sip-core` was
+already taken on crates.io, hence the prefix.
+
+1. `hep-rs` must be on crates.io first — `siphon-hep` and `siphon-transport`
+   require it, and crates.io rejects a crate whose dependency it cannot find.
+2. Dry run (the `--config` patch is only needed while `hep-rs` is unpublished):
+
+   ```bash
+   cargo publish --workspace --dry-run \
+     --config 'patch.crates-io.hep-rs.git="https://github.com/feryx-io/hep-rs"' \
+     --config 'patch.crates-io.hep-rs.branch="main"'
+   ```
+3. `cargo publish --workspace` — publishes in dependency order. New-crate rate
+   limits may stop it partway; re-run to continue.
+
+A published version can be yanked but never replaced. Once published,
+per-crate tags (`siphon-uac-v0.9.6`) and `release-plz`/`cargo-release` become
+useful; the dated workspace tags remain valid alongside.

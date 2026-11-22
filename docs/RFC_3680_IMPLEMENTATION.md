@@ -274,8 +274,8 @@ pub fn create_reg_subscribe(&self, target_uri: &SipUri, expires: u32) -> Request
 
 **Example:**
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 let uac = UserAgentClient::new(
     SipUri::parse("sip:monitor@example.com")?,
@@ -324,10 +324,10 @@ pub fn create_reg_notify(
 
 **Example:**
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::{SipUri, RegInfo, RegInfoState, Registration, RegistrationState,
+use siphon_uac::UserAgentClient;
+use siphon_core::{SipUri, RegInfo, RegInfoState, Registration, RegistrationState,
                Contact, ContactState, ContactEvent};
-use sip_dialog::SubscriptionState;
+use siphon_dialog::SubscriptionState;
 
 let uac = UserAgentClient::new(
     SipUri::parse("sip:registrar@example.com")?,
@@ -372,8 +372,8 @@ transport.send(&notify).await?;
 ### Monitor Single User Registration
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 async fn monitor_user_registration(
     uac: &UserAgentClient,
@@ -406,10 +406,10 @@ async fn monitor_user_registration(
 ### Send Registration Notification
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::{RegInfo, RegInfoState, Registration, RegistrationState,
+use siphon_uac::UserAgentClient;
+use siphon_core::{RegInfo, RegInfoState, Registration, RegistrationState,
                Contact, ContactState, ContactEvent};
-use sip_dialog::SubscriptionState;
+use siphon_dialog::SubscriptionState;
 
 async fn send_registration_notification(
     uac: &UserAgentClient,
@@ -692,13 +692,13 @@ Reg event tests include:
 
 ```bash
 # Run all reg_event tests
-cargo test --package sip-core reg_event
+cargo test --package siphon-core reg_event
 
-# Run all sip-uac tests (includes reg subscribe/notify)
-cargo test --package sip-uac
+# Run all siphon-uac tests (includes reg subscribe/notify)
+cargo test --package siphon-uac
 
 # Run specific test
-cargo test --package sip-core reginfo_xml_output
+cargo test --package siphon-core reginfo_xml_output
 ```
 
 ---
@@ -708,8 +708,8 @@ cargo test --package sip-core reginfo_xml_output
 ### Call Center Agent Monitoring
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 use std::collections::HashMap;
 
 struct AgentMonitor {
@@ -852,7 +852,7 @@ Registration information can be sensitive:
 
 ```rust
 // Future API (not yet implemented)
-use sip_core::parse_reginfo_xml;
+use siphon_core::parse_reginfo_xml;
 
 fn handle_reg_notify(notify: &Request) -> anyhow::Result<()> {
     let reginfo = parse_reginfo_xml(notify.body())?;

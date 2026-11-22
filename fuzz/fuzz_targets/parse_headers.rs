@@ -5,7 +5,7 @@
 #![no_main]
 use bytes::Bytes;
 use libfuzzer_sys::fuzz_target;
-use sip_parse::{parse_request, parse_response};
+use siphon_parse::{parse_request, parse_response};
 
 fuzz_target!(|data: &[u8]| {
     if data.len() < 4 {

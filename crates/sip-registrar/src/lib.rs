@@ -9,9 +9,9 @@
 //!
 //! # Example
 //! ```no_run
-//! use sip_registrar::{BasicRegistrar, MemoryLocationStore};
-//! use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
-//! # use sip_core::{Request, Headers, RequestLine, Method, SipUri};
+//! use siphon_registrar::{BasicRegistrar, MemoryLocationStore};
+//! use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
+//! # use siphon_core::{Request, Headers, RequestLine, Method, SipUri};
 //! # use bytes::Bytes;
 //! # async fn example() -> anyhow::Result<()> {
 //! let store = MemoryLocationStore::new();
@@ -29,12 +29,12 @@ use bytes::Bytes;
 use chrono::Utc;
 use dashmap::DashMap;
 use rand::{distr::Alphanumeric, RngExt};
-use sip_auth::Authenticator;
-use sip_core::{
+use siphon_auth::Authenticator;
+use siphon_core::{
     Headers, PathHeader, Request, Response, ServiceRouteHeader, SipUri, StatusLine, TelUri, Uri,
 };
-use sip_parse::{header, parse_to_header};
-use sip_ratelimit::RateLimiter;
+use siphon_parse::{header, parse_to_header};
+use siphon_ratelimit::RateLimiter;
 use smol_str::SmolStr;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -253,8 +253,8 @@ fn validate_expires(expires: Duration) -> Result<(), RegistrationError> {
 /// # Examples
 ///
 /// ```rust
-/// use sip_registrar::normalize_aor;
-/// use sip_core::Uri;
+/// use siphon_registrar::normalize_aor;
+/// use siphon_core::Uri;
 ///
 /// // SIP URI - parameters stripped
 /// let uri = Uri::parse("sip:alice@example.com;transport=tcp").unwrap();
@@ -1084,9 +1084,9 @@ impl<S, A> BasicRegistrar<S, A> {
     /// # Example
     ///
     /// ```
-    /// use sip_registrar::{BasicRegistrar, MemoryLocationStore};
-    /// use sip_ratelimit::{RateLimiter, RateLimitConfig};
-    /// use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
+    /// use siphon_registrar::{BasicRegistrar, MemoryLocationStore};
+    /// use siphon_ratelimit::{RateLimiter, RateLimitConfig};
+    /// use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
     ///
     /// let store = MemoryLocationStore::new();
     /// let auth_store = MemoryCredentialStore::new();
@@ -1148,11 +1148,11 @@ impl<S, A> BasicRegistrar<S, A> {
     /// header was syntactically invalid.
     fn extract_path(
         request: &Request,
-    ) -> Result<Option<PathHeader>, sip_core::service_route::RouteError> {
+    ) -> Result<Option<PathHeader>, siphon_core::service_route::RouteError> {
         if !request.headers().contains("Path") {
             return Ok(None);
         }
-        sip_parse::parse_path(request.headers()).map(Some)
+        siphon_parse::parse_path(request.headers()).map(Some)
     }
 
     /// Emit Service-Route, Supported and Path-echo headers on a 200
@@ -1564,7 +1564,7 @@ impl<S: AsyncLocationStore, A: Authenticator> BasicRegistrar<S, A> {
             // numbers and host-only SIP URIs) previously yielded `None` and
             // skipped this check entirely, letting any authenticated user
             // hijack another party's `tel:` / host-only registration.
-            let authorized = sip_auth::extract_auth_username(request.headers())
+            let authorized = siphon_auth::extract_auth_username(request.headers())
                 .and_then(|auth_user| {
                     aor_identity(&aor).map(|id| usernames_equal(id, auth_user.as_str()))
                 })
@@ -1904,7 +1904,7 @@ impl<S: LocationStore, A: Authenticator> Registrar for BasicRegistrar<S, A> {
             // numbers and host-only SIP URIs) previously yielded `None` and
             // skipped this check entirely, letting any authenticated user
             // hijack another party's `tel:` / host-only registration.
-            let authorized = sip_auth::extract_auth_username(request.headers())
+            let authorized = siphon_auth::extract_auth_username(request.headers())
                 .and_then(|auth_user| {
                     aor_identity(&aor).map(|id| usernames_equal(id, auth_user.as_str()))
                 })
@@ -2260,8 +2260,8 @@ fn split_quoted_commas(input: &str) -> Vec<String> {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_auth::{Credentials, DigestAuthenticator, MemoryCredentialStore};
-    use sip_core::{Headers, Method, RequestLine, SipUri};
+    use siphon_auth::{Credentials, DigestAuthenticator, MemoryCredentialStore};
+    use siphon_core::{Headers, Method, RequestLine, SipUri};
 
     fn base_headers() -> Headers {
         let mut headers = Headers::new();
@@ -2526,9 +2526,9 @@ mod tests {
     // the AOR-to-identity authorization step (not digest verification itself).
     struct AlwaysAuthenticated;
     impl Authenticator for AlwaysAuthenticated {
-        fn challenge(&self, _request: &Request) -> Result<sip_core::Response> {
-            Ok(sip_core::Response::new(
-                sip_core::StatusLine::new(401, SmolStr::new("Unauthorized")).unwrap(),
+        fn challenge(&self, _request: &Request) -> Result<siphon_core::Response> {
+            Ok(siphon_core::Response::new(
+                siphon_core::StatusLine::new(401, SmolStr::new("Unauthorized")).unwrap(),
                 Headers::new(),
                 Bytes::new(),
             )
@@ -3516,7 +3516,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_handles_global_tel_uri() {
-        use sip_core::{TelUri, Uri};
+        use siphon_core::{TelUri, Uri};
 
         // Global tel URI with visual separators
         let tel = TelUri::parse("tel:+1-555-123-4567").unwrap();
@@ -3529,7 +3529,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_handles_local_tel_uri() {
-        use sip_core::{TelUri, Uri};
+        use siphon_core::{TelUri, Uri};
 
         // Local tel URI with phone-context
         let tel = TelUri::parse("tel:5551234;phone-context=example.com").unwrap();
@@ -3541,7 +3541,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_includes_tel_params() {
-        use sip_core::{TelUri, Uri};
+        use siphon_core::{TelUri, Uri};
 
         let tel = TelUri::parse("tel:+1-555-123-4567;ext=123;isub=xyz").unwrap();
         let uri = Uri::Tel(tel);
@@ -3552,7 +3552,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_normalizes_local_tel_context() {
-        use sip_core::{TelUri, Uri};
+        use siphon_core::{TelUri, Uri};
 
         let tel = TelUri::parse("tel:555-1234;phone-context=EXAMPLE.com").unwrap();
         let uri = Uri::Tel(tel);
@@ -3785,7 +3785,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_preserves_sip_uri_behavior() {
-        use sip_core::{SipUri, Uri};
+        use siphon_core::{SipUri, Uri};
 
         // Test that SIP URI normalization still works as before
         let sip = SipUri::parse("sip:alice@example.com;transport=tcp").unwrap();
@@ -4261,7 +4261,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_lowercases_sip_host() {
-        use sip_core::{SipUri, Uri};
+        use siphon_core::{SipUri, Uri};
 
         let sip = SipUri::parse("sip:alice@EXAMPLE.COM").unwrap();
         let uri = Uri::Sip(sip);
@@ -4272,7 +4272,7 @@ mod tests {
 
     #[test]
     fn normalize_aor_lowercases_sip_host_with_port() {
-        use sip_core::{SipUri, Uri};
+        use siphon_core::{SipUri, Uri};
 
         let sip = SipUri::parse("sip:alice@EXAMPLE.COM:5060").unwrap();
         let uri = Uri::Sip(sip);

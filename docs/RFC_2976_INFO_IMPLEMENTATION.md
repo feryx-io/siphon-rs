@@ -73,7 +73,7 @@ pub fn create_info(
 #### Example Usage
 
 ```rust
-use sip_uac::UserAgentClient;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -118,8 +118,8 @@ pub fn handle_info(
 #### Example Usage
 
 ```rust
-use sip_parse::header;
-use sip_uas::UserAgentServer;
+use siphon_parse::header;
+use siphon_uas::UserAgentServer;
 
 let uas = UserAgentServer::new(local_uri, contact_uri);
 
@@ -179,7 +179,7 @@ transaction_manager.send_request(info)?;
 #### UAS Side (Receiving DTMF)
 
 ```rust
-use sip_parse::header;
+use siphon_parse::header;
 
 match uas.handle_info(&info_request, &dialog) {
     Ok(response) => {
@@ -227,7 +227,7 @@ transaction_manager.send_request(info)?;
 #### UAS Side (Receiving JSON)
 
 ```rust
-use sip_parse::header;
+use siphon_parse::header;
 use serde_json::Value;
 
 match uas.handle_info(&info_request, &dialog) {
@@ -350,7 +350,7 @@ let info = uac.create_info(&dialog, "application/x-myapp-video+xml", video_cmd)?
 ### Test Results
 
 ```bash
-$ cargo test -p sip-uac -p sip-uas
+$ cargo test -p siphon-uac -p siphon-uas
 
 running 18 tests (UAC)
 test result: ok. 18 passed; 0 failed
@@ -426,7 +426,7 @@ match info_transaction.wait_for_response().await? {
 
 ```rust
 // UAS Side
-use sip_parse::header;
+use siphon_parse::header;
 
 let uas = UserAgentServer::new(local_uri, contact_uri);
 

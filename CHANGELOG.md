@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking — every crate renamed from `sip-*` to `siphon-*`** (`sip-core` →
+  `siphon-core`, `sip_core::` → `siphon_core::`, and so on for all 17 library
+  crates) so the workspace can be published to crates.io, where `sip-core` is
+  taken. `siphond` keeps its name and crate directories keep theirs. Log
+  targets follow the crate names, so `RUST_LOG=sip_transport=debug` becomes
+  `siphon_transport=debug`. Consumers can keep their code unchanged with
+  `sip-core = { package = "siphon-core", … }`.
+- Inter-crate dependencies now carry versions, declared once in the root
+  `[workspace.dependencies]`; `hep-rs` gains a version requirement (`0.1`)
+  alongside its git source. The per-crate `documentation` link to the
+  non-existent `docs.rs/siphon-rs` is gone, so each crate links to its own
+  docs.rs page.
+
 ## [2026-11-22] — workspace release
 
 Crate versions in this release: sip-transport 0.7.2. (Every other crate is

@@ -1,21 +1,20 @@
 [package]
-name = "sip-parse"
+name = "siphon-parse"
 version = "0.4.0"
 edition = "2021"
 license.workspace = true
 description = "SIP message parser and serializer."
-readme = "../../README.md"
+readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 bytes = { workspace = true }
 smol_str = { workspace = true }
 serde = { workspace = true }
 tracing = { workspace = true }
-sip-core = { path = "../sip-core" }
+siphon-core = { workspace = true }
 httpdate = { workspace = true }
 nom = "7"
 libfuzzer-sys = { version = "0.4", optional = true }

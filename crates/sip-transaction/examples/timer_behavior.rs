@@ -17,8 +17,8 @@
 //! cargo run --example timer_behavior
 //! ```
 
-use sip_transaction::timers::{TimerDefaults, Transport, TransportAwareTimers};
-use sip_transaction::TransactionTimer;
+use siphon_transaction::timers::{TimerDefaults, Transport, TransportAwareTimers};
+use siphon_transaction::TransactionTimer;
 use std::time::Duration;
 
 fn main() {

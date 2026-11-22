@@ -163,14 +163,14 @@ All test files were updated to pass correct timer parameters:
 
 ### Test Results
 ```bash
-$ cargo test -p sip-transaction
+$ cargo test -p siphon-transaction
 running 23 tests
 test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
 ### Full Workspace Tests
 ```bash
-$ cargo test --workspace --exclude sip-proxy
+$ cargo test --workspace --exclude siphon-proxy
 All tests passing: 236+ tests across all crates
 ```
 

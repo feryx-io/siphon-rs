@@ -4,7 +4,7 @@
 
 #![no_main]
 use libfuzzer_sys::fuzz_target;
-use sip_core::cpim::parse_cpim;
+use siphon_core::cpim::parse_cpim;
 
 fuzz_target!(|data: &[u8]| {
     // Ignore non-UTF8 or obviously tiny payloads.

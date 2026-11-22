@@ -7,10 +7,10 @@
 /// Implements RFC 3311 mid-dialog session updates.
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use tracing::{info, warn};
 
 use super::RequestHandler;
@@ -96,7 +96,7 @@ impl RequestHandler for UpdateHandler {
             None
         };
 
-        let local_uri = sip_core::SipUri::parse(&services.config.local_uri)
+        let local_uri = siphon_core::SipUri::parse(&services.config.local_uri)
             .map_err(|_| anyhow!("Invalid local_uri"))?;
         let contact_uri = local_uri.clone();
         let mut uas = UserAgentServer::new(local_uri, contact_uri);

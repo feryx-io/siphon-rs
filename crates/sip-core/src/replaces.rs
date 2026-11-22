@@ -138,7 +138,7 @@ impl ReplacesHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReplacesHeader;
+    /// use siphon_core::ReplacesHeader;
     ///
     /// let replaces = ReplacesHeader::new(
     ///     "425928@bobster.example.org",
@@ -175,7 +175,7 @@ impl ReplacesHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReplacesHeader;
+    /// use siphon_core::ReplacesHeader;
     ///
     /// let replaces = ReplacesHeader::new(
     ///     "call123@example.com",
@@ -224,7 +224,7 @@ impl ReplacesHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReplacesHeader;
+    /// use siphon_core::ReplacesHeader;
     ///
     /// let header = ReplacesHeader::parse(
     ///     "425928@bobster.example.org;to-tag=7743;from-tag=6472"

@@ -18,7 +18,7 @@
 //! # Examples
 //!
 //! ```
-//! # use sip_core::*;
+//! # use siphon_core::*;
 //! // Parse a SIP URI
 //! let uri = SipUri::parse("sip:alice@example.com").unwrap();
 //!

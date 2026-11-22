@@ -10,7 +10,7 @@
 //! # Ingress rate limiting
 //!
 //! Every receive path applies a per-source-IP token-bucket rate limit
-//! (via `sip-ratelimit`): inbound UDP datagrams and, after framing,
+//! (via `siphon-ratelimit`): inbound UDP datagrams and, after framing,
 //! inbound TCP/TLS/WebSocket SIP messages. Both limiters default to
 //! 200 packets (frames) per second per source IP with an equal burst.
 //! This sits *below* any application-level admission control and
@@ -20,7 +20,7 @@
 //! and [`set_stream_rate_limit`] (once each, before traffic arrives):
 //!
 //! ```
-//! use sip_transport::{set_udp_rate_limit, RateLimitConfig};
+//! use siphon_transport::{set_udp_rate_limit, RateLimitConfig};
 //! // Allow 1000 packets/sec per source, e.g. for a busy carrier SBC.
 //! set_udp_rate_limit(RateLimitConfig::new(1000, 1).unwrap());
 //! // ...or turn the UDP limiter off: RateLimitConfig::disabled()
@@ -33,7 +33,7 @@
 //!
 //! # Example
 //! ```no_run
-//! use sip_transport::{run_udp, InboundPacket};
+//! use siphon_transport::{run_udp, InboundPacket};
 //! use tokio::sync::mpsc;
 //! use tokio::net::UdpSocket;
 //! use std::sync::Arc;
@@ -50,11 +50,11 @@
 
 use anyhow::{anyhow, Result};
 use bytes::{Buf, Bytes, BytesMut};
-use sip_observe::{span_with_transport, transport_metrics, OpLabel, StageLabel, TransportLabel};
-use sip_ratelimit::RateLimiter;
+use siphon_observe::{span_with_transport, transport_metrics, OpLabel, StageLabel, TransportLabel};
+use siphon_ratelimit::RateLimiter;
 // Re-exported so callers can build configs for `set_udp_rate_limit` /
-// `set_stream_rate_limit` without depending on sip-ratelimit directly.
-pub use sip_ratelimit::{RateLimitConfig, RateLimitError};
+// `set_stream_rate_limit` without depending on siphon-ratelimit directly.
+pub use siphon_ratelimit::{RateLimitConfig, RateLimitError};
 mod peer_identity;
 pub mod pool;
 pub use peer_identity::{PeerIdentity, PeerIdentityBuilder};
@@ -248,7 +248,7 @@ impl TransportKind {
     /// # Examples
     ///
     /// ```
-    /// use sip_transport::TransportKind;
+    /// use siphon_transport::TransportKind;
     ///
     /// assert_eq!(TransportKind::Udp.via_transport(), "UDP");
     /// assert_eq!(TransportKind::Tcp.via_transport(), "TCP");
@@ -275,7 +275,7 @@ impl TransportKind {
     /// # Examples
     ///
     /// ```
-    /// use sip_transport::TransportKind;
+    /// use siphon_transport::TransportKind;
     ///
     /// assert_eq!(TransportKind::parse("UDP"), Some(TransportKind::Udp));
     /// assert_eq!(TransportKind::parse("tcp"), Some(TransportKind::Tcp));
@@ -302,7 +302,7 @@ impl TransportKind {
     /// # Examples
     ///
     /// ```
-    /// use sip_transport::TransportKind;
+    /// use siphon_transport::TransportKind;
     ///
     /// assert!(!TransportKind::Udp.is_stream_based());
     /// assert!(TransportKind::Tcp.is_stream_based());
@@ -327,7 +327,7 @@ impl TransportKind {
     /// # Examples
     ///
     /// ```
-    /// use sip_transport::TransportKind;
+    /// use siphon_transport::TransportKind;
     ///
     /// assert!(!TransportKind::Udp.is_secure());
     /// assert!(!TransportKind::Tcp.is_secure());
@@ -644,16 +644,16 @@ pub async fn run_udp(socket: Arc<UdpSocket>, tx: mpsc::Sender<InboundPacket>) ->
                 // HEP3 capture (chunk type 0x01 = SIP). No-op when no
                 // emitter is installed at the process level — the
                 // global access is one atomic load.
-                if let Some(emitter) = sip_hep::sip_hep() {
+                if let Some(emitter) = siphon_hep::sip_hep() {
                     // Resolving local_addr per-packet would be a
                     // syscall on every inbound; cache it once outside
                     // the loop. We do that further up — but the lifetime
                     // of `socket` here makes the cache trivial: we ask
                     // once and reuse. See `udp_local` below.
-                    let corr = sip_hep::extract_call_id(&payload);
+                    let corr = siphon_hep::extract_call_id(&payload);
                     emitter.emit_sip(
-                        sip_hep::Direction::Inbound,
-                        sip_hep::IpProto::Udp,
+                        siphon_hep::Direction::Inbound,
+                        siphon_hep::IpProto::Udp,
                         peer,
                         udp_local,
                         &payload,
@@ -693,11 +693,11 @@ pub async fn run_udp(socket: Arc<UdpSocket>, tx: mpsc::Sender<InboundPacket>) ->
 /// Homer's UI already labels the SIP message as SIPS based on
 /// `start.uri` / `via` headers, so collapsing TLS → TCP here matches
 /// what other emitters (Kamailio, FreeSWITCH) ship.
-fn hep_ip_for_stream(kind: TransportKind) -> sip_hep::IpProto {
+fn hep_ip_for_stream(kind: TransportKind) -> siphon_hep::IpProto {
     match kind {
-        TransportKind::Sctp | TransportKind::TlsSctp => sip_hep::IpProto::Sctp,
+        TransportKind::Sctp | TransportKind::TlsSctp => siphon_hep::IpProto::Sctp,
         // Tcp / Tls / Ws / Wss — all TCP underneath.
-        _ => sip_hep::IpProto::Tcp,
+        _ => siphon_hep::IpProto::Tcp,
     }
 }
 
@@ -708,12 +708,12 @@ pub async fn send_udp(socket: &UdpSocket, to: &std::net::SocketAddr, data: &[u8]
     // HEP3 outbound capture. `local_addr()` here is one syscall per
     // outbound packet; cheap relative to a real SIP message. No-op
     // when no emitter is installed.
-    if let Some(emitter) = sip_hep::sip_hep() {
+    if let Some(emitter) = siphon_hep::sip_hep() {
         if let Ok(local) = socket.local_addr() {
-            let corr = sip_hep::extract_call_id(data);
+            let corr = siphon_hep::extract_call_id(data);
             emitter.emit_sip(
-                sip_hep::Direction::Outbound,
-                sip_hep::IpProto::Udp,
+                siphon_hep::Direction::Outbound,
+                siphon_hep::IpProto::Udp,
                 local,
                 *to,
                 data,
@@ -858,11 +858,11 @@ pub async fn send_tcp(to: &SocketAddr, data: &[u8]) -> Result<()> {
     let local = stream.local_addr().ok();
     stream.write_all(data).await?;
     transport_metrics().on_packet_sent(TransportLabel::Tcp);
-    if let (Some(emitter), Some(local)) = (sip_hep::sip_hep(), local) {
-        let corr = sip_hep::extract_call_id(data);
+    if let (Some(emitter), Some(local)) = (siphon_hep::sip_hep(), local) {
+        let corr = siphon_hep::extract_call_id(data);
         emitter.emit_sip(
-            sip_hep::Direction::Outbound,
-            sip_hep::IpProto::Tcp,
+            siphon_hep::Direction::Outbound,
+            siphon_hep::IpProto::Tcp,
             local,
             *to,
             data,
@@ -973,7 +973,7 @@ pub async fn send_wss(url: &str, data: Bytes) -> Result<()> {
 /// address for `src`. Skipped when no emitter is installed.
 #[cfg(feature = "ws")]
 fn emit_one_shot_ws_outbound(url: &str, data: &[u8]) {
-    let Some(emitter) = sip_hep::sip_hep() else {
+    let Some(emitter) = siphon_hep::sip_hep() else {
         return;
     };
     let Some(dst) = ws_url_to_socketaddr(url) else {
@@ -983,10 +983,10 @@ fn emit_one_shot_ws_outbound(url: &str, data: &[u8]) {
         SocketAddr::V4(_) => "0.0.0.0:0".parse().unwrap(),
         SocketAddr::V6(_) => "[::]:0".parse().unwrap(),
     };
-    let corr = sip_hep::extract_call_id(data);
+    let corr = siphon_hep::extract_call_id(data);
     emitter.emit_sip(
-        sip_hep::Direction::Outbound,
-        sip_hep::IpProto::Tcp,
+        siphon_hep::Direction::Outbound,
+        siphon_hep::IpProto::Tcp,
         unspecified,
         dst,
         data,
@@ -1143,11 +1143,11 @@ where
                     // HEP3 outbound capture. SIP-over-WS uses TCP
                     // underneath; the SIP message text is what
                     // Homer renders.
-                    if let Some(emitter) = sip_hep::sip_hep() {
-                        let corr = sip_hep::extract_call_id(&data);
+                    if let Some(emitter) = siphon_hep::sip_hep() {
+                        let corr = siphon_hep::extract_call_id(&data);
                         emitter.emit_sip(
-                            sip_hep::Direction::Outbound,
-                            sip_hep::IpProto::Tcp,
+                            siphon_hep::Direction::Outbound,
+                            siphon_hep::IpProto::Tcp,
                             local,
                             peer,
                             &data,
@@ -1172,11 +1172,11 @@ where
                         last_activity = tokio::time::Instant::now();
                         transport_metrics().on_packet_received(transport.into());
                         // HEP3 inbound capture for binary WS frames.
-                        if let Some(emitter) = sip_hep::sip_hep() {
-                            let corr = sip_hep::extract_call_id(&data);
+                        if let Some(emitter) = siphon_hep::sip_hep() {
+                            let corr = siphon_hep::extract_call_id(&data);
                             emitter.emit_sip(
-                                sip_hep::Direction::Inbound,
-                                sip_hep::IpProto::Tcp,
+                                siphon_hep::Direction::Inbound,
+                                siphon_hep::IpProto::Tcp,
                                 peer,
                                 local,
                                 &data,
@@ -1209,11 +1209,11 @@ where
                         transport_metrics().on_packet_received(transport.into());
                         let payload_bytes = text.into_bytes();
                         // HEP3 inbound capture for text WS frames.
-                        if let Some(emitter) = sip_hep::sip_hep() {
-                            let corr = sip_hep::extract_call_id(&payload_bytes);
+                        if let Some(emitter) = siphon_hep::sip_hep() {
+                            let corr = siphon_hep::extract_call_id(&payload_bytes);
                             emitter.emit_sip(
-                                sip_hep::Direction::Inbound,
-                                sip_hep::IpProto::Tcp,
+                                siphon_hep::Direction::Inbound,
+                                siphon_hep::IpProto::Tcp,
                                 peer,
                                 local,
                                 &payload_bytes,
@@ -1434,11 +1434,11 @@ pub async fn send_tls(to: &SocketAddr, data: &[u8], config: &TlsConfig) -> Resul
     let mut tls_stream = connector.connect(server_name, stream).await?;
     tls_stream.write_all(data).await?;
     transport_metrics().on_packet_sent(TransportLabel::Tls);
-    if let (Some(emitter), Some(local)) = (sip_hep::sip_hep(), local) {
-        let corr = sip_hep::extract_call_id(data);
+    if let (Some(emitter), Some(local)) = (siphon_hep::sip_hep(), local) {
+        let corr = siphon_hep::extract_call_id(data);
         emitter.emit_sip(
-            sip_hep::Direction::Outbound,
-            sip_hep::IpProto::Tcp,
+            siphon_hep::Direction::Outbound,
+            siphon_hep::IpProto::Tcp,
             local,
             *to,
             data,
@@ -1753,11 +1753,11 @@ async fn spawn_tls_session(
             // message headers, not from the HEP proto byte.
             // CRLF-only keepalive frames aren't SIP; skip capture.
             let crlf_only = buf.iter().all(|&b| b == b'\r' || b == b'\n');
-            if let Some(emitter) = sip_hep::sip_hep().filter(|_| !crlf_only) {
-                let corr = sip_hep::extract_call_id(&buf);
+            if let Some(emitter) = siphon_hep::sip_hep().filter(|_| !crlf_only) {
+                let corr = siphon_hep::extract_call_id(&buf);
                 emitter.emit_sip(
-                    sip_hep::Direction::Outbound,
-                    sip_hep::IpProto::Tcp,
+                    siphon_hep::Direction::Outbound,
+                    siphon_hep::IpProto::Tcp,
                     local,
                     peer,
                     &buf,
@@ -1824,11 +1824,11 @@ async fn spawn_tls_session(
                             }
                             // HEP3 inbound capture. Skipped when no
                             // emitter is installed.
-                            if let Some(emitter) = sip_hep::sip_hep() {
-                                let corr = sip_hep::extract_call_id(&payload);
+                            if let Some(emitter) = siphon_hep::sip_hep() {
+                                let corr = siphon_hep::extract_call_id(&payload);
                                 emitter.emit_sip(
-                                    sip_hep::Direction::Inbound,
-                                    sip_hep::IpProto::Tcp,
+                                    siphon_hep::Direction::Inbound,
+                                    siphon_hep::IpProto::Tcp,
                                     peer,
                                     local,
                                     &payload,
@@ -1965,10 +1965,10 @@ async fn spawn_stream_session<S>(
             // hit the wire are what Homer sees.
             // CRLF-only keepalive frames aren't SIP; skip capture.
             let crlf_only = buf.iter().all(|&b| b == b'\r' || b == b'\n');
-            if let Some(emitter) = sip_hep::sip_hep().filter(|_| !crlf_only) {
-                let corr = sip_hep::extract_call_id(&buf);
+            if let Some(emitter) = siphon_hep::sip_hep().filter(|_| !crlf_only) {
+                let corr = siphon_hep::extract_call_id(&buf);
                 emitter.emit_sip(
-                    sip_hep::Direction::Outbound,
+                    siphon_hep::Direction::Outbound,
                     hep_ip,
                     local,
                     peer,
@@ -2038,10 +2038,10 @@ async fn spawn_stream_session<S>(
                             // HEP3 inbound capture per framed SIP
                             // message. Skipped when no emitter is
                             // installed.
-                            if let Some(emitter) = sip_hep::sip_hep() {
-                                let corr = sip_hep::extract_call_id(&payload);
+                            if let Some(emitter) = siphon_hep::sip_hep() {
+                                let corr = siphon_hep::extract_call_id(&payload);
                                 emitter.emit_sip(
-                                    sip_hep::Direction::Inbound,
+                                    siphon_hep::Direction::Inbound,
                                     hep_ip,
                                     peer,
                                     local,
@@ -2760,7 +2760,7 @@ mod tests {
             rate_limited: AtomicU64,
         }
 
-        impl sip_observe::TransportMetrics for CountingMetrics {
+        impl siphon_observe::TransportMetrics for CountingMetrics {
             fn on_packet_received(&self, _transport: TransportLabel) {}
             fn on_packet_sent(&self, _transport: TransportLabel) {}
             fn on_error(&self, _transport: TransportLabel, _stage: StageLabel) {}
@@ -2773,7 +2773,7 @@ mod tests {
         }
 
         let metrics = std::sync::Arc::new(CountingMetrics::default());
-        if !sip_observe::set_transport_metrics(metrics.clone()) {
+        if !siphon_observe::set_transport_metrics(metrics.clone()) {
             // Another test already installed a sink; the global can only be
             // set once per process, so this scenario can't be exercised here.
             return;

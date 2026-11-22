@@ -12,7 +12,7 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use sip_transport::{run_tcp, InboundPacket};
+use siphon_transport::{run_tcp, InboundPacket};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;
@@ -20,7 +20,7 @@ use tokio::time::timeout;
 
 #[tokio::test]
 async fn established_connection_receives_crlf_keepalives() {
-    sip_transport::set_stream_keepalive_interval(1);
+    siphon_transport::set_stream_keepalive_interval(1);
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let server_addr: SocketAddr = listener.local_addr().unwrap();

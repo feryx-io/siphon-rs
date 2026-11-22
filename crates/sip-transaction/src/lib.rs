@@ -9,7 +9,7 @@
 //!
 //! # Example
 //! ```no_run
-//! use sip_transaction::{TransactionManager, TransportDispatcher, TransportContext};
+//! use siphon_transaction::{TransactionManager, TransportDispatcher, TransportContext};
 //! # use anyhow::Result;
 //! # use bytes::Bytes;
 //! # use std::sync::Arc;
@@ -26,7 +26,7 @@
 //! ```
 
 use rand::{distr::Alphanumeric, RngExt};
-use sip_core::{Headers, Method, Request};
+use siphon_core::{Headers, Method, Request};
 use smol_str::SmolStr;
 
 /// Provides convenient access to repeated header fields commonly needed by the
@@ -346,7 +346,7 @@ pub mod storage;
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, Method, RequestLine, SipUri};
+    use siphon_core::{Headers, Method, RequestLine, SipUri};
 
     fn build_request(headers: Vec<(&str, &str)>) -> Request {
         let mut hdrs = Headers::new();

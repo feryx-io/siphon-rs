@@ -1,4 +1,4 @@
-# sip-parse
+# siphon-parse
 
 Fast and secure SIP message parser using nom combinators with built-in DoS protection.
 
@@ -13,7 +13,7 @@ Fast and secure SIP message parser using nom combinators with built-in DoS prote
 ## Quick Start
 
 ```rust
-use sip_parse::{parse_request, parse_response};
+use siphon_parse::{parse_request, parse_response};
 use bytes::Bytes;
 
 // Parse SIP request
@@ -205,7 +205,7 @@ The parser protects against:
 ### Parsing with Security Monitoring
 
 ```rust
-use sip_parse::parse_request;
+use siphon_parse::parse_request;
 use bytes::Bytes;
 
 fn handle_message(data: &Bytes) {

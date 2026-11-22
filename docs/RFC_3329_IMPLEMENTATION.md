@@ -217,7 +217,7 @@ Parse security headers from header value strings.
 UAC sends initial request advertising supported security mechanisms:
 
 ```rust
-use sip_core::{SecurityClientHeader, SecurityEntry};
+use siphon_core::{SecurityClientHeader, SecurityEntry};
 use smol_str::SmolStr;
 
 // UAC supports TLS (preferred) and Digest
@@ -245,7 +245,7 @@ request
 UAS responds with 494 and its supported mechanisms:
 
 ```rust
-use sip_core::{SecurityServerHeader, SecurityEntry};
+use siphon_core::{SecurityServerHeader, SecurityEntry};
 use smol_str::SmolStr;
 
 // Server supports TLS and Digest
@@ -280,7 +280,7 @@ response
 Server determines the best security mechanism supported by both parties:
 
 ```rust
-use sip_core::parse_security_client;
+use siphon_core::parse_security_client;
 
 // Parse Security-Client from initial request
 let security_client = parse_security_client(
@@ -310,7 +310,7 @@ if let Some(best_match) = security_server.find_best_match(&security_client) {
 UAC sends new request with Security-Verify echoing chosen mechanism:
 
 ```rust
-use sip_core::{parse_security_server, SecurityVerifyHeader};
+use siphon_core::{parse_security_server, SecurityVerifyHeader};
 use smol_str::SmolStr;
 
 // Parse Security-Server from 494 response
@@ -343,7 +343,7 @@ request
 Server verifies that client is using the agreed mechanism:
 
 ```rust
-use sip_core::parse_security_verify;
+use siphon_core::parse_security_verify;
 
 // Parse Security-Verify from client's request
 let security_verify = parse_security_verify(
@@ -371,7 +371,7 @@ if security_verify.matches(&expected_mechanism) {
 Creating IPsec security entries:
 
 ```rust
-use sip_core::SecurityEntry;
+use siphon_core::SecurityEntry;
 
 // IPsec with IKE key management
 let mut ipsec_ike = SecurityEntry::ipsec_ike(
@@ -396,7 +396,7 @@ ipsec_ike.set_param("port-s", Some("5060"))?;
 Working with preference values:
 
 ```rust
-use sip_core::{SecurityClientHeader, SecurityEntry};
+use siphon_core::{SecurityClientHeader, SecurityEntry};
 
 // Create entries with different preferences
 let mut tls = SecurityEntry::tls();
@@ -429,7 +429,7 @@ println!("{}: q={}", entry.mechanism(), q);
 Using custom/proprietary security mechanisms:
 
 ```rust
-use sip_core::{SecurityEntry, SecurityMechanism};
+use siphon_core::{SecurityEntry, SecurityMechanism};
 
 // Custom mechanism
 let mechanism = SecurityMechanism::parse("mycompany-secure")?;
@@ -447,7 +447,7 @@ entry.set_preference(0.8)?;
 Full UAC-UAS security agreement:
 
 ```rust
-use sip_core::*;
+use siphon_core::*;
 use smol_str::SmolStr;
 use smol_str::SmolStr;
 
@@ -693,7 +693,7 @@ Created three distinct header types (SecurityClient, SecurityServer, SecurityVer
 ### UAC Pattern
 
 ```rust
-use sip_core::*;
+use siphon_core::*;
 
 struct SecureUac {
     supported_mechanisms: SecurityClientHeader,
@@ -768,7 +768,7 @@ impl SecureUac {
 ### UAS Pattern
 
 ```rust
-use sip_core::*;
+use siphon_core::*;
 use smol_str::SmolStr;
 
 struct SecureUas {

@@ -5,7 +5,7 @@
 #![no_main]
 use bytes::Bytes;
 use libfuzzer_sys::fuzz_target;
-use sip_parse::parse_request;
+use siphon_parse::parse_request;
 
 fuzz_target!(|data: &[u8]| {
     // Ignore non-UTF8 or obviously tiny payloads.

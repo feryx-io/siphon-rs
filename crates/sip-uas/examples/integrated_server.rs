@@ -25,11 +25,11 @@
 
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::{Request, Response};
-use sip_dialog::Dialog;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::integrated::UasRequestHandler;
-use sip_uas::UserAgentServer;
+use siphon_core::{Request, Response};
+use siphon_dialog::Dialog;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::integrated::UasRequestHandler;
+use siphon_uas::UserAgentServer;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;

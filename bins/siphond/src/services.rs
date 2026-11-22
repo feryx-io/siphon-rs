@@ -8,15 +8,15 @@
 use std::collections::HashMap;
 use std::sync::{Arc, OnceLock};
 
-use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
-use sip_dialog::{
+use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
+use siphon_dialog::{
     prack_validator::PrackValidator, session_timer_manager::SessionTimerManager, DialogManager,
     RSeqManager, SubscriptionManager,
 };
-use sip_ratelimit::{RateLimitConfig, RateLimiter};
-use sip_registrar::{BasicRegistrar, MemoryLocationStore};
-use sip_transaction::{TransactionManager, TransportDispatcher};
-use sip_transport::pool::TlsClientConfig;
+use siphon_ratelimit::{RateLimitConfig, RateLimiter};
+use siphon_registrar::{BasicRegistrar, MemoryLocationStore};
+use siphon_transaction::{TransactionManager, TransportDispatcher};
+use siphon_transport::pool::TlsClientConfig;
 use tokio::net::UdpSocket;
 
 use crate::b2bua_state::B2BUAStateManager;
@@ -74,7 +74,7 @@ pub struct ServiceRegistry {
     /// UDP socket for sending ACKs and other messages over UDP (set after initialization)
     pub udp_socket: OnceLock<Arc<UdpSocket>>,
     /// Outbound TCP, its replies read into the inbound pipeline.
-    pub tcp_pool: OnceLock<Arc<sip_transport::pool::ConnectionPool>>,
+    pub tcp_pool: OnceLock<Arc<siphon_transport::pool::ConnectionPool>>,
 
     /// TLS client config for outbound TLS connections (set after initialization)
     pub tls_client_config: OnceLock<Arc<TlsClientConfig>>,
@@ -119,7 +119,7 @@ impl ServiceRegistry {
                     Ok(users) => {
                         let count = users.len();
                         for (username, password) in users {
-                            cred_store.add(sip_auth::Credentials::new(
+                            cred_store.add(siphon_auth::Credentials::new(
                                 username,
                                 password,
                                 &config.auth.realm,
@@ -159,7 +159,7 @@ impl ServiceRegistry {
                 if let Some(ref users_file) = config.auth.users_file {
                     if let Ok(users) = load_users_file(users_file) {
                         for (username, password) in users {
-                            cred_store.add(sip_auth::Credentials::new(
+                            cred_store.add(siphon_auth::Credentials::new(
                                 username,
                                 password,
                                 &config.auth.realm,

@@ -333,7 +333,7 @@ impl TelUri {
     ///
     /// # Examples
     /// ```
-    /// use sip_core::TelUri;
+    /// use siphon_core::TelUri;
     ///
     /// // Global number (E.164)
     /// let uri = TelUri::parse("tel:+1-555-123-4567").unwrap();

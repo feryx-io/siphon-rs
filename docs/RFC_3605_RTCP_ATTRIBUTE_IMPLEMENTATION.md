@@ -125,7 +125,7 @@ pub fn rtcp(&self) -> Option<&RtcpAttribute>;
 ### Parsing Example
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 // Parse SDP with RTCP attribute (port only)
 let sdp = "\
@@ -167,7 +167,7 @@ if let Some(rtcp) = session2.media().first().and_then(|media| media.rtcp()) {
 ### Generation Example
 
 ```rust
-use sip_core::RtcpAttribute;
+use siphon_core::RtcpAttribute;
 
 let audio_rtcp = RtcpAttribute::new(53020);
 let video_rtcp = RtcpAttribute::with_address(
@@ -321,7 +321,7 @@ m=audio {} RTP/AVP 0\r\n\
 ### Example Implementation
 
 ```rust
-use sip_core::RtcpAttribute;
+use siphon_core::RtcpAttribute;
 
 fn create_nat_sdp(
     _local_rtp_port: u16,

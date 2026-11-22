@@ -112,7 +112,7 @@ fn the_offer_seeds_are_valid_and_written_when_asked() {
 
     for (name, sdp) in &offers {
         assert!(
-            sip_sdp::SessionDescription::parse(sdp).is_ok(),
+            siphon_sdp::SessionDescription::parse(sdp).is_ok(),
             "seed {name} is not valid SDP"
         );
     }

@@ -20,8 +20,8 @@
 /// # Example
 ///
 /// ```ignore
-/// use sip_uas::integrated::{IntegratedUAS, UasRequestHandler};
-/// use sip_core::{Request, Response};
+/// use siphon_uas::integrated::{IntegratedUAS, UasRequestHandler};
+/// use siphon_core::{Request, Response};
 /// use anyhow::Result;
 ///
 /// struct MyApp;
@@ -49,11 +49,11 @@
 /// ```
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
-use sip_auth::Authenticator;
-use sip_core::{Method, Request, Response, SipUri};
-use sip_dialog::{Dialog, DialogManager, SubscriptionManager};
-use sip_sdp::profiles::MediaProfileBuilder;
-use sip_transaction::{
+use siphon_auth::Authenticator;
+use siphon_core::{Method, Request, Response, SipUri};
+use siphon_dialog::{Dialog, DialogManager, SubscriptionManager};
+use siphon_sdp::profiles::MediaProfileBuilder;
+use siphon_transaction::{
     ServerTransactionHandle, TransactionKey, TransactionManager, TransportContext,
     TransportDispatcher,
 };
@@ -773,21 +773,21 @@ impl IntegratedUAS {
 }
 
 /// The topmost Via of `response`, as RFC 3261 §18.2.1 and RFC 3581 §4
-/// have a server fill it ([`sip_transaction::stamp_via`]). The server
+/// have a server fill it ([`siphon_transaction::stamp_via`]). The server
 /// transaction does it to every response it sends; this keeps the
 /// response the handler inspects the one that goes out.
 fn apply_via_rport_received(response: &mut Response, source: SocketAddr) {
-    sip_transaction::stamp_via(response, source);
+    siphon_transaction::stamp_via(response, source);
 }
 
 /// Lowercase transport token for a SIP URI `transport=` parameter
-/// (RFC 3261 §19.1.1, RFC 4168). Mirrors `sip_transport::TransportKind::as_str`
+/// (RFC 3261 §19.1.1, RFC 4168). Mirrors `siphon_transport::TransportKind::as_str`
 /// — duplicated here because `TransportContext` (and therefore the
 /// dispatch entrypoints in this crate) work in terms of the
-/// `sip_transaction::TransportKind` re-export, which doesn't carry
+/// `siphon_transaction::TransportKind` re-export, which doesn't carry
 /// the helper. The two enums are isomorphic; keep them aligned.
-fn transport_param_for(kind: sip_transaction::TransportKind) -> &'static str {
-    use sip_transaction::TransportKind as T;
+fn transport_param_for(kind: siphon_transaction::TransportKind) -> &'static str {
+    use siphon_transaction::TransportKind as T;
     match kind {
         T::Udp => "udp",
         T::Tcp => "tcp",
@@ -820,7 +820,7 @@ fn build_contact_value(
     user: &str,
     advertised: SocketAddr,
     ctx_local: Option<SocketAddr>,
-    transport: sip_transaction::TransportKind,
+    transport: siphon_transaction::TransportKind,
 ) -> String {
     let port = ctx_local.map(|l| l.port()).unwrap_or(advertised.port());
     format!(
@@ -1018,8 +1018,8 @@ mod tests {
         UasRequestHandler, DEFAULT_SUPPORTED_METHODS,
     };
     use bytes::Bytes;
-    use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-    use sip_transaction::TransportKind;
+    use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+    use siphon_transaction::TransportKind;
     use smol_str::SmolStr;
     use std::net::SocketAddr;
 

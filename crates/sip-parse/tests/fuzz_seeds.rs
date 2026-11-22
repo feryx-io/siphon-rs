@@ -270,14 +270,14 @@ fn the_seed_corpus_is_valid_and_written_when_asked() {
         // starts from inputs that bail out at the first line.
         if seed.targets.contains(&"parse_request") || seed.targets.contains(&"registrar_bindings") {
             assert!(
-                sip_parse::parse_request(&bytes).is_some(),
+                siphon_parse::parse_request(&bytes).is_some(),
                 "seed {} does not parse as a request",
                 seed.name
             );
         }
         if seed.targets.contains(&"parse_response") {
             assert!(
-                sip_parse::parse_response(&bytes).is_some(),
+                siphon_parse::parse_response(&bytes).is_some(),
                 "seed {} does not parse as a response",
                 seed.name
             );

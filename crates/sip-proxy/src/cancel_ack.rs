@@ -8,7 +8,7 @@
 //! different processing than regular request forwarding.
 
 use anyhow::{anyhow, Result};
-use sip_core::{Request, SipUri};
+use siphon_core::{Request, SipUri};
 use tracing::debug;
 
 /// CANCEL forwarding per RFC 3261 §16.10
@@ -252,7 +252,7 @@ impl AckForwarder {
                 new_headers.push(header);
             }
 
-            *ack.headers_mut() = sip_core::Headers::from_vec(new_headers)
+            *ack.headers_mut() = siphon_core::Headers::from_vec(new_headers)
                 .expect("validated headers should remain within limits");
         }
 
@@ -347,7 +347,7 @@ impl RouteProcessor {
                         filtered.push(header);
                     }
                     filtered.reverse();
-                    *request.headers_mut() = sip_core::Headers::from_vec(filtered)
+                    *request.headers_mut() = siphon_core::Headers::from_vec(filtered)
                         .expect("route header list should be within limits");
 
                     return Ok(Some(route_uri));
@@ -382,7 +382,7 @@ impl RouteProcessor {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, Method, RequestLine};
+    use siphon_core::{Headers, Method, RequestLine};
 
     fn make_cancel() -> Request {
         let mut headers = Headers::new();

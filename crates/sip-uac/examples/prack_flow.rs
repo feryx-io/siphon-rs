@@ -16,8 +16,8 @@
 /// - Early media (SDP in 183 Session Progress)
 /// - QoS preconditions (ensuring media path before ringing)
 /// - Reliable progress indication
-use sip_core::SipUri;
-use sip_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== PRACK (Provisional Response Acknowledgement) Example (RFC 3262) ===\n");
@@ -72,7 +72,7 @@ fn main() {
 
     // Mock early dialog from 180 response
     use bytes::Bytes;
-    use sip_core::{Headers, Response, StatusLine};
+    use siphon_core::{Headers, Response, StatusLine};
     use smol_str::SmolStr;
 
     let mut ringing_headers = Headers::new();

@@ -137,7 +137,7 @@ RUST_LOG=debug siphond --mode full-uas
 RUST_LOG=trace siphond --mode full-uas
 
 # Specific modules
-RUST_LOG=siphond=debug,sip_transaction=trace siphond
+RUST_LOG=siphond=debug,siphon_transaction=trace siphond
 ```
 
 ## Testing

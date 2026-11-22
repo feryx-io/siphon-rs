@@ -3,10 +3,10 @@
 //! [`crate::TransactionManager`] applies [`stamp_via`] to every response a
 //! server transaction sends, so a UA answering through the handle with a
 //! response it built itself gets `rport=` and `received=` as one using
-//! `sip-uas`'s `IntegratedUAS` always did (feryx-io/siphon-rs#164).
+//! `siphon-uas`'s `IntegratedUAS` always did (feryx-io/siphon-rs#164).
 //! It changes nothing it has already filled, so applying it twice is safe.
 
-use sip_core::{Response, ViaHeader};
+use siphon_core::{Response, ViaHeader};
 use std::net::SocketAddr;
 
 /// Fill the topmost Via of `response` as RFC 3261 §18.2.1 and RFC 3581 §4
@@ -95,7 +95,7 @@ pub(crate) fn sent_by_host(sent_by: &str) -> &str {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, StatusLine};
+    use siphon_core::{Headers, StatusLine};
     use smol_str::SmolStr;
 
     #[test]

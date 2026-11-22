@@ -1,4 +1,4 @@
-# sip-dns
+# siphon-dns
 
 RFC 3263 and RFC 3361 compliant SIP server discovery.
 
@@ -52,8 +52,8 @@ RFC 3263 and RFC 3361 compliant SIP server discovery.
 ### Basic Resolution
 
 ```rust
-use sip_core::SipUri;
-use sip_dns::{Resolver, SipResolver};
+use siphon_core::SipUri;
+use siphon_dns::{Resolver, SipResolver};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -89,7 +89,7 @@ let targets = resolver.resolve(&uri).await?;
 ### Static Resolver for Testing
 
 ```rust
-use sip_dns::{StaticResolver, DnsTarget, Transport};
+use siphon_dns::{StaticResolver, DnsTarget, Transport};
 
 let resolver = StaticResolver::single("testserver.local", 5060, Transport::Udp);
 let targets = resolver.resolve(&uri).await?;
@@ -108,7 +108,7 @@ let resolver = StaticResolver::new(targets);
 ### DHCP-Based Discovery
 
 ```rust
-use sip_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
+use siphon_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
 use smol_str::SmolStr;
 
 // Create DHCP provider (use StaticDhcpProvider for testing)
@@ -132,7 +132,7 @@ let targets = resolver.resolve(&uri).await?;
 #### Option 120 (SIP Servers)
 
 ```rust
-use sip_dns::parse_dhcp_option_120;
+use siphon_dns::parse_dhcp_option_120;
 
 // Encoding 1: IPv4 addresses
 let data = vec![1, 192, 168, 1, 1, 10, 0, 0, 1];
@@ -146,7 +146,7 @@ let servers = parse_dhcp_option_120(&data)?;
 #### Option 66 (TFTP Server Name)
 
 ```rust
-use sip_dns::parse_dhcp_option_66;
+use siphon_dns::parse_dhcp_option_66;
 
 // Hostname or IP as string
 let data = b"tftp.example.com";
@@ -157,7 +157,7 @@ println!("TFTP server: {}", server.as_str());
 #### Option 150 (TFTP Server Addresses)
 
 ```rust
-use sip_dns::parse_dhcp_option_150;
+use siphon_dns::parse_dhcp_option_150;
 
 // Multiple IPv4 addresses
 let data = vec![192, 168, 1, 1, 10, 0, 0, 1];
@@ -172,8 +172,8 @@ for addr in servers {
 Implement the `DhcpProvider` trait to integrate with platform-specific DHCP:
 
 ```rust
-use sip_dns::{DhcpProvider, DhcpSipServer, TftpServerName};
-use sip_dns::{parse_dhcp_option_120, parse_dhcp_option_66, parse_dhcp_option_150};
+use siphon_dns::{DhcpProvider, DhcpSipServer, TftpServerName};
+use siphon_dns::{parse_dhcp_option_120, parse_dhcp_option_66, parse_dhcp_option_150};
 use anyhow::Result;
 
 struct SystemDhcpProvider;
@@ -338,10 +338,10 @@ cargo test --lib
 
 ## Integration
 
-Typically used with `sip-transport`:
+Typically used with `siphon-transport`:
 
 ```rust
-use sip_transport::{send_udp, send_stream};
+use siphon_transport::{send_udp, send_stream};
 
 for target in targets {
     match target.transport {

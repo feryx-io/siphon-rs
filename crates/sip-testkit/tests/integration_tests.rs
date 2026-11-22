@@ -5,11 +5,11 @@
 use bytes::Bytes;
 #[cfg(feature = "proptest")]
 use proptest::prelude::*;
-use sip_core::Method;
-use sip_parse::{parse_request, parse_response, serialize_request, serialize_response};
+use siphon_core::Method;
+use siphon_parse::{parse_request, parse_response, serialize_request, serialize_response};
 #[cfg(feature = "proptest")]
-use sip_testkit::build_prack;
-use sip_testkit::{
+use siphon_testkit::build_prack;
+use siphon_testkit::{
     as_bytes, build_invite, build_options, build_provisional_with_rseq, build_refer,
     build_register, build_response, scenario_invite_prack, scenario_refer_with_notify,
     scenario_register_with_auth,
@@ -92,7 +92,7 @@ fn register_request_structure() {
 fn response_roundtrip() {
     let original = build_response(200, "OK");
 
-    let bytes = sip_testkit::response_as_bytes(&original);
+    let bytes = siphon_testkit::response_as_bytes(&original);
     let parsed = parse_response(&bytes).expect("Should parse response");
 
     assert_eq!(parsed.code(), 200);

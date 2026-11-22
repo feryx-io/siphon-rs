@@ -156,7 +156,7 @@ impl MediaProfileBuilder {
 ///
 /// # Example
 /// ```
-/// use sip_sdp::profiles::{SdpProfile, create_from_profile};
+/// use siphon_sdp::profiles::{SdpProfile, create_from_profile};
 ///
 /// // Audio-only call with PCMU, PCMA, and telephone-event
 /// let sdp = create_from_profile(

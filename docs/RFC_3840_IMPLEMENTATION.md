@@ -101,7 +101,7 @@ Returns the feature tag name with "sip." prefix (as used in RFC 3840).
 
 **Examples:**
 ```rust
-use sip_core::FeatureTag;
+use siphon_core::FeatureTag;
 
 assert_eq!(FeatureTag::Audio.as_str(), "sip.audio");
 assert_eq!(FeatureTag::Methods.as_str(), "sip.methods");
@@ -117,7 +117,7 @@ Per RFC 3840, the "sip." prefix is stripped when encoding as Contact parameters.
 
 **Examples:**
 ```rust
-use sip_core::FeatureTag;
+use siphon_core::FeatureTag;
 
 assert_eq!(FeatureTag::Audio.param_name(), "audio");
 assert_eq!(FeatureTag::IsFocus.param_name(), "isfocus");
@@ -131,7 +131,7 @@ Parses a feature tag from a parameter name (without "sip." prefix).
 
 **Examples:**
 ```rust
-use sip_core::FeatureTag;
+use siphon_core::FeatureTag;
 
 assert_eq!(FeatureTag::from_param_name("audio"), Some(FeatureTag::Audio));
 assert_eq!(FeatureTag::from_param_name("VIDEO"), Some(FeatureTag::Video));
@@ -146,7 +146,7 @@ Returns true if this feature tag represents a media type capability.
 
 **Examples:**
 ```rust
-use sip_core::FeatureTag;
+use siphon_core::FeatureTag;
 
 assert!(FeatureTag::Audio.is_media_type());
 assert!(FeatureTag::Video.is_media_type());
@@ -161,7 +161,7 @@ Returns true if this feature tag represents a list-valued capability.
 
 **Examples:**
 ```rust
-use sip_core::FeatureTag;
+use siphon_core::FeatureTag;
 
 assert!(FeatureTag::Methods.is_list_valued());
 assert!(FeatureTag::Events.is_list_valued());
@@ -274,7 +274,7 @@ Converts this feature value to a Contact header parameter value.
 
 **Examples:**
 ```rust
-use sip_core::FeatureValue;
+use siphon_core::FeatureValue;
 use smol_str::SmolStr;
 
 let bool_val = FeatureValue::Boolean(true);
@@ -305,7 +305,7 @@ Invalid quote framing returns `CapabilityError::InvalidQuoting`.
 
 **Examples:**
 ```rust
-use sip_core::{FeatureTag, FeatureValue};
+use siphon_core::{FeatureTag, FeatureValue};
 use smol_str::SmolStr;
 
 // Boolean (no value)
@@ -348,7 +348,7 @@ Creates a boolean capability.
 
 **Example:**
 ```rust
-use sip_core::{Capability, FeatureTag};
+use siphon_core::{Capability, FeatureTag};
 
 let cap = Capability::boolean(FeatureTag::Audio, true)?;
 ```
@@ -361,7 +361,7 @@ Creates a token capability.
 
 **Example:**
 ```rust
-use sip_core::{Capability, FeatureTag};
+use siphon_core::{Capability, FeatureTag};
 
 let cap = Capability::token(FeatureTag::Mobility, "mobile")?;
 ```
@@ -374,7 +374,7 @@ Creates a token list capability.
 
 **Example:**
 ```rust
-use sip_core::{Capability, FeatureTag};
+use siphon_core::{Capability, FeatureTag};
 use smol_str::SmolStr;
 
 let cap = Capability::token_list(
@@ -392,7 +392,7 @@ Creates a string capability.
 
 **Example:**
 ```rust
-use sip_core::{Capability, FeatureTag};
+use siphon_core::{Capability, FeatureTag};
 
 let cap = Capability::string(FeatureTag::Description, "Alice's Phone")?;
 ```
@@ -450,7 +450,7 @@ Creates a new empty capability set.
 
 **Example:**
 ```rust
-use sip_core::CapabilitySet;
+use siphon_core::CapabilitySet;
 
 let mut capabilities = CapabilitySet::new();
 ```
@@ -463,7 +463,7 @@ Adds a capability to the set.
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, Capability, FeatureTag};
+use siphon_core::{CapabilitySet, Capability, FeatureTag};
 
 let mut set = CapabilitySet::new();
 set.add(Capability::boolean(FeatureTag::Audio, true)?)?;
@@ -477,7 +477,7 @@ Adds a boolean capability.
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 
 let mut set = CapabilitySet::new();
 set.add_boolean(FeatureTag::Audio, true)?;
@@ -516,7 +516,7 @@ Gets a capability value by tag.
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 
 let mut set = CapabilitySet::new();
 set.add_boolean(FeatureTag::Audio, true)?;
@@ -561,7 +561,7 @@ Boolean false values are omitted.
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 use smol_str::SmolStr;
 
 let mut set = CapabilitySet::new();
@@ -581,7 +581,7 @@ Parses a capability set from Contact header parameters.
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 use smol_str::SmolStr;
 use std::collections::BTreeMap;
 
@@ -609,7 +609,7 @@ A capability set matches if:
 
 **Example:**
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 
 let mut available = CapabilitySet::new();
 available.add_boolean(FeatureTag::Audio, true)?;
@@ -638,7 +638,7 @@ from the Contact header parameters and returns them as a CapabilitySet.
 
 **Example:**
 ```rust
-use sip_core::{ContactHeader, NameAddr, SipUri, Uri, FeatureTag};
+use siphon_core::{ContactHeader, NameAddr, SipUri, Uri, FeatureTag};
 use std::collections::BTreeMap;
 use smol_str::SmolStr;
 
@@ -667,7 +667,7 @@ assert!(capabilities.has(FeatureTag::Video));
 When a UA registers, it should include its capabilities as Contact parameters:
 
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 use smol_str::SmolStr;
 
 // Build capability set
@@ -698,7 +698,7 @@ let params = capabilities.to_params()?;
 When responding to OPTIONS, include capabilities:
 
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 
 let mut capabilities = CapabilitySet::new();
 capabilities.add_boolean(FeatureTag::Audio, true)?;
@@ -714,7 +714,7 @@ let params = capabilities.to_params()?;
 When receiving a Contact with capabilities:
 
 ```rust
-use sip_core::{ContactHeader, FeatureTag};
+use siphon_core::{ContactHeader, FeatureTag};
 use std::collections::BTreeMap;
 use smol_str::SmolStr;
 
@@ -746,7 +746,7 @@ if let Some(methods) = capabilities.get(FeatureTag::Methods) {
 Check if a UA meets requirements:
 
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 use smol_str::SmolStr;
 
 // UA's advertised capabilities
@@ -789,7 +789,7 @@ if available.matches(&required) {
 Complete example of building a comprehensive UA capability profile:
 
 ```rust
-use sip_core::{CapabilitySet, FeatureTag};
+use siphon_core::{CapabilitySet, FeatureTag};
 use smol_str::SmolStr;
 
 let mut capabilities = CapabilitySet::new();
@@ -998,13 +998,13 @@ The capabilities implementation includes 32 comprehensive unit tests:
 
 ```bash
 # Run all capabilities tests
-cargo test --package sip-core capabilities
+cargo test --package siphon-core capabilities
 
 # Run specific test
-cargo test --package sip-core boolean_feature_value
+cargo test --package siphon-core boolean_feature_value
 
 # Run with output
-cargo test --package sip-core capabilities -- --nocapture
+cargo test --package siphon-core capabilities -- --nocapture
 ```
 
 ## Limitations and Future Work

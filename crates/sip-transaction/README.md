@@ -1,4 +1,4 @@
-# sip-transaction
+# siphon-transaction
 
 RFC 3261 compliant SIP transaction layer with transport-aware timers and DoS protection.
 
@@ -13,7 +13,7 @@ RFC 3261 compliant SIP transaction layer with transport-aware timers and DoS pro
 ## Quick Start
 
 ```rust
-use sip_transaction::{TransactionManager, TransactionLimits, TransportDispatcher};
+use siphon_transaction::{TransactionManager, TransactionLimits, TransportDispatcher};
 use std::sync::Arc;
 
 // Create transaction manager with default limits
@@ -51,7 +51,7 @@ let limits = TransactionLimits::unlimited();
 ### Custom Configuration
 
 ```rust
-use sip_transaction::TransactionLimits;
+use siphon_transaction::TransactionLimits;
 
 let limits = TransactionLimits::new(
     5_000,   // max server transactions (incoming requests)

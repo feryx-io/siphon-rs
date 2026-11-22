@@ -56,7 +56,7 @@
 //! ## Creating a CPIM message
 //!
 //! ```
-//! use sip_core::cpim::CpimMessage;
+//! use siphon_core::cpim::CpimMessage;
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let msg = CpimMessage::new("text/plain", b"Hello, World!".to_vec())?
@@ -73,7 +73,7 @@
 //! ## Error handling
 //!
 //! ```
-//! use sip_core::cpim::{CpimMessage, CpimError};
+//! use siphon_core::cpim::{CpimMessage, CpimError};
 //!
 //! # fn example() -> Result<(), CpimError> {
 //! // Handle validation errors
@@ -102,7 +102,7 @@
 //! ## Parsing CPIM messages
 //!
 //! ```
-//! use sip_core::cpim::parse_cpim;
+//! use siphon_core::cpim::parse_cpim;
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let input = "Content-type: Message/CPIM\r\n\r\n\
@@ -122,7 +122,7 @@
 //! ## Using language-tagged subjects (RFC 3862)
 //!
 //! ```
-//! # use sip_core::cpim::CpimMessage;
+//! # use siphon_core::cpim::CpimMessage;
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let msg = CpimMessage::new("text/plain", b"Hello".to_vec())?
 //!     .with_subject_lang("Hello", "en")?

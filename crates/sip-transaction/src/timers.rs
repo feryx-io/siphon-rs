@@ -31,8 +31,8 @@
 //! # Usage
 //!
 //! ```rust
-//! use sip_transaction::timers::{Transport, TransportAwareTimers};
-//! use sip_transaction::TransactionTimer;
+//! use siphon_transaction::timers::{Transport, TransportAwareTimers};
+//! use siphon_transaction::TransactionTimer;
 //!
 //! // Create timer calculator for TCP
 //! let timers = TransportAwareTimers::new(Transport::Tcp);
@@ -150,8 +150,8 @@ impl TransportAwareTimers {
     /// # Examples
     ///
     /// ```
-    /// use sip_transaction::timers::{TransportAwareTimers, Transport};
-    /// use sip_transaction::TransactionTimer;
+    /// use siphon_transaction::timers::{TransportAwareTimers, Transport};
+    /// use siphon_transaction::TransactionTimer;
     /// use std::time::Duration;
     ///
     /// let udp_timers = TransportAwareTimers::new(Transport::Udp);

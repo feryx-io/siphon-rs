@@ -19,11 +19,11 @@
 //! to this trait.
 
 use async_trait::async_trait;
-use sip_core::SipUri;
+use siphon_core::SipUri;
 
 /// A single registration binding the proxy may forward to.
 ///
-/// Equivalent to `sip-registrar::Binding` from the proxy's
+/// Equivalent to `siphon-registrar::Binding` from the proxy's
 /// perspective: only the fields the proxy needs to make routing
 /// decisions are exposed. Higher-layer code that wraps a real
 /// registrar adapts its own binding type into `Target`.

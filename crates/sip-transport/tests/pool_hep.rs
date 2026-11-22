@@ -6,10 +6,10 @@
 //! (`ConnectionPool` / `TlsPool`) — used for every *outbound* SIP
 //! connection — emitted no HEP at all, so outbound-originated (UAC)
 //! calls had no SIP ladder in Homer while inbound calls did. This drives
-//! a real send + reply through the TCP pool with a `sip-hep` emitter
+//! a real send + reply through the TCP pool with a `siphon-hep` emitter
 //! installed and asserts both directions produce a `HepPacket`.
 //!
-//! Its own test binary: `sip_hep::set_emitter` installs a process-global
+//! Its own test binary: `siphon_hep::set_emitter` installs a process-global
 //! once, so this can't share with `hep_udp.rs`.
 
 use std::net::SocketAddr;
@@ -18,9 +18,9 @@ use std::time::Duration;
 
 use bytes::Bytes;
 use hep_rs::{HepPacket, HepProtocol, HepSink};
-use sip_hep::SipHepEmitter;
-use sip_transport::pool::ConnectionPool;
-use sip_transport::InboundPacket;
+use siphon_hep::SipHepEmitter;
+use siphon_transport::pool::ConnectionPool;
+use siphon_transport::InboundPacket;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 use tokio::sync::mpsc;
@@ -42,7 +42,7 @@ async fn tcp_pool_emits_hep_on_outbound_send_and_inbound_reply() {
     let sink = Arc::new(CapturingSink::default());
     let emitter = Arc::new(SipHepEmitter::new(sink.clone() as Arc<dyn HepSink>, 4444));
     assert!(
-        sip_hep::set_emitter(emitter),
+        siphon_hep::set_emitter(emitter),
         "first install of the test emitter should succeed"
     );
 

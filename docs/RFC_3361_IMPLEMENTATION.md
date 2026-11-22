@@ -20,7 +20,7 @@ RFC 3361 defines DHCP Option 120 for advertising SIP server addresses:
 - **Preference Ordering**: Servers listed in order of preference
 - **Integration with DNS**: Domain names resolved via RFC 3263
 
-**Note:** The DHCP helper layer in `sip-dns` also includes Option 66 (TFTP server name)
+**Note:** The DHCP helper layer in `siphon-dns` also includes Option 66 (TFTP server name)
 and Option 150 (TFTP server addresses) parsing and provider hooks. These are not part
 of RFC 3361 but share the same provider interface for provisioning workflows.
 
@@ -270,8 +270,8 @@ let targets = resolver.resolve(&uri).await?;
 ### Example 1: Static DHCP Configuration for Testing
 
 ```rust
-use sip_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
-use sip_core::SipUri;
+use siphon_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
+use siphon_core::SipUri;
 use smol_str::SmolStr;
 
 #[tokio::main]
@@ -303,7 +303,7 @@ async fn main() -> anyhow::Result<()> {
 ### Example 2: Parsing DHCP Option 120
 
 ```rust
-use sip_dns::{parse_dhcp_option_120, DhcpSipServer};
+use siphon_dns::{parse_dhcp_option_120, DhcpSipServer};
 
 fn process_dhcp_option_120(raw_data: &[u8]) -> anyhow::Result<()> {
     let servers = parse_dhcp_option_120(raw_data)?;
@@ -334,7 +334,7 @@ process_dhcp_option_120(&data)?;
 ### Example 3: Custom DHCP Provider (Platform-Specific)
 
 ```rust
-use sip_dns::{DhcpProvider, DhcpSipServer, parse_dhcp_option_120};
+use siphon_dns::{DhcpProvider, DhcpSipServer, parse_dhcp_option_120};
 use anyhow::{Result, anyhow};
 
 /// Linux DHCP provider that reads dhclient.leases
@@ -392,8 +392,8 @@ let resolver = HybridResolver::new(dhcp, dns);
 ### Example 4: DHCP-Only Resolution (No DNS Fallback)
 
 ```rust
-use sip_dns::{DhcpResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
-use sip_core::SipUri;
+use siphon_dns::{DhcpResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
+use siphon_core::SipUri;
 use smol_str::SmolStr;
 
 #[tokio::main]
@@ -427,8 +427,8 @@ async fn main() -> anyhow::Result<()> {
 ### Example 5: Handling Mixed DHCP Responses
 
 ```rust
-use sip_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
-use sip_core::SipUri;
+use siphon_dns::{HybridResolver, StaticDhcpProvider, SipResolver, DhcpSipServer};
+use siphon_core::SipUri;
 use smol_str::SmolStr;
 
 #[tokio::main]
@@ -459,7 +459,7 @@ async fn main() -> anyhow::Result<()> {
 ### Example 6: Testing DHCP Parsing Edge Cases
 
 ```rust
-use sip_dns::parse_dhcp_option_120;
+use siphon_dns::parse_dhcp_option_120;
 
 #[test]
 fn test_dhcp_option_120_edge_cases() -> anyhow::Result<()> {
@@ -502,8 +502,8 @@ fn test_dhcp_option_120_edge_cases() -> anyhow::Result<()> {
 A SIP User Agent Client should integrate DHCP discovery as follows:
 
 ```rust
-use sip_dns::{HybridResolver, DhcpProvider, SipResolver};
-use sip_core::SipUri;
+use siphon_dns::{HybridResolver, DhcpProvider, SipResolver};
+use siphon_core::SipUri;
 
 pub struct SipUac<D: DhcpProvider> {
     resolver: HybridResolver<D, SipResolver>,
@@ -645,13 +645,13 @@ All tests are in `sip-dns/src/lib.rs`:
 
 ```bash
 # Run all tests
-cargo test --package sip-dns
+cargo test --package siphon-dns
 
 # Run only DHCP tests
-cargo test --package sip-dns dhcp
+cargo test --package siphon-dns dhcp
 
 # Run with output
-cargo test --package sip-dns -- --nocapture
+cargo test --package siphon-dns -- --nocapture
 ```
 
 ---
@@ -838,7 +838,7 @@ let resolver = HybridResolver::new(dhcp_provider, dns_resolver);
 ## Related RFCs
 
 - **RFC 3361** - DHCP Option for SIP Servers (this implementation)
-- **RFC 3263** - Locating SIP Servers via DNS (implemented in `sip-dns`)
+- **RFC 3263** - Locating SIP Servers via DNS (implemented in `siphon-dns`)
 - **RFC 2131** - DHCP Protocol
 - **RFC 2132** - DHCP Options (Option 66)
 - **RFC 1035** - DNS Domain Names (label encoding used in Option 120)

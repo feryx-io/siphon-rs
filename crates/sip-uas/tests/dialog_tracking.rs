@@ -28,14 +28,14 @@ use std::sync::Arc;
 use anyhow::Result;
 use async_trait::async_trait;
 use bytes::Bytes;
-use sip_core::Request;
-use sip_dialog::{Dialog, DialogManager};
-use sip_parse::parse_request;
-use sip_transaction::{
+use siphon_core::Request;
+use siphon_dialog::{Dialog, DialogManager};
+use siphon_parse::parse_request;
+use siphon_transaction::{
     ServerTransactionHandle, TransactionManager, TransportContext, TransportDispatcher,
     TransportKind,
 };
-use sip_uas::integrated::{IntegratedUAS, UasRequestHandler};
+use siphon_uas::integrated::{IntegratedUAS, UasRequestHandler};
 use tokio::sync::Mutex;
 
 // ─── Test plumbing ──────────────────────────────────────────────────────
@@ -117,7 +117,7 @@ impl UasRequestHandler for RecordingHandler {
             .push(dialog.id().call_id().to_string());
         // Reply 200 OK; build via UserAgentServer helpers would couple
         // the test to lib internals — emit a minimal Response inline.
-        use sip_uas::UserAgentServer;
+        use siphon_uas::UserAgentServer;
         let response = UserAgentServer::create_response(_request, 200, "OK");
         handle.send_final(response).await;
         Ok(())
@@ -302,7 +302,7 @@ async fn create_ok_path_demonstrates_old_bug_for_documentation() {
     // build a 2xx with `create_ok` and send it via the handle. The
     // dialog manager stays empty and the BYE comes back as "unknown".
 
-    use sip_uas::UserAgentServer;
+    use siphon_uas::UserAgentServer;
 
     struct ManualHandler {
         helper: Mutex<Option<Arc<Mutex<UserAgentServer>>>>,

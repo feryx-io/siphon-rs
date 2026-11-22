@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use proptest::prelude::*;
-use sip_transaction::{branch_from_via, generate_branch_id};
+use siphon_transaction::{branch_from_via, generate_branch_id};
 
 // Helper function to validate branch has RFC 3261 magic cookie
 fn is_valid_branch(branch: &str) -> bool {

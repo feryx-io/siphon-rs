@@ -13,8 +13,8 @@
 /// - UAC doesn't know its media capabilities in advance
 /// - UAS wants to control the media negotiation
 /// - Certain gateway/interop scenarios
-use sip_core::SipUri;
-use sip_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== Late Offer Call Flow Example ===\n");

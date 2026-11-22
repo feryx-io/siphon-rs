@@ -153,14 +153,14 @@ Without Max-Forwards, this would loop forever. With Max-Forwards:
 
 Enable debug logging to observe decrement behavior:
 ```bash
-RUST_LOG=sip_proxy=debug cargo run -p siphond -- --mode proxy
+RUST_LOG=siphon_proxy=debug cargo run -p siphond -- --mode proxy
 ```
 
 Look for log entries like:
 ```
-DEBUG sip_proxy: Checking Max-Forwards header value=70
-DEBUG sip_proxy: Decremented Max-Forwards from 70 to 69
-DEBUG sip_proxy: Forwarding request with Max-Forwards: 69
+DEBUG siphon_proxy: Checking Max-Forwards header value=70
+DEBUG siphon_proxy: Decremented Max-Forwards from 70 to 69
+DEBUG siphon_proxy: Forwarding request with Max-Forwards: 69
 ```
 
 ## RFC Compliance Summary
@@ -168,8 +168,8 @@ DEBUG sip_proxy: Forwarding request with Max-Forwards: 69
 | RFC Section | Requirement | Implementation | Tests |
 |-------------|-------------|----------------|-------|
 | §8.1.1.3 | Reject if Max-Forwards=0 | ✅ dispatcher.rs | ✅ max_forwards_zero.xml |
-| §8.1.1.6 | Decrement before forward | ✅ sip-proxy | ⏳ max_forwards_decrement.xml |
-| §8.1.1.6 | Insert 70 if missing | ✅ sip-core | ✅ Unit tests |
+| §8.1.1.6 | Decrement before forward | ✅ siphon-proxy | ⏳ max_forwards_decrement.xml |
+| §8.1.1.6 | Insert 70 if missing | ✅ siphon-core | ✅ Unit tests |
 | §8.1.1.6 | Value range 0-255 | ✅ u32 validation | ✅ Unit tests |
 
 ## Future Enhancements

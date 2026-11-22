@@ -18,7 +18,7 @@
 //! # Example
 //!
 //! ```
-//! use sip_ratelimit::{RateLimiter, RateLimitConfig};
+//! use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 //!
 //! // Configure rate limiter: 10 requests per minute with burst of 20
 //! let config = RateLimitConfig::new(10, 60)
@@ -167,7 +167,7 @@ impl RateLimitConfig {
     /// # Example
     ///
     /// ```
-    /// use sip_ratelimit::RateLimitConfig;
+    /// use siphon_ratelimit::RateLimitConfig;
     ///
     /// // 10 requests per minute
     /// let config = RateLimitConfig::new(10, 60).unwrap();

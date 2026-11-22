@@ -45,7 +45,7 @@ impl std::error::Error for MethodError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::Method;
+/// use siphon_core::Method;
 ///
 /// let method = Method::from_token("INVITE").unwrap();
 /// assert_eq!(method.as_str(), "INVITE");
@@ -133,7 +133,7 @@ impl Method {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::Method;
+    /// use siphon_core::Method;
     ///
     /// // Standard methods
     /// assert!(Method::from_token("INVITE").is_ok());

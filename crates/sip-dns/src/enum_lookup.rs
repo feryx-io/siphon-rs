@@ -20,7 +20,7 @@
 /// # Examples
 ///
 /// ```
-/// use sip_dns::enum_to_domain;
+/// use siphon_dns::enum_to_domain;
 ///
 /// // Convert E.164 number to ENUM domain
 /// let domain = enum_to_domain("+12025332600").unwrap();
@@ -45,7 +45,7 @@
 /// # Examples
 ///
 /// ```
-/// use sip_dns::enum_to_domain;
+/// use siphon_dns::enum_to_domain;
 ///
 /// let domain = enum_to_domain("+12025332600").unwrap();
 /// assert_eq!(domain, "0.0.6.2.3.3.5.2.0.2.1.e164.arpa");
@@ -93,14 +93,14 @@ pub fn enum_to_domain(e164_number: &str) -> Option<String> {
 /// # Examples
 ///
 /// ```
-/// use sip_core::TelUri;
-/// use sip_dns::tel_uri_to_enum_domain;
+/// use siphon_core::TelUri;
+/// use siphon_dns::tel_uri_to_enum_domain;
 ///
 /// let tel = TelUri::parse("tel:+1-555-123-4567").unwrap();
 /// let domain = tel_uri_to_enum_domain(&tel).unwrap();
 /// assert_eq!(domain, "7.6.5.4.3.2.1.5.5.5.1.e164.arpa");
 /// ```
-pub fn tel_uri_to_enum_domain(tel_uri: &sip_core::TelUri) -> Option<String> {
+pub fn tel_uri_to_enum_domain(tel_uri: &siphon_core::TelUri) -> Option<String> {
     if !tel_uri.is_global() {
         return None;
     }
@@ -170,7 +170,7 @@ impl EnumNaptrRecord {
     /// # Examples
     ///
     /// ```
-    /// use sip_dns::EnumNaptrRecord;
+    /// use siphon_dns::EnumNaptrRecord;
     ///
     /// let record = EnumNaptrRecord::new(
     ///     100,
@@ -344,7 +344,7 @@ mod tests {
 
     #[test]
     fn tel_uri_to_enum() {
-        use sip_core::TelUri;
+        use siphon_core::TelUri;
 
         // Global number
         let tel = TelUri::parse("tel:+1-555-123-4567").unwrap();

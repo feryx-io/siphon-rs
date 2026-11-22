@@ -9,7 +9,7 @@
 //!
 //! # Example
 //! ```
-//! use sip_observe::{set_transport_metrics, RateLimitedTracingTransportMetrics};
+//! use siphon_observe::{set_transport_metrics, RateLimitedTracingTransportMetrics};
 //! use std::sync::Arc;
 //! set_transport_metrics(Arc::new(RateLimitedTracingTransportMetrics::default()));
 //! // Metrics automatically emitted via tracing events

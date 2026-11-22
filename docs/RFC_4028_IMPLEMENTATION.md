@@ -176,7 +176,7 @@ match UserAgentServer::validate_session_timer(&invite, Some(Duration::from_secs(
 | `sip-dialog/src/session_timer_manager.rs` | 1-443 | Complete SessionTimerManager implementation |
 | `sip-dialog/src/lib.rs` | 8 | Module export |
 | `sip-uas/src/lib.rs` | 6-7, 182-238 | Min-SE validation methods |
-| `sip-uas/Cargo.toml` | - | No changes needed (sip-dialog already dependency) |
+| `sip-uas/Cargo.toml` | - | No changes needed (siphon-dialog already dependency) |
 | `sip-dialog/Cargo.toml` | 13 | Added tokio dependency |
 
 ### Dialog State
@@ -240,7 +240,7 @@ match UserAgentServer::validate_session_timer(&invite, Some(Duration::from_secs(
 ### Basic Session Timer Management
 
 ```rust
-use sip_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
+use siphon_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
 use std::time::Duration;
 
 // Create manager
@@ -289,7 +289,7 @@ manager.stop_timer(&dialog_id);
 ### UAS Session-Expires Validation
 
 ```rust
-use sip_uas::UserAgentServer;
+use siphon_uas::UserAgentServer;
 use std::time::Duration;
 
 let uas = UserAgentServer::new(local_uri, contact_uri);

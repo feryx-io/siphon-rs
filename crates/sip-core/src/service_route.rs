@@ -56,7 +56,7 @@ impl std::error::Error for RouteError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{PathHeader, SipUri, Uri};
+/// use siphon_core::{PathHeader, SipUri, Uri};
 ///
 /// // Single Path entry
 /// let proxy_uri = SipUri::parse("sip:proxy.example.com;lr").unwrap();
@@ -186,7 +186,7 @@ impl fmt::Display for PathHeader {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{ServiceRouteHeader, SipUri, Uri};
+/// use siphon_core::{ServiceRouteHeader, SipUri, Uri};
 ///
 /// // Single Service-Route entry
 /// let service_uri = SipUri::parse("sip:service.example.com;lr").unwrap();

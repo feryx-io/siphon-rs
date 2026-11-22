@@ -27,8 +27,8 @@
 //! - Wire up packet reception to the transaction manager
 
 use anyhow::Result;
-use sip_sdp::{MediaDescription, SessionDescription};
-use sip_uac::integrated::SdpAnswerGenerator;
+use siphon_sdp::{MediaDescription, SessionDescription};
+use siphon_uac::integrated::SdpAnswerGenerator;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::time::{sleep, Duration};
 
@@ -47,7 +47,7 @@ impl SdpAnswerGenerator for SimpleSdpGenerator {
     async fn generate_answer(
         &self,
         _offer: &SessionDescription,
-        dialog: &sip_dialog::Dialog,
+        dialog: &siphon_dialog::Dialog,
     ) -> Result<SessionDescription> {
         // Generate simple audio-only answer using the builder for type-safe SDP
         let session_id = SystemTime::now()

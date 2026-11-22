@@ -84,7 +84,7 @@ impl std::error::Error for ResourcePriorityError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::ResourcePriorityValue;
+/// use siphon_core::ResourcePriorityValue;
 ///
 /// let value = ResourcePriorityValue::new("dsn", "flash-override").unwrap();
 /// assert_eq!(value.namespace(), "dsn");
@@ -130,7 +130,7 @@ impl ResourcePriorityValue {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ResourcePriorityValue;
+    /// use siphon_core::ResourcePriorityValue;
     ///
     /// let value = ResourcePriorityValue::parse("dsn.flash").unwrap();
     /// assert_eq!(value.namespace(), "dsn");
@@ -166,7 +166,7 @@ impl fmt::Display for ResourcePriorityValue {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{ResourcePriorityHeader, ResourcePriorityValue};
+/// use siphon_core::{ResourcePriorityHeader, ResourcePriorityValue};
 ///
 /// let mut header = ResourcePriorityHeader::new();
 /// header.add_value(ResourcePriorityValue::new("dsn", "flash-override").unwrap()).unwrap();
@@ -228,7 +228,7 @@ impl ResourcePriorityHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ResourcePriorityHeader;
+    /// use siphon_core::ResourcePriorityHeader;
     ///
     /// let header = ResourcePriorityHeader::parse("dsn.flash, wps.0").unwrap();
     /// assert_eq!(header.len(), 2);

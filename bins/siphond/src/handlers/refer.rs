@@ -30,14 +30,14 @@
 /// it explicitly to enable UDP ACKs.
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
-use sip_core::{Headers, Request, Response, SipUri};
-use sip_dialog::{Subscription, SubscriptionId, SubscriptionState};
-use sip_parse::header;
-use sip_transaction::{
+use siphon_core::{Headers, Request, Response, SipUri};
+use siphon_dialog::{Subscription, SubscriptionId, SubscriptionState};
+use siphon_parse::header;
+use siphon_transaction::{
     ClientTransactionUser, ServerTransactionHandle, TransactionKey, TransportContext,
 };
-use sip_uac::UserAgentClient;
-use sip_uas::UserAgentServer;
+use siphon_uac::UserAgentClient;
+use siphon_uas::UserAgentServer;
 use smol_str::SmolStr;
 use std::sync::Arc;
 use std::time::Duration;
@@ -88,7 +88,7 @@ struct ReferTransferTransactionUser {
     uas: UserAgentServer,
     subscription: Arc<Mutex<Subscription>>,
     notify_ctx: TransportContext,
-    transaction_mgr: Arc<sip_transaction::TransactionManager>,
+    transaction_mgr: Arc<siphon_transaction::TransactionManager>,
     config: Arc<crate::config::DaemonConfig>,
 }
 
@@ -166,18 +166,18 @@ impl ClientTransactionUser for ReferTransferTransactionUser {
         let ack = self
             .uac
             .create_ack(&self.invite, &response, sdp_body.as_deref());
-        let payload = sip_parse::serialize_request(&ack);
+        let payload = siphon_parse::serialize_request(&ack);
 
         match ctx.transport() {
-            sip_transaction::TransportKind::Tcp => {
-                if let Err(e) = sip_transport::send_tcp(&ctx.peer(), &payload).await {
+            siphon_transaction::TransportKind::Tcp => {
+                if let Err(e) = siphon_transport::send_tcp(&ctx.peer(), &payload).await {
                     warn!(error = %e, "Failed to send REFER ACK via TCP");
                 }
             }
-            sip_transaction::TransportKind::Tls => {
+            siphon_transaction::TransportKind::Tls => {
                 if let Some(writer) = &ctx.stream() {
-                    if let Err(e) = sip_transport::send_stream(
-                        sip_transport::TransportKind::Tls,
+                    if let Err(e) = siphon_transport::send_stream(
+                        siphon_transport::TransportKind::Tls,
                         writer,
                         bytes::Bytes::from(payload.to_vec()),
                     )
@@ -192,15 +192,15 @@ impl ClientTransactionUser for ReferTransferTransactionUser {
                     );
                 }
             }
-            sip_transaction::TransportKind::Ws | sip_transaction::TransportKind::Wss => {
+            siphon_transaction::TransportKind::Ws | siphon_transaction::TransportKind::Wss => {
                 #[cfg(feature = "ws")]
                 {
                     if let Some(ws_uri) = ctx.ws_uri() {
                         let data = bytes::Bytes::from(payload.to_vec());
-                        let result = if ctx.transport() == sip_transaction::TransportKind::Wss {
-                            sip_transport::send_wss(ws_uri, data).await
+                        let result = if ctx.transport() == siphon_transaction::TransportKind::Wss {
+                            siphon_transport::send_wss(ws_uri, data).await
                         } else {
-                            sip_transport::send_ws(ws_uri, data).await
+                            siphon_transport::send_ws(ws_uri, data).await
                         };
                         if let Err(e) = result {
                             warn!(error = %e, "Failed to send REFER ACK via WS/WSS");
@@ -208,11 +208,11 @@ impl ClientTransactionUser for ReferTransferTransactionUser {
                     }
                 }
             }
-            sip_transaction::TransportKind::Udp => {
+            siphon_transaction::TransportKind::Udp => {
                 // Send ACK over UDP using the socket from TransportContext
                 if let Some(socket) = &ctx.udp_socket() {
                     if let Err(e) =
-                        sip_transport::send_udp(socket.as_ref(), &ctx.peer(), &payload).await
+                        siphon_transport::send_udp(socket.as_ref(), &ctx.peer(), &payload).await
                     {
                         warn!(error = %e, "Failed to send REFER ACK via UDP");
                     }
@@ -385,13 +385,13 @@ impl RequestHandler for ReferHandler {
         // Check if REFER is enabled
         if !services.config.features.enable_refer {
             warn!(call_id, "REFER rejected: feature not enabled");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
 
             // Try to create and send 501 response, but don't crash if it fails
-            match sip_core::StatusLine::new(501, "Not Implemented") {
+            match siphon_core::StatusLine::new(501, "Not Implemented") {
                 Ok(status_line) => {
-                    match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                    match siphon_core::Response::new(status_line, headers, bytes::Bytes::new()) {
                         Ok(response) => {
                             handle.send_final(response).await;
                         }
@@ -435,13 +435,13 @@ impl RequestHandler for ReferHandler {
                 call_id,
                 "REFER received outside of a dialog - rejecting with 481"
             );
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
 
             // Try to create and send 481 response, but don't crash if it fails
-            match sip_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
+            match siphon_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
                 Ok(status_line) => {
-                    match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                    match siphon_core::Response::new(status_line, headers, bytes::Bytes::new()) {
                         Ok(response) => {
                             handle.send_final(response).await;
                         }
@@ -461,13 +461,13 @@ impl RequestHandler for ReferHandler {
         let Some(dialog) = dialog else {
             // This should be unreachable due to logic above, but handle gracefully
             warn!(call_id, "Unexpected None dialog after guard check");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
 
             // Try to create and send 481 response, but don't crash if it fails
-            match sip_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
+            match siphon_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
                 Ok(status_line) => {
-                    match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                    match siphon_core::Response::new(status_line, headers, bytes::Bytes::new()) {
                         Ok(response) => {
                             handle.send_final(response).await;
                         }
@@ -484,7 +484,7 @@ impl RequestHandler for ReferHandler {
         };
 
         // Parse local URI from config
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!("Invalid local_uri in config");
@@ -586,18 +586,18 @@ impl RequestHandler for ReferHandler {
                     .and_then(|value| value.as_ref());
                 let transport_param = transport_param.map(|value| value.to_ascii_lowercase());
                 let transport = match transport_param.as_deref() {
-                    Some("ws") => sip_transaction::TransportKind::Ws,
-                    Some("wss") => sip_transaction::TransportKind::Wss,
-                    Some("tls") => sip_transaction::TransportKind::Tls,
-                    Some("udp") => sip_transaction::TransportKind::Udp,
-                    _ => sip_transaction::TransportKind::Tcp,
+                    Some("ws") => siphon_transaction::TransportKind::Ws,
+                    Some("wss") => siphon_transaction::TransportKind::Wss,
+                    Some("tls") => siphon_transaction::TransportKind::Tls,
+                    Some("udp") => siphon_transaction::TransportKind::Udp,
+                    _ => siphon_transaction::TransportKind::Tcp,
                 };
 
                 let ws_uri = match transport {
-                    sip_transaction::TransportKind::Ws => {
+                    siphon_transaction::TransportKind::Ws => {
                         Some(format!("ws://{}:{}", refer_uri.host(), target_port))
                     }
-                    sip_transaction::TransportKind::Wss => {
+                    siphon_transaction::TransportKind::Wss => {
                         Some(format!("wss://{}:{}", refer_uri.host(), target_port))
                     }
                     _ => None,
@@ -631,13 +631,13 @@ impl RequestHandler for ReferHandler {
                 }
 
                 let transport_name = match transport {
-                    sip_transaction::TransportKind::Udp => "UDP",
-                    sip_transaction::TransportKind::Tcp => "TCP",
-                    sip_transaction::TransportKind::Tls => "TLS",
-                    sip_transaction::TransportKind::Ws => "WS",
-                    sip_transaction::TransportKind::Wss => "WSS",
-                    sip_transaction::TransportKind::Sctp => "SCTP",
-                    sip_transaction::TransportKind::TlsSctp => "TLS-SCTP",
+                    siphon_transaction::TransportKind::Udp => "UDP",
+                    siphon_transaction::TransportKind::Tcp => "TCP",
+                    siphon_transaction::TransportKind::Tls => "TLS",
+                    siphon_transaction::TransportKind::Ws => "WS",
+                    siphon_transaction::TransportKind::Wss => "WSS",
+                    siphon_transaction::TransportKind::Sctp => "SCTP",
+                    siphon_transaction::TransportKind::TlsSctp => "TLS-SCTP",
                 };
 
                 // Find and replace the Via header
@@ -645,10 +645,12 @@ impl RequestHandler for ReferHandler {
                 let mut via_replaced = false;
                 for header in invite.headers().iter() {
                     if !via_replaced && header.name().eq_ignore_ascii_case("Via") {
-                        let branch = sip_transaction::branch_from_via(header.value())
+                        let branch = siphon_transaction::branch_from_via(header.value())
                             .filter(|value| !value.is_empty())
                             .map(|value| value.to_string())
-                            .unwrap_or_else(|| sip_transaction::generate_branch_id().to_string());
+                            .unwrap_or_else(|| {
+                                siphon_transaction::generate_branch_id().to_string()
+                            });
                         let new_via =
                             format!("SIP/2.0/{} placeholder;branch={}", transport_name, branch);
                         if let Err(e) = new_headers.push(header.name(), new_via) {
@@ -834,7 +836,7 @@ fn is_global_unicast(ip: &std::net::IpAddr) -> bool {
 }
 
 /// Copy essential headers from request to response
-fn copy_headers(request: &Request, headers: &mut sip_core::Headers) {
+fn copy_headers(request: &Request, headers: &mut siphon_core::Headers) {
     if let Some(via) = header(request.headers(), "Via") {
         let _ = headers.push("Via", via.clone());
     }

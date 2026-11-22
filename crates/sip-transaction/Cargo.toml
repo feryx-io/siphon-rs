@@ -1,28 +1,27 @@
 [package]
-name = "sip-transaction"
+name = "siphon-transaction"
 version = "0.9.1"
 edition = "2021"
 license.workspace = true
 description = "RFC 3261 transaction state machines and timers."
-readme = "../../README.md"
+readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-sip-core = { path = "../sip-core" }
+siphon-core = { workspace = true }
 smol_str = { workspace = true }
 rand = { workspace = true }
-sip-parse = { path = "../sip-parse" }
+siphon-parse = { workspace = true }
 bytes = { workspace = true }
 dashmap = { workspace = true }
 parking_lot = { workspace = true }
 tokio = { workspace = true, features = ["sync", "time", "rt"] }
 async-trait = "0.1"
 tracing = { workspace = true }
-sip-transport = { path = "../sip-transport" }
+siphon-transport = { workspace = true }
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }

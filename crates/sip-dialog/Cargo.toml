@@ -1,5 +1,5 @@
 [package]
-name = "sip-dialog"
+name = "siphon-dialog"
 version = "0.4.0"
 edition = "2021"
 license.workspace = true
@@ -8,12 +8,11 @@ readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
-sip-core = { path = "../sip-core" }
+siphon-core = { workspace = true }
 dashmap = { workspace = true }
-sip-parse = { path = "../sip-parse" }
+siphon-parse = { workspace = true }
 smol_str = { workspace = true }
 parking_lot = { workspace = true }
 bytes = { workspace = true }

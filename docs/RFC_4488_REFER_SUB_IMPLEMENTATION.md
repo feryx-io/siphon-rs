@@ -259,7 +259,7 @@ pub fn parse(input: &str) -> Option<Self> {
 **Usage Example:**
 
 ```rust
-use sip_core::ReferSubHeader;
+use siphon_core::ReferSubHeader;
 
 // Create REFER request
 let mut refer = Request::new(
@@ -353,7 +353,7 @@ response.headers_mut().set("Refer-Sub", "true");
 ### REFER-Issuer: Suppressing Subscription
 
 ```rust
-use sip_core::{Request, Method, RequestLine, ReferSubHeader};
+use siphon_core::{Request, Method, RequestLine, ReferSubHeader};
 
 async fn send_refer_without_subscription(
     &self,
@@ -398,7 +398,7 @@ async fn send_refer_without_subscription(
 ### REFER-Recipient: Accepting Suppression
 
 ```rust
-use sip_core::{Request, Response, ReferSubHeader};
+use siphon_core::{Request, Response, ReferSubHeader};
 
 async fn handle_refer_request(&self, request: Request) -> Result<Response> {
     // Check for Refer-Sub header
@@ -509,7 +509,7 @@ async fn send_refer(&self, refer_to: &str) -> Result<()> {
 ### Complete Call Transfer Example
 
 ```rust
-use sip_core::{Request, Method, ReferSubHeader};
+use siphon_core::{Request, Method, ReferSubHeader};
 
 /// Attended call transfer using RFC 4488 suppression
 async fn attended_transfer(

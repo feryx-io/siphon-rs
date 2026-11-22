@@ -18,8 +18,8 @@
 //! ```
 
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-use sip_proxy::{
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+use siphon_proxy::{
     cancel_ack::{CancelForwarder, RouteProcessor},
     stateful::{forwarding, BranchInfo, BranchState, ForkMode, ProxyTarget, StatefulProxy},
 };

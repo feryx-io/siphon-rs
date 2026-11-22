@@ -66,19 +66,19 @@
 /siphon-rs
   Cargo.toml           # [workspace]
   /crates
-    sip-core          # Message types, headers, parsing, utilities
-    sip-parse         # Lexer/Parser (nom-based), codecs
-    sip-transport     # UDP/TCP/TLS (+WS later), connection manager
-    sip-dns           # NAPTR/SRV resolution, transport policy
-    sip-transaction   # Client/Server transactions + timers
-    sip-dialog        # Dialog state machine, target refresh
-    sip-auth          # Digest (RFC 7616/7617)
-    sip-registrar     # REGISTER handling, location service
-    sip-proxy         # Stateful/stateless proxy logic
-    sip-uas           # UAS helpers (INVITE server, etc.)
-    sip-uac           # UAC helpers (invite client, options pinger)
-    sip-sdp           # Thin SDP model (or integrate external crate)
-    sip-testkit       # Integration harness, fuzz targets, sipp bindings
+    siphon-core          # Message types, headers, parsing, utilities
+    siphon-parse         # Lexer/Parser (nom-based), codecs
+    siphon-transport     # UDP/TCP/TLS (+WS later), connection manager
+    siphon-dns           # NAPTR/SRV resolution, transport policy
+    siphon-transaction   # Client/Server transactions + timers
+    siphon-dialog        # Dialog state machine, target refresh
+    siphon-auth          # Digest (RFC 7616/7617)
+    siphon-registrar     # REGISTER handling, location service
+    siphon-proxy         # Stateful/stateless proxy logic
+    siphon-uas           # UAS helpers (INVITE server, etc.)
+    siphon-uac           # UAC helpers (invite client, options pinger)
+    siphon-sdp           # Thin SDP model (or integrate external crate)
+    siphon-testkit       # Integration harness, fuzz targets, sipp bindings
   /bins
     siphond           # Example daemon: registrar+proxy
     sipctl            # CLI tool: send, trace, register, options, etc.
@@ -255,7 +255,7 @@ resolver = "2"
 **`crates/sip-core/Cargo.toml`**
 ```toml
 [package]
-name = "sip-core"
+name = "siphon-core"
 version = "0.1.0"
 edition = "2021"
 
@@ -268,7 +268,7 @@ serde = { version = "1", features = ["derive"] }
 **`crates/sip-transport/Cargo.toml`**
 ```toml
 [package]
-name = "sip-transport"
+name = "siphon-transport"
 version = "0.1.0"
 edition = "2021"
 
@@ -276,7 +276,7 @@ edition = "2021"
 tokio = { version = "1", features = ["net","rt-multi-thread","time"] }
 tracing = "0.1"
 bytes = "1"
-sip-core = { path = "../sip-core" }
+siphon-core = { path = "../sip-core" }
 ```
 
 **UDP receive loop (sketch)**
@@ -327,7 +327,7 @@ async fn main() -> anyhow::Result<()> {
 ## 14) Next Steps
 
 1. Initialize repo with the workspace and crates above.
-2. Implement `sip-parse` minimal: Request/Response start‑line + Via/To/From/Call‑ID/CSeq/Max‑Forwards bodies.
+2. Implement `siphon-parse` minimal: Request/Response start‑line + Via/To/From/Call‑ID/CSeq/Max‑Forwards bodies.
 3. Wire UDP transport → parser → stateless OPTIONS UAS (200 OK) to validate loop.
 4. Add non‑INVITE client transaction (OPTIONS pinger) → run interop with sipp.
 

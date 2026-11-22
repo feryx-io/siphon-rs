@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the implementation of RFC 3857 ("A Watcher Information Event Template-Package for the Session Initiation Protocol (SIP)") and RFC 3858 ("An Extensible Markup Language (XML) Based Format for Watcher Information") in the sip-core crate.
+This document describes the implementation of RFC 3857 ("A Watcher Information Event Template-Package for the Session Initiation Protocol (SIP)") and RFC 3858 ("An Extensible Markup Language (XML) Based Format for Watcher Information") in the siphon-core crate.
 
 ## RFCs Implemented
 
@@ -207,7 +207,7 @@ Element Content:
 ### Creating a Watcher Information Document
 
 ```rust
-use sip_core::{WatcherinfoDocument, WatcherList, Watcher, WatcherStatus, WatcherEvent};
+use siphon_core::{WatcherinfoDocument, WatcherList, Watcher, WatcherStatus, WatcherEvent};
 
 // Create a new document
 let mut doc = WatcherinfoDocument::new(0, "full");
@@ -239,7 +239,7 @@ println!("{}", xml);
 ### Parsing Watcher Information
 
 ```rust
-use sip_core::parse_watcherinfo;
+use siphon_core::parse_watcherinfo;
 
 let xml = r#"<?xml version="1.0"?>
 <watcherinfo xmlns="urn:ietf:params:xml:ns:watcherinfo" version="0" state="full">
@@ -434,7 +434,7 @@ The implementation includes comprehensive tests covering:
 ### Running Tests
 
 ```bash
-cargo test --package sip-core watcher_info
+cargo test --package siphon-core watcher_info
 ```
 
 All 10 tests pass successfully.
@@ -456,7 +456,7 @@ The watcher information module integrates with:
 
 ## Module Exports
 
-The following types are exported from sip-core:
+The following types are exported from siphon-core:
 
 ```rust
 pub use watcher_info::{

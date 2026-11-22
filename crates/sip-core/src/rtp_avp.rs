@@ -450,7 +450,7 @@ pub const STATIC_PAYLOAD_TYPES: [Option<&'static StaticPayloadType>; 128] = [
 /// # Example
 ///
 /// ```
-/// use sip_core::rtp_avp::get_static_payload_type;
+/// use siphon_core::rtp_avp::get_static_payload_type;
 ///
 /// let pcmu = get_static_payload_type(0).unwrap();
 /// assert_eq!(pcmu.encoding_name(), "PCMU");
@@ -485,7 +485,7 @@ pub fn get_static_payload_type(pt: u8) -> Option<&'static StaticPayloadType> {
 /// # Example
 ///
 /// ```
-/// use sip_core::rtp_avp::get_payload_type;
+/// use siphon_core::rtp_avp::get_payload_type;
 ///
 /// assert_eq!(get_payload_type("PCMU"), Some(0));
 /// assert_eq!(get_payload_type("pcmu"), Some(0));  // case-insensitive
@@ -526,7 +526,7 @@ pub fn get_payload_type(encoding_name: &str) -> Option<u8> {
 /// # Example
 ///
 /// ```
-/// use sip_core::rtp_avp::get_payload_type_with_rate;
+/// use siphon_core::rtp_avp::get_payload_type_with_rate;
 ///
 /// assert_eq!(get_payload_type_with_rate("DVI4", 8000), Some(5));
 /// assert_eq!(get_payload_type_with_rate("DVI4", 16000), Some(6));

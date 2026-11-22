@@ -9,8 +9,8 @@
 //!
 //! # Example
 //! ```
-//! use sip_uas::UserAgentServer;
-//! # use sip_core::SipUri;
+//! use siphon_uas::UserAgentServer;
+//! # use siphon_core::SipUri;
 //! let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
 //! let contact_uri = SipUri::parse("sip:bob@192.168.1.100").unwrap();
 //! let uas = UserAgentServer::new(local_uri, contact_uri);
@@ -20,17 +20,17 @@ pub mod integrated;
 
 use anyhow::{anyhow, Result};
 use bytes::Bytes;
-use sip_auth::Authenticator;
-use sip_core::{
+use siphon_auth::Authenticator;
+use siphon_core::{
     Headers, Method, RefresherRole, Request, RequestLine, Response, SipUri, StatusLine,
 };
-use sip_dialog::prack_validator::PrackValidator;
-use sip_dialog::session_timer_manager::{
+use siphon_dialog::prack_validator::PrackValidator;
+use siphon_dialog::session_timer_manager::{
     negotiate_session_expires, validate_session_expires, MIN_SESSION_EXPIRES,
 };
-use sip_dialog::{Dialog, DialogManager, RSeqManager, Subscription, SubscriptionManager};
-use sip_parse::{header, parse_min_se, parse_session_expires};
-pub use sip_sdp::profiles::{MediaProfileBuilder, SdpProfile};
+use siphon_dialog::{Dialog, DialogManager, RSeqManager, Subscription, SubscriptionManager};
+use siphon_parse::{header, parse_min_se, parse_session_expires};
+pub use siphon_sdp::profiles::{MediaProfileBuilder, SdpProfile};
 use smol_str::SmolStr;
 use std::sync::Arc;
 use std::time::Duration;
@@ -178,7 +178,7 @@ impl Default for SessionTimerPolicy {
 /// Negotiation outcome handed back to callers of
 /// [`UserAgentServer::accept_invite_with_session_timer`]. Wraps the chosen
 /// `Session-Expires` value and refresher role so the caller can drive a
-/// [`sip_dialog::session_timer_manager::SessionTimerManager`] timer without
+/// [`siphon_dialog::session_timer_manager::SessionTimerManager`] timer without
 /// re-parsing headers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NegotiatedSessionTimer {
@@ -1462,7 +1462,7 @@ fn extract_tag_param(value: &SmolStr) -> Option<SmolStr> {
 }
 
 /// Builds a stable dialog key for PRACK tracking.
-fn dialog_id_key(id: &sip_dialog::DialogId) -> String {
+fn dialog_id_key(id: &siphon_dialog::DialogId) -> String {
     format!("{}:{}:{}", id.call_id(), id.local_tag(), id.remote_tag())
 }
 
@@ -1579,7 +1579,7 @@ fn extract_from_uri(request: &Request) -> Result<SipUri> {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, Method, RequestLine, SipUri, StatusLine};
+    use siphon_core::{Headers, Method, RequestLine, SipUri, StatusLine};
 
     struct EchoUas;
 
@@ -2483,7 +2483,7 @@ mod tests {
 
     #[test]
     fn creates_notify_sipfrag_request() {
-        use sip_dialog::{Subscription, SubscriptionState};
+        use siphon_dialog::{Subscription, SubscriptionState};
         use std::time::Duration;
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
@@ -2493,8 +2493,12 @@ mod tests {
 
         // Create a mock subscription
         let remote_uri = SipUri::parse("sip:alice@example.com").unwrap();
-        let subscription_id =
-            sip_dialog::SubscriptionId::unchecked_new("test-call-id", "abc123", "def456", "refer");
+        let subscription_id = siphon_dialog::SubscriptionId::unchecked_new(
+            "test-call-id",
+            "abc123",
+            "def456",
+            "refer",
+        );
         let mut subscription = Subscription::unchecked_new(
             subscription_id,
             SubscriptionState::Active,
@@ -2601,8 +2605,8 @@ mod tests {
 
     #[test]
     fn creates_reliable_provisional_response() {
-        use sip_core::RefresherRole;
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::RefresherRole;
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
         use std::time::Duration;
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
@@ -2708,8 +2712,8 @@ mod tests {
 
     #[test]
     fn handles_prack_request() {
-        use sip_core::RefresherRole;
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::RefresherRole;
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
         use std::time::Duration;
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
@@ -3070,7 +3074,7 @@ mod tests {
 
     #[test]
     fn handles_info_request() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:bob@192.168.1.200:5060").unwrap();
@@ -3160,7 +3164,7 @@ mod tests {
 
     #[test]
     fn handles_info_with_json_payload() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:bob@192.168.1.200:5060").unwrap();
@@ -3247,7 +3251,7 @@ mod tests {
 
     #[test]
     fn rejects_info_with_wrong_call_id() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:bob@192.168.1.200:5060").unwrap();
@@ -3321,7 +3325,7 @@ mod tests {
 
     #[test]
     fn rejects_non_info_request() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:bob@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:bob@192.168.1.200:5060").unwrap();
@@ -3518,7 +3522,7 @@ mod tests {
     fn accept_with_session_timer_below_min_se_returns_422() {
         // UAC requests 120s; UAS Min-SE policy is 300s. Expect 422
         // with Min-SE: 300. Note we can't drive the parser-level
-        // floor (sip-parse rejects raw values <90 outright — see
+        // floor (siphon-parse rejects raw values <90 outright — see
         // `validates_session_expires_too_small`); the 422 path
         // exercises a higher local Min-SE policy.
         let uas = fresh_uas();

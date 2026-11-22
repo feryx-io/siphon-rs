@@ -6,9 +6,9 @@
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use serde::Deserialize;
-use sip_core::{Headers, Method, Request, RequestLine, SipUri};
-use sip_transaction::{ClientTransactionUser, TransactionKey, TransportContext, TransportKind};
-use sip_uac::UserAgentClient;
+use siphon_core::{Headers, Method, Request, RequestLine, SipUri};
+use siphon_transaction::{ClientTransactionUser, TransactionKey, TransportContext, TransportKind};
+use siphon_uac::UserAgentClient;
 use smol_str::SmolStr;
 use std::fs;
 use std::path::Path;
@@ -54,16 +54,16 @@ struct ScenarioTransactionUser {
 
 #[async_trait]
 impl ClientTransactionUser for ScenarioTransactionUser {
-    async fn on_provisional(&self, _key: &TransactionKey, _response: &sip_core::Response) {}
+    async fn on_provisional(&self, _key: &TransactionKey, _response: &siphon_core::Response) {}
 
-    async fn on_final(&self, _key: &TransactionKey, _response: &sip_core::Response) {}
+    async fn on_final(&self, _key: &TransactionKey, _response: &siphon_core::Response) {}
 
     async fn on_terminated(&self, _key: &TransactionKey, _reason: &str) {}
 
     async fn send_ack(
         &self,
         _key: &TransactionKey,
-        response: sip_core::Response,
+        response: siphon_core::Response,
         ctx: &TransportContext,
         is_2xx: bool,
     ) {
@@ -71,15 +71,16 @@ impl ClientTransactionUser for ScenarioTransactionUser {
             return;
         }
         let ack = self.uac.create_ack(&self.request, &response, None);
-        let payload = sip_parse::serialize_request(&ack);
+        let payload = siphon_parse::serialize_request(&ack);
 
         match ctx.transport() {
             TransportKind::Tcp => {
-                let _ = sip_transport::send_tcp(&ctx.peer(), &payload).await;
+                let _ = siphon_transport::send_tcp(&ctx.peer(), &payload).await;
             }
             TransportKind::Udp => {
                 if let Some(socket) = &ctx.udp_socket() {
-                    let _ = sip_transport::send_udp(socket.as_ref(), &ctx.peer(), &payload).await;
+                    let _ =
+                        siphon_transport::send_udp(socket.as_ref(), &ctx.peer(), &payload).await;
                 }
             }
             TransportKind::Ws | TransportKind::Wss => {
@@ -88,9 +89,9 @@ impl ClientTransactionUser for ScenarioTransactionUser {
                     if let Some(ws_uri) = ctx.ws_uri() {
                         let data = bytes::Bytes::from(payload.to_vec());
                         if ctx.transport() == TransportKind::Wss {
-                            let _ = sip_transport::send_wss(ws_uri, data).await;
+                            let _ = siphon_transport::send_wss(ws_uri, data).await;
                         } else {
-                            let _ = sip_transport::send_ws(ws_uri, data).await;
+                            let _ = siphon_transport::send_ws(ws_uri, data).await;
                         }
                     }
                 }
@@ -103,7 +104,7 @@ impl ClientTransactionUser for ScenarioTransactionUser {
     async fn send_prack(
         &self,
         _key: &TransactionKey,
-        _response: sip_core::Response,
+        _response: siphon_core::Response,
         _ctx: &TransportContext,
     ) {
     }

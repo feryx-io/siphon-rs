@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-use sip_transaction::fsm::{
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+use siphon_transaction::fsm::{
     ClientAction, ClientInviteAction, ClientInviteEvent, ClientInviteFsm, ClientNonInviteEvent,
     ClientNonInviteFsm, ServerAction, ServerInviteAction, ServerInviteEvent, ServerInviteFsm,
     ServerNonInviteEvent, ServerNonInviteFsm,
 };
-use sip_transaction::timers::{Transport, TransportAwareTimers};
-use sip_transaction::{ClientNonInviteState, ServerNonInviteState, TransactionTimer};
+use siphon_transaction::timers::{Transport, TransportAwareTimers};
+use siphon_transaction::{ClientNonInviteState, ServerNonInviteState, TransactionTimer};
 use smol_str::SmolStr;
 use std::time::Duration;
 
@@ -213,7 +213,7 @@ fn client_invite_timer_b_timeout() {
     let actions = fsm.on_event(ClientInviteEvent::TimerFired(TransactionTimer::B));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ClientInviteState::Terminated
+        siphon_transaction::ClientInviteState::Terminated
     ));
     assert!(
         actions
@@ -244,7 +244,7 @@ fn client_invite_provisional_with_rseq() {
     let actions = fsm.on_event(ClientInviteEvent::ReceiveProvisional(resp.clone()));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ClientInviteState::Proceeding
+        siphon_transaction::ClientInviteState::Proceeding
     ));
     assert!(
         actions
@@ -264,7 +264,10 @@ fn client_invite_3xx_4xx_5xx_6xx_requires_ack() {
         let actions = fsm.on_event(ClientInviteEvent::ReceiveFinal(sample_response(code)));
 
         assert!(
-            matches!(fsm.state(), sip_transaction::ClientInviteState::Completed),
+            matches!(
+                fsm.state(),
+                siphon_transaction::ClientInviteState::Completed
+            ),
             "Non-2xx final should move to Completed for code {}",
             code
         );
@@ -299,7 +302,7 @@ fn client_invite_2xx_immediate_termination() {
 
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ClientInviteState::Terminated
+        siphon_transaction::ClientInviteState::Terminated
     ));
     assert!(
         actions
@@ -329,7 +332,7 @@ fn client_invite_transport_error_in_calling() {
 
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ClientInviteState::Terminated
+        siphon_transaction::ClientInviteState::Terminated
     ));
     assert!(
         actions
@@ -448,7 +451,7 @@ fn server_invite_timer_g_retransmission() {
     fsm.on_event(ServerInviteEvent::SendFinal(sample_response(486)));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Completed
+        siphon_transaction::ServerInviteState::Completed
     ));
 
     // Timer G should trigger retransmission of final response
@@ -483,7 +486,7 @@ fn server_invite_timer_h_timeout() {
     let actions = fsm.on_event(ServerInviteEvent::TimerFired(TransactionTimer::H));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Terminated
+        siphon_transaction::ServerInviteState::Terminated
     ));
     assert!(
         actions
@@ -502,13 +505,13 @@ fn server_invite_ack_moves_to_confirmed() {
     fsm.on_event(ServerInviteEvent::SendFinal(sample_response(486)));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Completed
+        siphon_transaction::ServerInviteState::Completed
     ));
 
     let actions = fsm.on_event(ServerInviteEvent::ReceiveAck);
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Confirmed
+        siphon_transaction::ServerInviteState::Confirmed
     ));
     assert!(
         actions.iter().any(|a| matches!(
@@ -538,13 +541,13 @@ fn server_invite_timer_i_termination() {
     fsm.on_event(ServerInviteEvent::ReceiveAck);
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Confirmed
+        siphon_transaction::ServerInviteState::Confirmed
     ));
 
     let actions = fsm.on_event(ServerInviteEvent::TimerFired(TransactionTimer::I));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Terminated
+        siphon_transaction::ServerInviteState::Terminated
     ));
     assert!(
         actions
@@ -564,7 +567,7 @@ fn server_invite_2xx_immediate_termination() {
 
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Terminated
+        siphon_transaction::ServerInviteState::Terminated
     ));
     assert!(
         actions
@@ -613,7 +616,7 @@ fn server_invite_provisional_response() {
     let actions = fsm.on_event(ServerInviteEvent::SendProvisional(sample_response(180)));
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Proceeding
+        siphon_transaction::ServerInviteState::Proceeding
     ));
     assert!(
         actions
@@ -642,7 +645,7 @@ fn server_invite_transport_error() {
 
     assert!(matches!(
         fsm.state(),
-        sip_transaction::ServerInviteState::Terminated
+        siphon_transaction::ServerInviteState::Terminated
     ));
     assert!(
         actions

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 //! Demonstrates a B2BUA bridging two legs while negotiating SDP with MediaProfileBuilder.
-use sip_sdp::profiles::MediaProfileBuilder;
+use siphon_sdp::profiles::MediaProfileBuilder;
 
 fn main() {
     // Leg A offer (caller -> B2BUA)
@@ -15,7 +15,7 @@ fn main() {
     let profile_b = MediaProfileBuilder::audio_only().add_audio_codec(111, "opus", 48000);
 
     // B2BUA negotiates answer to caller based on callee profile
-    let answer_to_a = sip_sdp::profiles::negotiate_answer(
+    let answer_to_a = siphon_sdp::profiles::negotiate_answer(
         &offer_a,
         &profile_b,
         "b2bua",

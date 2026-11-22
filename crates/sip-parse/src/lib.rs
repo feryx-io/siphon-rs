@@ -9,7 +9,7 @@
 //!
 //! # Example
 //! ```
-//! use sip_parse::{parse_request, serialize_request};
+//! use siphon_parse::{parse_request, serialize_request};
 //! use bytes::Bytes;
 //! # let raw = b"INVITE sip:bob@example.com SIP/2.0\r\nVia: SIP/2.0/UDP pc33.example.com;branch=z9hG4bK776asdhds\r\nMax-Forwards: 70\r\nTo: <sip:bob@example.com>\r\nFrom: Alice <sip:alice@example.com>;tag=1928301774\r\nCall-ID: a84b4c76e66710@pc33.example.com\r\nCSeq: 314159 INVITE\r\nContact: <sip:alice@pc33.example.com>\r\nContent-Length: 0\r\n\r\n";
 //! let request = parse_request(&Bytes::from_static(raw)).unwrap();
@@ -17,7 +17,9 @@
 //! ```
 
 use bytes::{Bytes, BytesMut};
-use sip_core::{is_valid_branch, Headers, Method, Request, RequestLine, Response, StatusLine, Uri};
+use siphon_core::{
+    is_valid_branch, Headers, Method, Request, RequestLine, Response, StatusLine, Uri,
+};
 use smol_str::SmolStr;
 
 mod header_values;
@@ -36,7 +38,7 @@ pub use header_values::{
 };
 
 /// Convenience re-export for decrementing Max-Forwards safely.
-pub use sip_core::decrement_max_forwards;
+pub use siphon_core::decrement_max_forwards;
 
 pub const DEFAULT_MAX_MESSAGE_SIZE: usize = 64 * 1024;
 
@@ -236,7 +238,7 @@ pub fn serialize_request(req: &Request) -> Bytes {
 }
 
 /// Serializes a SIP response while normalising the `Content-Length` header.
-pub fn serialize_response(res: &sip_core::Response) -> Bytes {
+pub fn serialize_response(res: &siphon_core::Response) -> Bytes {
     let mut buf = String::new();
     use std::fmt::Write;
 
@@ -632,7 +634,7 @@ fn canonical_name(name: &SmolStr) -> SmolStr {
 mod tests {
     use super::*;
     use proptest::{prelude::*, string::string_regex};
-    use sip_core::{
+    use siphon_core::{
         Header, Headers, PriorityValue, RefresherRole, Response, SipUri, StatusLine,
         SubscriptionState,
     };
@@ -1164,11 +1166,12 @@ l: 0\r\n\r\n",
 
     #[test]
     fn geolocation_headers_round_trip() {
-        use sip_core::{GeolocationErrorHeader, GeolocationHeader, GeolocationRoutingHeader};
+        use siphon_core::{GeolocationErrorHeader, GeolocationHeader, GeolocationRoutingHeader};
 
         // A location by value (RFC 6442 §4.1): the cid: URI names a body part.
-        let value =
-            sip_core::GeolocationValue::new(sip_core::Uri::parse("cid:5f3a@pbx.example").unwrap());
+        let value = siphon_core::GeolocationValue::new(
+            siphon_core::Uri::parse("cid:5f3a@pbx.example").unwrap(),
+        );
         let written = GeolocationHeader::single(value).to_string();
         let mut headers = Headers::new();
         headers.push("Geolocation", written.as_str()).unwrap();

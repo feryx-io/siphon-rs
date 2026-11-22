@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the implementation of RFC 3891 ("The 'Replaces' Header Field in the Session Initiation Protocol (SIP)") in the sip-core crate.
+This document describes the implementation of RFC 3891 ("The 'Replaces' Header Field in the Session Initiation Protocol (SIP)") in the siphon-core crate.
 
 ## RFC Implemented
 
@@ -93,7 +93,7 @@ pub struct ReplacesHeader {
 ### Creating a Replaces Header
 
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 // Basic Replaces header
 let replaces = ReplacesHeader::new(
@@ -115,7 +115,7 @@ println!("{}", replaces);
 ### With Early-Only Flag
 
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 let replaces = ReplacesHeader::new(
     "call123@example.com",
@@ -132,7 +132,7 @@ println!("{}", replaces);
 ### Parsing Replaces Headers
 
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 // Parse basic header
 let input = "425928@bobster.example.org;to-tag=7743;from-tag=6472";
@@ -193,7 +193,7 @@ Replaces: call-b@bob.example.com;to-tag=9999;from-tag=8888
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, ReplacesHeader};
+use siphon_core::{Request, Method, ReplacesHeader};
 
 // Charlie receives the INVITE and extracts the Replaces header
 let replaces_value = request.headers().get("Replaces")?;
@@ -234,7 +234,7 @@ Replaces: desk-call@example.com;to-tag=desk-tag;from-tag=alice-tag;early-only
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 // Create Replaces header for call pickup
 let replaces = ReplacesHeader::new(
@@ -266,7 +266,7 @@ Call parking allows placing a call in a temporary holding location and retrievin
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 // When Bob parks the call, the parking server stores the dialog info
 let parked_dialog = ParkingSlot {
@@ -303,7 +303,7 @@ Moving an active call from one device to another.
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 // Extract dialog info from mobile call
 let mobile_dialog = current_call.dialog();
@@ -341,7 +341,7 @@ When a UA receives a request with a Replaces header, it should respond according
 
 **Example Response Handling:**
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 fn handle_invite_with_replaces(request: &Request) -> Response {
     if let Some(replaces_value) = request.headers().get("Replaces") {
@@ -460,7 +460,7 @@ Refer-To: <sip:target@example.com?Replaces=call-id%3Bto-tag%3Dtag1%3Bfrom-tag%3D
 
 **Encoding:**
 ```rust
-use sip_core::ReplacesHeader;
+use siphon_core::ReplacesHeader;
 
 let replaces = ReplacesHeader::new("call-id", "tag1", "tag2");
 let encoded = urlencoding::encode(&replaces.to_string());
@@ -506,7 +506,7 @@ The implementation includes 14 comprehensive tests covering:
 ### Running Tests
 
 ```bash
-cargo test --package sip-core replaces
+cargo test --package siphon-core replaces
 ```
 
 All 14 tests pass successfully.
@@ -516,7 +516,7 @@ All 14 tests pass successfully.
 ### Attended Transfer Implementation
 
 ```rust
-use sip_core::{Request, Response, Method, ReplacesHeader};
+use siphon_core::{Request, Response, Method, ReplacesHeader};
 
 struct AttendedTransfer {
     // Call A: Alice ↔ Bob
@@ -585,7 +585,7 @@ fn handle_invite_from_alice(request: &Request) {
 ### Call Pickup Implementation
 
 ```rust
-use sip_core::{Request, ReplacesHeader};
+use siphon_core::{Request, ReplacesHeader};
 
 struct CallPickupService {
     ringing_calls: HashMap<String, DialogInfo>,
@@ -645,7 +645,7 @@ impl CallPickupService {
 
 ## Module Exports
 
-The following type is exported from sip-core:
+The following type is exported from siphon-core:
 
 ```rust
 pub use replaces::ReplacesHeader;

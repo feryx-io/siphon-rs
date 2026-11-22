@@ -9,9 +9,9 @@
 //!
 //! # Example
 //! ```no_run
-//! use sip_dialog::{Dialog, DialogManager};
+//! use siphon_dialog::{Dialog, DialogManager};
 //! use std::sync::Arc;
-//! # use sip_core::{SipUri, Request, Response};
+//! # use siphon_core::{SipUri, Request, Response};
 //! let manager = Arc::new(DialogManager::new());
 //! # let req: Request = todo!();
 //! # let resp: Response = todo!();
@@ -23,8 +23,8 @@
 //! ```
 
 use dashmap::DashMap;
-use sip_core::{Headers, RefresherRole, Request, Response, SipUri};
-use sip_parse::{header, parse_session_expires};
+use siphon_core::{Headers, RefresherRole, Request, Response, SipUri};
+use siphon_parse::{header, parse_session_expires};
 use smol_str::SmolStr;
 use std::sync::Arc;
 use std::time::Duration;
@@ -1828,7 +1828,7 @@ impl Default for RSeqManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sip_core::{Method, RequestLine, StatusLine};
+    use siphon_core::{Method, RequestLine, StatusLine};
 
     fn make_request(
         method: Method,

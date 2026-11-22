@@ -8,7 +8,7 @@
 //! `Identity` header and the RFC 8225 PASSporT it carries, in the SHAKEN
 //! (ATIS-1000074) profile. The consuming application (e.g. SiphonAI) reads
 //! the `Identity` header off an inbound INVITE via
-//! [`sip_core::Headers::get`], hands the value to [`IdentityHeader::parse`],
+//! [`siphon_core::Headers::get`], hands the value to [`IdentityHeader::parse`],
 //! and surfaces / acts on the result.
 //!
 //! ## Scope of this revision
@@ -31,7 +31,7 @@
 //! [`Passport::verify_with_chain`] (or signature + caller-side chain) passes.
 //!
 //! ```
-//! use sip_identity::{IdentityHeader, AttestationLevel};
+//! use siphon_identity::{IdentityHeader, AttestationLevel};
 //! # use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 //! # let hdr = URL_SAFE_NO_PAD.encode(br#"{"alg":"ES256","typ":"passport","ppt":"shaken","x5u":"https://c.example/c.crt"}"#);
 //! # let pld = URL_SAFE_NO_PAD.encode(br#"{"attest":"A","dest":{"tn":["+12155551213"]},"iat":1443208345,"orig":{"tn":"+12155551212"},"origid":"123e4567-e89b-12d3-a456-426655440000"}"#);

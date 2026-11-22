@@ -4,7 +4,7 @@
 
 #![no_main]
 use libfuzzer_sys::fuzz_target;
-use sip_core::SipUri;
+use siphon_core::SipUri;
 
 fuzz_target!(|data: &[u8]| {
     if data.len() < 3 || data.len() > 1024 {

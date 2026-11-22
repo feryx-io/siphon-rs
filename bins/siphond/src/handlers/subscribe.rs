@@ -11,14 +11,14 @@
 /// 4. Send initial NOTIFY (RFC 3265 §3.1.4)
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::{Request, Response};
-use sip_dialog::{Subscription, SubscriptionState};
-use sip_parse::header;
-use sip_transaction::{
+use siphon_core::{Request, Response};
+use siphon_dialog::{Subscription, SubscriptionState};
+use siphon_parse::header;
+use siphon_transaction::{
     ClientTransactionUser, ServerTransactionHandle, TransactionKey, TransportContext,
 };
-use sip_uac::UserAgentClient;
-use sip_uas::UserAgentServer;
+use siphon_uac::UserAgentClient;
+use siphon_uas::UserAgentServer;
 use std::sync::Arc;
 use tracing::{debug, info, warn};
 
@@ -114,7 +114,7 @@ impl SubscribeHandler {
         };
 
         // Create UAC for generating NOTIFY
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!("Invalid local_uri, cannot send NOTIFY");
@@ -213,10 +213,10 @@ impl RequestHandler for SubscribeHandler {
         // Check if subscriptions are enabled
         if !services.config.enable_subscriptions() {
             warn!(call_id, "SUBSCRIBE rejected: subscriptions not enabled");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
-            let response = sip_core::Response::new(
-                sip_core::StatusLine::new(501, "Not Implemented").expect("valid status line"),
+            let response = siphon_core::Response::new(
+                siphon_core::StatusLine::new(501, "Not Implemented").expect("valid status line"),
                 headers,
                 bytes::Bytes::new(),
             )
@@ -249,10 +249,10 @@ impl RequestHandler for SubscribeHandler {
         // Check if auto-accept is enabled
         if !services.config.features.auto_accept_subscriptions {
             warn!(call_id, "SUBSCRIBE rejected: auto-accept disabled");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
-            let response = sip_core::Response::new(
-                sip_core::StatusLine::new(603, "Decline").expect("valid status line"),
+            let response = siphon_core::Response::new(
+                siphon_core::StatusLine::new(603, "Decline").expect("valid status line"),
                 headers,
                 bytes::Bytes::new(),
             )
@@ -262,7 +262,7 @@ impl RequestHandler for SubscribeHandler {
         }
 
         // Parse local URI from config
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!("Invalid local_uri in config");
@@ -333,7 +333,7 @@ impl RequestHandler for SubscribeHandler {
 }
 
 /// Copy essential headers from request to response
-fn copy_headers(request: &Request, headers: &mut sip_core::Headers) {
+fn copy_headers(request: &Request, headers: &mut siphon_core::Headers) {
     if let Some(via) = header(request.headers(), "Via") {
         let _ = headers.push("Via", via.clone());
     }

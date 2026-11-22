@@ -59,7 +59,7 @@ Converts an E.164 telephone number to an ENUM domain name for DNS lookup.
 
 **Examples:**
 ```rust
-use sip_dns::enum_to_domain;
+use siphon_dns::enum_to_domain;
 
 // Standard E.164 conversion
 let domain = enum_to_domain("+12025332600")?;
@@ -95,8 +95,8 @@ Converts a TelUri to an ENUM domain name. Only works for global (E.164) tel URIs
 
 **Examples:**
 ```rust
-use sip_core::TelUri;
-use sip_dns::tel_uri_to_enum_domain;
+use siphon_core::TelUri;
+use siphon_dns::tel_uri_to_enum_domain;
 
 // Global number - works
 let tel = TelUri::parse("tel:+1-555-123-4567")?;
@@ -125,7 +125,7 @@ Sorts ENUM NAPTR records by priority according to RFC 3824.
 
 **Examples:**
 ```rust
-use sip_dns::{EnumNaptrRecord, sort_enum_records};
+use siphon_dns::{EnumNaptrRecord, sort_enum_records};
 
 let mut records = vec![
     EnumNaptrRecord::new(200, 10, "u", "E2U+sip", "!^.*$!sip:d@example.com!", ""),
@@ -160,7 +160,7 @@ Filters ENUM NAPTR records to return only SIP service records.
 
 **Examples:**
 ```rust
-use sip_dns::{EnumNaptrRecord, filter_sip_records};
+use siphon_dns::{EnumNaptrRecord, filter_sip_records};
 
 let records = vec![
     EnumNaptrRecord::new(100, 10, "u", "E2U+sip", "!^.*$!sip:user@example.com!", ""),
@@ -194,7 +194,7 @@ Selects the best ENUM NAPTR record for SIP by filtering for SIP services, sortin
 
 **Examples:**
 ```rust
-use sip_dns::{EnumNaptrRecord, select_best_sip_record};
+use siphon_dns::{EnumNaptrRecord, select_best_sip_record};
 
 let records = vec![
     EnumNaptrRecord::new(100, 30, "u", "E2U+sip", "!^.*$!sip:c@example.com!", ""),
@@ -231,7 +231,7 @@ Creates a new ENUM NAPTR record.
 
 **Example:**
 ```rust
-use sip_dns::EnumNaptrRecord;
+use siphon_dns::EnumNaptrRecord;
 
 let record = EnumNaptrRecord::new(
     100,
@@ -251,7 +251,7 @@ Returns true if this is a SIP service record (service field is "E2U+sip", case-i
 
 **Example:**
 ```rust
-use sip_dns::EnumNaptrRecord;
+use siphon_dns::EnumNaptrRecord;
 
 let sip_record = EnumNaptrRecord::new(
     100, 10, "u", "E2U+sip", "!^.*$!sip:user@example.com!", ""
@@ -272,7 +272,7 @@ Returns true if this is a terminal rule (flags field contains 'u' or 'U').
 
 **Example:**
 ```rust
-use sip_dns::EnumNaptrRecord;
+use siphon_dns::EnumNaptrRecord;
 
 let record = EnumNaptrRecord::new(
     100, 10, "u", "E2U+sip", "!^.*$!sip:user@example.com!", ""
@@ -300,7 +300,7 @@ This method extracts the replacement part (the consequent/URI), including escape
 
 **Examples:**
 ```rust
-use sip_dns::EnumNaptrRecord;
+use siphon_dns::EnumNaptrRecord;
 
 // Standard regexp with '!' delimiter
 let record = EnumNaptrRecord::new(
@@ -348,7 +348,7 @@ assert_eq!(
 ### Basic ENUM Lookup Flow
 
 ```rust
-use sip_dns::{enum_to_domain, EnumNaptrRecord, select_best_sip_record};
+use siphon_dns::{enum_to_domain, EnumNaptrRecord, select_best_sip_record};
 
 // 1. Convert E.164 number to ENUM domain
 let e164 = "+12025551234";
@@ -376,8 +376,8 @@ let sip_uri = best_record.extract_uri()?;
 ### TelUri Integration
 
 ```rust
-use sip_core::TelUri;
-use sip_dns::tel_uri_to_enum_domain;
+use siphon_core::TelUri;
+use siphon_dns::tel_uri_to_enum_domain;
 
 // Parse tel URI from SIP message
 let tel = TelUri::parse("tel:+1-555-123-4567")?;
@@ -394,7 +394,7 @@ if let Some(domain) = tel_uri_to_enum_domain(&tel) {
 ### Manual Record Processing
 
 ```rust
-use sip_dns::{EnumNaptrRecord, sort_enum_records, filter_sip_records};
+use siphon_dns::{EnumNaptrRecord, sort_enum_records, filter_sip_records};
 
 // Get NAPTR records from DNS
 let mut all_records = vec![
@@ -422,7 +422,7 @@ for record in sorted {
 ### Multi-Service Handling
 
 ```rust
-use sip_dns::{EnumNaptrRecord, sort_enum_records};
+use siphon_dns::{EnumNaptrRecord, sort_enum_records};
 
 let mut records = vec![
     EnumNaptrRecord::new(100, 10, "u", "E2U+sip", "!^.*$!sip:user@example.com!", ""),
@@ -447,9 +447,9 @@ for record in records {
 
 ## Integration with Other Components
 
-### With sip-core TelUri
+### With siphon-core TelUri
 
-The ENUM implementation integrates with the existing TelUri type from sip-core:
+The ENUM implementation integrates with the existing TelUri type from siphon-core:
 
 - TelUri already handles E.164 number parsing and normalization
 - TelUri removes visual separators (hyphens, spaces) from tel URIs
@@ -458,8 +458,8 @@ The ENUM implementation integrates with the existing TelUri type from sip-core:
 
 **Example:**
 ```rust
-use sip_core::TelUri;
-use sip_dns::tel_uri_to_enum_domain;
+use siphon_core::TelUri;
+use siphon_dns::tel_uri_to_enum_domain;
 
 // TelUri normalizes the number
 let tel = TelUri::parse("tel:+1-555-123-4567")?;
@@ -470,9 +470,9 @@ let domain = tel_uri_to_enum_domain(&tel)?;
 assert_eq!(domain, "7.6.5.4.3.2.1.5.5.5.1.e164.arpa");
 ```
 
-### With sip-dns Resolver
+### With siphon-dns Resolver
 
-The ENUM module in sip-dns provides the data structures and conversion logic. Integration with DNS resolution would involve:
+The ENUM module in siphon-dns provides the data structures and conversion logic. Integration with DNS resolution would involve:
 
 1. Use `enum_to_domain()` to convert E.164 number to DNS name
 2. Query DNS for NAPTR records at that domain
@@ -582,13 +582,13 @@ The ENUM implementation includes 13 comprehensive unit tests covering all functi
 
 ```bash
 # Run all ENUM tests
-cargo test --package sip-dns enum
+cargo test --package siphon-dns enum
 
 # Run specific test
-cargo test --package sip-dns converts_e164_to_enum_domain
+cargo test --package siphon-dns converts_e164_to_enum_domain
 
 # Run with output
-cargo test --package sip-dns enum -- --nocapture
+cargo test --package siphon-dns enum -- --nocapture
 ```
 
 ## Limitations and Future Work

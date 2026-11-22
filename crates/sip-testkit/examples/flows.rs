@@ -2,9 +2,9 @@
 // Copyright (C) 2025 James Ferris <ferrous.communications@gmail.com>
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-//! Demonstrates assembling simple SIP call flows with sip-testkit helpers.
-use sip_parse::{serialize_request, serialize_response};
-use sip_testkit::{
+//! Demonstrates assembling simple SIP call flows with siphon-testkit helpers.
+use siphon_parse::{serialize_request, serialize_response};
+use siphon_testkit::{
     build_options, build_refer, build_register, build_response, scenario_invite_prack,
 };
 

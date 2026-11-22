@@ -143,7 +143,7 @@ impl MediaDescription {
 ### Parsing Example
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 let sdp = "\
 v=0\r\n\
@@ -179,7 +179,7 @@ for media in session.media() {
 ### Generation Example
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 let sdp = "\
 v=0\r\n\
@@ -412,7 +412,7 @@ While the current implementation is fully compliant with RFC 3524, potential fut
 Here’s how an application might use SRF groups for RSVP setup:
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 fn setup_rsvp_sessions(sdp: &SdpSession) {
     for group in sdp.groups() {

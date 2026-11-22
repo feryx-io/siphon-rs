@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 //! Demonstrates building SDP offers/answers using MediaProfileBuilder.
-use sip_sdp::profiles::{negotiate_answer, MediaProfileBuilder};
+use siphon_sdp::profiles::{negotiate_answer, MediaProfileBuilder};
 
 fn main() {
     // Build an audio/video offer with default codecs.

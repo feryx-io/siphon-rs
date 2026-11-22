@@ -33,12 +33,12 @@ use rcgen::{
     BasicConstraints, Certificate, CertificateParams, DnType, ExtendedKeyUsagePurpose, IsCa,
     KeyPair, SanType,
 };
-use sip_transport::mtls::{
+use siphon_transport::mtls::{
     build_rustls_client_config, build_rustls_server_config, client_cert_verifier, ClientAuthMode,
     ClientIdentity,
 };
-use sip_transport::pool::TlsPool;
-use sip_transport::{run_tls, InboundPacket, TransportKind};
+use siphon_transport::pool::TlsPool;
+use siphon_transport::{run_tls, InboundPacket, TransportKind};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;

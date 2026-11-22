@@ -49,9 +49,9 @@
 //! # Example: Client Non-INVITE Transaction
 //!
 //! ```rust
-//! use sip_transaction::fsm::{ClientNonInviteFsm, ClientNonInviteEvent, ClientAction};
-//! use sip_transaction::timers::{TransportAwareTimers, Transport};
-//! use sip_core::{Headers, Method, Request, RequestLine, SipUri};
+//! use siphon_transaction::fsm::{ClientNonInviteFsm, ClientNonInviteEvent, ClientAction};
+//! use siphon_transaction::timers::{TransportAwareTimers, Transport};
+//! use siphon_core::{Headers, Method, Request, RequestLine, SipUri};
 //! use bytes::Bytes;
 //!
 //! # fn create_request() -> Request {
@@ -84,9 +84,9 @@
 //! # Example: Server INVITE Transaction
 //!
 //! ```rust
-//! use sip_transaction::fsm::{ServerInviteFsm, ServerInviteEvent, ServerAction};
-//! use sip_transaction::timers::{TransportAwareTimers, Transport};
-//! use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+//! use siphon_transaction::fsm::{ServerInviteFsm, ServerInviteEvent, ServerAction};
+//! use siphon_transaction::timers::{TransportAwareTimers, Transport};
+//! use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
 //! use bytes::Bytes;
 //!
 //! # fn create_request() -> Request {
@@ -283,8 +283,8 @@ use std::collections::VecDeque;
 use std::time::Duration;
 
 use bytes::Bytes;
-use sip_core::{Request, Response};
-use sip_parse::{serialize_request, serialize_response};
+use siphon_core::{Request, Response};
+use siphon_parse::{serialize_request, serialize_response};
 use smol_str::SmolStr;
 use tracing::{debug, warn};
 
@@ -1188,7 +1188,7 @@ impl ServerInviteFsm {
         // 100 Trying is TU responsibility; just remain in Proceeding.
         if self.call_id.is_none() {
             self.requires_100rel = requires_100rel(invite);
-            self.call_id = sip_parse::header(invite.headers(), "Call-ID").cloned();
+            self.call_id = siphon_parse::header(invite.headers(), "Call-ID").cloned();
             self.invite_cseq = invite.headers().get("CSeq").and_then(cseq_number);
         }
         Vec::new()
@@ -1482,7 +1482,7 @@ impl ServerInviteFsm {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sip_core::{
+    use siphon_core::{
         headers::Headers,
         method::Method,
         msg::{RequestLine, StatusLine},

@@ -136,7 +136,7 @@ fn validate_entity_tag(value: &str) -> Result<(), EntityTagError> {
 /// # Example
 ///
 /// ```
-/// use sip_core::SipETagHeader;
+/// use siphon_core::SipETagHeader;
 ///
 /// // Server generates entity-tag
 /// let etag = SipETagHeader::new("dx200xyz").unwrap();
@@ -168,7 +168,7 @@ impl SipETagHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SipETagHeader;
+    /// use siphon_core::SipETagHeader;
     ///
     /// let etag = SipETagHeader::new("dx200xyz").unwrap();
     /// assert_eq!(etag.value(), "dx200xyz");
@@ -195,7 +195,7 @@ impl SipETagHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SipETagHeader;
+    /// use siphon_core::SipETagHeader;
     ///
     /// let etag = SipETagHeader::parse("dx200xyz").unwrap();
     /// assert_eq!(etag.value(), "dx200xyz");
@@ -246,7 +246,7 @@ impl fmt::Display for SipETagHeader {
 /// # Example
 ///
 /// ```
-/// use sip_core::SipIfMatchHeader;
+/// use siphon_core::SipIfMatchHeader;
 ///
 /// // Client wants to refresh publication
 /// let if_match = SipIfMatchHeader::new("dx200xyz").unwrap();
@@ -278,7 +278,7 @@ impl SipIfMatchHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SipIfMatchHeader;
+    /// use siphon_core::SipIfMatchHeader;
     ///
     /// let if_match = SipIfMatchHeader::new("dx200xyz").unwrap();
     /// assert_eq!(if_match.value(), "dx200xyz");
@@ -305,7 +305,7 @@ impl SipIfMatchHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SipIfMatchHeader;
+    /// use siphon_core::SipIfMatchHeader;
     ///
     /// let if_match = SipIfMatchHeader::parse("dx200xyz").unwrap();
     /// assert_eq!(if_match.value(), "dx200xyz");

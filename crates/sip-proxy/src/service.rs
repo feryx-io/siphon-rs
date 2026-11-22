@@ -9,7 +9,7 @@ use crate::{
     ProxyHelpers,
 };
 use anyhow::{anyhow, Result};
-use sip_core::{is_valid_branch, Method, Request, RequestLine, SipUri};
+use siphon_core::{is_valid_branch, Method, Request, RequestLine, SipUri};
 use smol_str::SmolStr;
 use std::sync::Arc;
 use tokio::sync::mpsc;
@@ -44,17 +44,17 @@ impl ProxyActions {
 
 /// Response to forward upstream.
 pub struct ResponseAction {
-    response: sip_core::Response,
+    response: siphon_core::Response,
 }
 
 impl ResponseAction {
     /// Returns a reference to the response.
-    pub fn response(&self) -> &sip_core::Response {
+    pub fn response(&self) -> &siphon_core::Response {
         &self.response
     }
 
     /// Consumes self and returns the response.
-    pub fn into_response(self) -> sip_core::Response {
+    pub fn into_response(self) -> siphon_core::Response {
         self.response
     }
 }
@@ -94,7 +94,7 @@ impl ProxyService {
         fork_mode: ForkMode,
     ) -> Result<(
         Arc<ProxyContext>,
-        mpsc::UnboundedReceiver<sip_core::Response>,
+        mpsc::UnboundedReceiver<siphon_core::Response>,
         Vec<(SmolStr, Request)>,
     )> {
         use crate::stateful::ProxyError;
@@ -174,7 +174,7 @@ impl ProxyService {
         &self,
         context: &Arc<ProxyContext>,
         branch_id: &str,
-        response: sip_core::Response,
+        response: siphon_core::Response,
     ) -> ProxyActions {
         let forward = context.process_response(branch_id, response).await;
 

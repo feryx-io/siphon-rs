@@ -9,8 +9,8 @@
 /// 2. Send a REGISTER request
 /// 3. Handle a 401 Unauthorized challenge
 /// 4. Retry with authentication
-use sip_core::SipUri;
-use sip_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== UAC REGISTER with Authentication Example ===\n");

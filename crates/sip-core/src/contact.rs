@@ -41,7 +41,7 @@ impl ContactHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{ContactHeader, NameAddr, SipUri, Uri, FeatureTag};
+    /// use siphon_core::{ContactHeader, NameAddr, SipUri, Uri, FeatureTag};
     /// use std::collections::BTreeMap;
     /// use smol_str::SmolStr;
     ///

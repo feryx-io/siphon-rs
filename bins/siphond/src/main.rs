@@ -29,9 +29,9 @@ mod transport;
 use config::{AuthConfig, DaemonConfig, DaemonMode, FeatureFlags, RegistrarConfig, SdpProfile};
 use dispatcher::RequestDispatcher;
 use services::ServiceRegistry;
-use sip_observe::{set_transport_metrics, TracingTransportMetrics};
-use sip_transaction::TransactionManager;
-use sip_transport::InboundPacket;
+use siphon_observe::{set_transport_metrics, TracingTransportMetrics};
+use siphon_transaction::TransactionManager;
+use siphon_transport::InboundPacket;
 use transport::start_transports;
 
 /// SIP testing daemon - Swiss Army knife for SIP protocol testing
@@ -260,21 +260,21 @@ async fn main() -> Result<()> {
     // Transport-level per-source ingress rate limits. These are settable
     // only once, so configure them now — before any transport starts.
     let udp_rate = if args.udp_rate_limit == 0 {
-        sip_transport::RateLimitConfig::disabled()
+        siphon_transport::RateLimitConfig::disabled()
     } else {
-        sip_transport::RateLimitConfig::new(args.udp_rate_limit, 1)
+        siphon_transport::RateLimitConfig::new(args.udp_rate_limit, 1)
             .map_err(|e| anyhow::anyhow!("invalid --udp-rate-limit: {e}"))?
     };
-    if !sip_transport::set_udp_rate_limit(udp_rate) {
+    if !siphon_transport::set_udp_rate_limit(udp_rate) {
         tracing::warn!("UDP ingress rate limit already configured");
     }
     let stream_rate = if args.stream_rate_limit == 0 {
-        sip_transport::RateLimitConfig::disabled()
+        siphon_transport::RateLimitConfig::disabled()
     } else {
-        sip_transport::RateLimitConfig::new(args.stream_rate_limit, 1)
+        siphon_transport::RateLimitConfig::new(args.stream_rate_limit, 1)
             .map_err(|e| anyhow::anyhow!("invalid --stream-rate-limit: {e}"))?
     };
-    if !sip_transport::set_stream_rate_limit(stream_rate) {
+    if !siphon_transport::set_stream_rate_limit(stream_rate) {
         tracing::warn!("stream ingress rate limit already configured");
     }
 
@@ -433,10 +433,10 @@ async fn main() -> Result<()> {
             let mut rx = session_mgr.subscribe().await;
             while let Some(event) = rx.recv().await {
                 match event {
-                    sip_dialog::session_timer_manager::SessionTimerEvent::RefreshNeeded(id) => {
+                    siphon_dialog::session_timer_manager::SessionTimerEvent::RefreshNeeded(id) => {
                         tracing::info!(call_id = %id.call_id(), "Session refresh needed");
                     }
-                    sip_dialog::session_timer_manager::SessionTimerEvent::SessionExpired(id) => {
+                    siphon_dialog::session_timer_manager::SessionTimerEvent::SessionExpired(id) => {
                         tracing::warn!(call_id = %id.call_id(), "Session expired - removing dialog");
                         dialog_mgr.remove(&id);
                     }
@@ -507,10 +507,10 @@ async fn main() -> Result<()> {
 /// from the 200 OK response. Preserves any SDP body from caller's ACK (late offer).
 async fn create_b2bua_ack(
     call_leg: &crate::b2bua_state::CallLegPair,
-    caller_ack: &sip_core::Request,
-) -> sip_core::Request {
-    use sip_core::{Headers, Method, Request, RequestLine};
-    use sip_transaction::generate_branch_id;
+    caller_ack: &siphon_core::Request,
+) -> siphon_core::Request {
+    use siphon_core::{Headers, Method, Request, RequestLine};
+    use siphon_transaction::generate_branch_id;
     use smol_str::SmolStr;
 
     let mut headers = Headers::new();
@@ -591,26 +591,28 @@ async fn handle_packet(
     services: &Arc<ServiceRegistry>,
     packet: InboundPacket,
 ) {
-    use sip_core::Method;
-    use sip_core::SipUri;
-    use sip_parse::{header, parse_request, parse_response};
-    use sip_transaction::{branch_from_via, request_branch_id, TransactionKey, TransportContext};
+    use siphon_core::Method;
+    use siphon_core::SipUri;
+    use siphon_parse::{header, parse_request, parse_response};
+    use siphon_transaction::{
+        branch_from_via, request_branch_id, TransactionKey, TransportContext,
+    };
 
     // Try parsing as a request
     if let Some(req) = parse_request(packet.payload()) {
         let ws_override = if matches!(
             packet.transport(),
-            sip_transport::TransportKind::Ws | sip_transport::TransportKind::Wss
+            siphon_transport::TransportKind::Ws | siphon_transport::TransportKind::Wss
         ) {
             header(req.headers(), "Route").and_then(|route| {
                 let raw = route.trim_matches('<').trim_matches('>');
                 SipUri::parse(raw).ok().map(|uri| {
-                    let scheme = if matches!(packet.transport(), sip_transport::TransportKind::Wss)
-                    {
-                        "wss"
-                    } else {
-                        "ws"
-                    };
+                    let scheme =
+                        if matches!(packet.transport(), siphon_transport::TransportKind::Wss) {
+                            "wss"
+                        } else {
+                            "ws"
+                        };
                     let port = uri.port().unwrap_or(80);
                     format!("{}://{}:{}", scheme, uri.host(), port)
                 })
@@ -681,7 +683,7 @@ async fn handle_packet(
                         // As the INVITE went: over the transport the callee
                         // registered with.
                         if let Ok(addr) = callee_addr.parse::<std::net::SocketAddr>() {
-                            let payload = sip_parse::serialize_request(&callee_ack);
+                            let payload = siphon_parse::serialize_request(&callee_ack);
                             if let Err(e) = proxy_utils::send_to_contact(
                                 services,
                                 &call_leg.callee_contact,
@@ -803,14 +805,14 @@ async fn handle_packet(
                         }
 
                         let mut forwarded = response.clone();
-                        sip_proxy::ProxyHelpers::remove_top_via(forwarded.headers_mut());
+                        siphon_proxy::ProxyHelpers::remove_top_via(forwarded.headers_mut());
 
-                        let payload = sip_parse::serialize_response(&forwarded);
+                        let payload = siphon_parse::serialize_response(&forwarded);
 
                         match tx.sender_transport {
-                            sip_transaction::TransportKind::Tcp => {
+                            siphon_transaction::TransportKind::Tcp => {
                                 if let Err(e) =
-                                    sip_transport::send_tcp(&tx.sender_addr, &payload).await
+                                    siphon_transport::send_tcp(&tx.sender_addr, &payload).await
                                 {
                                     tracing::warn!(
                                         error = %e,
@@ -818,12 +820,12 @@ async fn handle_packet(
                                     );
                                 }
                             }
-                            sip_transaction::TransportKind::Ws
-                            | sip_transaction::TransportKind::Wss => {
+                            siphon_transaction::TransportKind::Ws
+                            | siphon_transaction::TransportKind::Wss => {
                                 #[cfg(feature = "ws")]
                                 {
                                     let scheme = if tx.sender_transport
-                                        == sip_transaction::TransportKind::Wss
+                                        == siphon_transaction::TransportKind::Wss
                                     {
                                         "wss"
                                     } else {
@@ -839,9 +841,9 @@ async fn handle_packet(
                                     });
                                     let data = bytes::Bytes::from(payload.to_vec());
                                     let result = if scheme == "wss" {
-                                        sip_transport::send_wss(&ws_url, data).await
+                                        siphon_transport::send_wss(&ws_url, data).await
                                     } else {
-                                        sip_transport::send_ws(&ws_url, data).await
+                                        siphon_transport::send_ws(&ws_url, data).await
                                     };
                                     if let Err(e) = result {
                                         tracing::warn!(
@@ -852,9 +854,9 @@ async fn handle_packet(
                                     }
                                 }
                             }
-                            sip_transaction::TransportKind::Udp => {
+                            siphon_transaction::TransportKind::Udp => {
                                 if let Some(socket) = services.udp_socket.get() {
-                                    if let Err(e) = sip_transport::send_udp(
+                                    if let Err(e) = siphon_transport::send_udp(
                                         socket.as_ref(),
                                         &tx.sender_addr,
                                         &payload,
@@ -872,10 +874,10 @@ async fn handle_packet(
                                     );
                                 }
                             }
-                            sip_transaction::TransportKind::Tls => {
+                            siphon_transaction::TransportKind::Tls => {
                                 if let Some(writer) = &tx.sender_stream {
-                                    if let Err(e) = sip_transport::send_stream(
-                                        sip_transport::TransportKind::Tls,
+                                    if let Err(e) = siphon_transport::send_stream(
+                                        siphon_transport::TransportKind::Tls,
                                         writer,
                                         bytes::Bytes::from(payload.to_vec()),
                                     )
@@ -939,15 +941,15 @@ fn is_keepalive(payload: &[u8]) -> bool {
     matches!(payload, b"\r\n" | b"\r\n\r\n")
 }
 
-fn map_transport(kind: sip_transport::TransportKind) -> sip_transaction::TransportKind {
+fn map_transport(kind: siphon_transport::TransportKind) -> siphon_transaction::TransportKind {
     match kind {
-        sip_transport::TransportKind::Udp => sip_transaction::TransportKind::Udp,
-        sip_transport::TransportKind::Tcp => sip_transaction::TransportKind::Tcp,
-        sip_transport::TransportKind::Tls => sip_transaction::TransportKind::Tls,
-        sip_transport::TransportKind::Sctp => sip_transaction::TransportKind::Sctp,
-        sip_transport::TransportKind::TlsSctp => sip_transaction::TransportKind::TlsSctp,
-        sip_transport::TransportKind::Ws => sip_transaction::TransportKind::Ws,
-        sip_transport::TransportKind::Wss => sip_transaction::TransportKind::Wss,
+        siphon_transport::TransportKind::Udp => siphon_transaction::TransportKind::Udp,
+        siphon_transport::TransportKind::Tcp => siphon_transaction::TransportKind::Tcp,
+        siphon_transport::TransportKind::Tls => siphon_transaction::TransportKind::Tls,
+        siphon_transport::TransportKind::Sctp => siphon_transaction::TransportKind::Sctp,
+        siphon_transport::TransportKind::TlsSctp => siphon_transaction::TransportKind::TlsSctp,
+        siphon_transport::TransportKind::Ws => siphon_transaction::TransportKind::Ws,
+        siphon_transport::TransportKind::Wss => siphon_transaction::TransportKind::Wss,
     }
 }
 

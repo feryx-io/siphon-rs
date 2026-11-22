@@ -6,7 +6,7 @@
 //! `Call-ID`. Avoids re-parsing the whole SIP message at the
 //! transport layer when all we want is the correlation key.
 //!
-//! Why not delegate to `sip-parse`? Because parse-then-discard the
+//! Why not delegate to `siphon-parse`? Because parse-then-discard the
 //! rest is wasted work — at the hook site we already have the raw
 //! bytes and just want one header. The scan is O(payload) but bails
 //! at the first match.

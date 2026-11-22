@@ -5,9 +5,9 @@
 use std::collections::BTreeMap;
 
 use bytes::Bytes;
-use sip_core::geolocation::{GeolocationError, MAX_GEO_VALUES};
-use sip_core::history_info::{HistoryInfoError, MAX_ENTRIES as MAX_HISTORY_ENTRIES};
-use sip_core::{
+use siphon_core::geolocation::{GeolocationError, MAX_GEO_VALUES};
+use siphon_core::history_info::{HistoryInfoError, MAX_ENTRIES as MAX_HISTORY_ENTRIES};
+use siphon_core::{
     p_headers::PHeaderError,
     service_route::{RouteError, MAX_ROUTES},
     AllowHeader, AuthorizationHeader, ContactHeader, DateHeader, EventHeader, FromHeader,
@@ -161,12 +161,12 @@ pub fn parse_rack_header(value: &SmolStr) -> Option<RAckHeader> {
 }
 
 pub fn parse_session_expires(value: &SmolStr) -> Option<SessionExpires> {
-    // Use the validated parser from sip-core which checks ranges and control characters
+    // Use the validated parser from siphon-core which checks ranges and control characters
     SessionExpires::parse(value.as_str())
 }
 
 pub fn parse_min_se(value: &SmolStr) -> Option<MinSessionExpires> {
-    // Use the validated parser from sip-core which checks ranges and control characters
+    // Use the validated parser from siphon-core which checks ranges and control characters
     MinSessionExpires::parse(value.as_str())
 }
 
@@ -253,7 +253,7 @@ pub fn parse_history_info(headers: &Headers) -> Result<HistoryInfoHeader, Histor
 }
 
 pub fn parse_reason_header(value: &SmolStr) -> Option<ReasonHeader> {
-    sip_core::reason::parse_reason_from_string(value.as_str()).ok()
+    siphon_core::reason::parse_reason_from_string(value.as_str()).ok()
 }
 
 pub fn parse_sip_etag(value: &SmolStr) -> Option<SipETagHeader> {
@@ -414,13 +414,13 @@ fn parse_name_addr_list<'a>(
 pub fn parse_p_asserted_identity(
     headers: &Headers,
 ) -> Result<Option<PAssertedIdentityHeader>, PHeaderError> {
-    sip_core::parse_p_asserted_identity(headers)
+    siphon_core::parse_p_asserted_identity(headers)
 }
 
 pub fn parse_p_preferred_identity(
     headers: &Headers,
 ) -> Result<Option<PPreferredIdentityHeader>, PHeaderError> {
-    sip_core::parse_p_preferred_identity(headers)
+    siphon_core::parse_p_preferred_identity(headers)
 }
 
 fn parse_name_addr(value: &SmolStr) -> Option<NameAddr> {

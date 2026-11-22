@@ -10,7 +10,7 @@
 use std::sync::{Arc, Mutex};
 
 use hep_rs::{HepPacket, HepProtocol, HepSink, IpProto};
-use sip_hep::{Direction, SipHepEmitter};
+use siphon_hep::{Direction, SipHepEmitter};
 
 #[derive(Default)]
 struct CapturingSink {
@@ -33,7 +33,7 @@ fn emits_a_well_formed_sip_packet_with_correlation_id() {
     let src = "10.0.0.1:5060".parse().unwrap();
     let dst = "10.0.0.2:5060".parse().unwrap();
 
-    let corr = sip_hep::extract_call_id(payload);
+    let corr = siphon_hep::extract_call_id(payload);
     emitter.emit_sip(Direction::Inbound, IpProto::Udp, src, dst, payload, corr);
 
     let captured = sink.received.lock().unwrap();
@@ -72,7 +72,7 @@ fn oversized_payload_is_truncated_not_dropped() {
 #[test]
 fn set_emitter_is_idempotent() {
     // The second `set_emitter` call must not replace the first — we
-    // mirror sip-observe's contract here. Note: this test depends on
+    // mirror siphon-observe's contract here. Note: this test depends on
     // module-level OnceCell state; the rest of the test binary must
     // not race the install. We run it isolated by being the only
     // `set_emitter` user across this binary's tests (the emitter is
@@ -80,12 +80,15 @@ fn set_emitter_is_idempotent() {
     // direct, bypassing the global).
     let sink = Arc::new(CapturingSink::default());
     let first = Arc::new(SipHepEmitter::new(sink.clone() as Arc<dyn HepSink>, 1));
-    assert!(sip_hep::set_emitter(first), "first install succeeds");
+    assert!(siphon_hep::set_emitter(first), "first install succeeds");
 
     let second = Arc::new(SipHepEmitter::new(sink as Arc<dyn HepSink>, 2));
-    assert!(!sip_hep::set_emitter(second), "second install is rejected");
+    assert!(
+        !siphon_hep::set_emitter(second),
+        "second install is rejected"
+    );
 
-    let installed = sip_hep::sip_hep().expect("installed");
+    let installed = siphon_hep::sip_hep().expect("installed");
     // The capture_id should be the first one we installed, not the
     // second — confirms `set` semantics.
     let pkt_sink = Arc::new(CapturingSink::default());

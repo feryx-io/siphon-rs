@@ -4,7 +4,7 @@
 
 #![no_main]
 use libfuzzer_sys::fuzz_target;
-use sip_parse::parse_via_header;
+use siphon_parse::parse_via_header;
 use smol_str::SmolStr;
 
 fuzz_target!(|data: &[u8]| {

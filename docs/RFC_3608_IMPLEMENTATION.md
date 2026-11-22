@@ -200,8 +200,8 @@ pub fn process_register_response(&mut self, register_response: &Response)
 
 **Example:**
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::{SipUri, Response};
+use siphon_uac::UserAgentClient;
+use siphon_core::{SipUri, Response};
 
 let mut uac = UserAgentClient::new(
     SipUri::parse("sip:alice@example.com")?,
@@ -272,9 +272,9 @@ transport.send(&invite).await?;
 ### Basic Registration with Service-Route
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
-use sip_transport::TransportLayer;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_transport::TransportLayer;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -320,8 +320,8 @@ Content-Length: 0
 ### Making Calls with Service-Route
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 async fn make_call_with_service_route(
     uac: &UserAgentClient,
@@ -436,7 +436,7 @@ let register = uac.create_register(&registrar, 7200);
 let response = transport.send_and_wait(&register).await?;
 
 // Registrar returns Service-Route for corporate proxy
-// Service-Route: <sip:sip-proxy.corp.example.com;lr;transport=tls>
+// Service-Route: <sip:siphon-proxy.corp.example.com;lr;transport=tls>
 uac.process_register_response(&response);
 
 // Outgoing calls route through corporate proxy for:
@@ -523,7 +523,7 @@ RFC 3608 Section 6.1:
 
 **Our Implementation:**
 ```rust
-use sip_core::{Header, Headers};
+use siphon_core::{Header, Headers};
 
 let mut new_headers = Vec::with_capacity(request.headers().len());
 let mut inserted = false;
@@ -565,9 +565,9 @@ Registrars determine Service-Route based on local policy:
 ### Complete Registration Flow
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
-use sip_transport::TransportLayer;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_transport::TransportLayer;
 
 async fn register_and_make_call(
     transport: &TransportLayer,
@@ -614,8 +614,8 @@ async fn register_and_make_call(
 ### Service-Route with MESSAGE
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 async fn send_instant_message_via_service_route(
     uac: &UserAgentClient,
@@ -694,14 +694,14 @@ Service-Route tests include:
 ### Running Tests
 
 ```bash
-# Run all sip-uac tests
-cargo test --package sip-uac
+# Run all siphon-uac tests
+cargo test --package siphon-uac
 
 # Run only Service-Route tests
-cargo test --package sip-uac service_route
+cargo test --package siphon-uac service_route
 
 # Run specific test
-cargo test --package sip-uac processes_service_route_from_register_response
+cargo test --package siphon-uac processes_service_route_from_register_response
 ```
 
 ---

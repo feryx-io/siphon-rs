@@ -52,7 +52,7 @@ impl std::error::Error for PrivacyError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::PrivacyValue;
+/// use siphon_core::PrivacyValue;
 ///
 /// let priv_val = PrivacyValue::Id;
 /// assert_eq!(priv_val.as_str(), "id");
@@ -136,7 +136,7 @@ impl fmt::Display for PrivacyValue {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{PrivacyHeader, PrivacyValue};
+/// use siphon_core::{PrivacyHeader, PrivacyValue};
 ///
 /// let header = PrivacyHeader::new(vec![PrivacyValue::Id, PrivacyValue::Critical]).unwrap();
 /// assert_eq!(header.to_string(), "id; critical");
@@ -238,7 +238,7 @@ impl PrivacyHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{PrivacyHeader, PrivacyValue};
+    /// use siphon_core::{PrivacyHeader, PrivacyValue};
     ///
     /// let header = PrivacyHeader::parse("id; critical").unwrap();
     /// assert_eq!(header.len(), 2);
@@ -286,7 +286,7 @@ impl fmt::Display for PrivacyHeader {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Headers, parse_privacy_header, PrivacyValue};
+/// use siphon_core::{Headers, parse_privacy_header, PrivacyValue};
 /// use smol_str::SmolStr;
 ///
 /// let mut headers = Headers::new();
@@ -341,7 +341,7 @@ const REMOVABLE_HEADERS: &[&str] = &[
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Headers, PrivacyHeader, PrivacyValue, enforce_privacy};
+/// use siphon_core::{Headers, PrivacyHeader, PrivacyValue, enforce_privacy};
 /// use smol_str::SmolStr;
 ///
 /// let mut headers = Headers::new();
@@ -488,7 +488,7 @@ fn split_header_params(value: &str) -> (&str, &str) {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Headers, requires_privacy_enforcement};
+/// use siphon_core::{Headers, requires_privacy_enforcement};
 /// use smol_str::SmolStr;
 ///
 /// let mut headers = Headers::new();

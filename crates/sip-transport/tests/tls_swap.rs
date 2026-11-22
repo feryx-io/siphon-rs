@@ -29,7 +29,7 @@ use std::time::Duration;
 
 use arc_swap::ArcSwap;
 use rcgen::{CertificateParams, KeyPair};
-use sip_transport::{run_tls_with_swappable_config, InboundPacket};
+use siphon_transport::{run_tls_with_swappable_config, InboundPacket};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;
