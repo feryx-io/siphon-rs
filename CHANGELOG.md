@@ -22,6 +22,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   non-existent `docs.rs/siphon-rs` is gone, so each crate links to its own
   docs.rs page.
 
+## [2026-11-22] — workspace release
+
+Crate versions in this release: sip-transport 0.7.2. (Every other crate is
+unchanged.)
+
+No breaking changes.
+
+### Fixed
+
+- **sip-transport 0.7.2**: no span guard is held across an await. The UDP
+  receive loop entered its `udp_packet` span and then awaited the send to the
+  dispatcher, and the TCP and TLS session tasks held theirs for the whole
+  session. A task that resumed on another thread dropped the guard there,
+  which corrupted the tracing subscriber's span stack: FCP's call manager
+  aborted with "tried to clone a span that already closed" (FCP #355). The
+  UDP loop now leaves the span before the send, and the sessions'
+  futures carry their spans with `Instrument`.
+
 ## [2026-11-21] — workspace release
 
 Crate versions in this release: every crate is unchanged.

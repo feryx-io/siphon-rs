@@ -121,7 +121,7 @@ branches:
 siphon-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "vYYYY.MM.DD" }
 ```
 
-Tags up to and including `v2026.11.21` carry the old package names
+Tags up to and including `v2026.11.22` carry the old package names
 (`sip-core`, `sip-uac`, …); the `siphon-` names start with the first tag after
 it. A consumer that wants to keep `use sip_uac::…` in its code can alias:
 
