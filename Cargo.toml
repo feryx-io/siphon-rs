@@ -61,6 +61,6 @@ siphon-observe = { path = "crates/sip-observe", version = "0.3.0" }
 siphon-hep = { path = "crates/sip-hep", version = "0.1.0" }
 siphon-ratelimit = { path = "crates/sip-ratelimit", version = "0.3.0" }
 
-# hep-rs lives in its own repo. Git for workspace builds; the version is what
-# the published crates require, so hep-rs must be on crates.io before they are.
-hep-rs = { git = "https://github.com/feryx-io/hep-rs", branch = "main", version = "0.1" }
+# hep-rs lives in its own repo (github.com/feryx-io/hep-rs) and is taken from
+# crates.io.
+hep-rs = "0.1"

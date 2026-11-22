@@ -14,9 +14,8 @@ bytes.workspace     = true
 tracing.workspace   = true
 once_cell.workspace = true
 
-# The hep-rs crate lives in its own repo (github.com/feryx-io/hep-rs).
-# Git-pinned for the dev cycle; will move to a crates.io version once
-# hep-rs publishes a stable release.
+# The hep-rs crate lives in its own repo (github.com/feryx-io/hep-rs); the
+# version is set in the workspace root.
 hep-rs = { workspace = true }
 
 [dev-dependencies]
