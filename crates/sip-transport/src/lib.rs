@@ -72,7 +72,7 @@ use std::time::Instant;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream, UdpSocket};
 use tokio::sync::mpsc;
-use tracing::{error, info, warn};
+use tracing::{error, info, warn, Instrument};
 #[cfg(feature = "ws")]
 use {
     futures_util::{SinkExt, StreamExt},
@@ -630,7 +630,7 @@ pub async fn run_udp(socket: Arc<UdpSocket>, tx: mpsc::Sender<InboundPacket>) ->
 
                 transport_metrics().on_latency(TransportLabel::Udp, OpLabel::Recv, 0);
                 let span = span_with_transport("udp_packet", TransportLabel::Udp);
-                let _entered = span.enter();
+                let entered = span.enter();
                 let payload = Bytes::copy_from_slice(&buf[..n]);
                 if n == buf.len() {
                     transport_metrics().on_error(TransportLabel::Udp, StageLabel::Truncate);
@@ -660,6 +660,9 @@ pub async fn run_udp(socket: Arc<UdpSocket>, tx: mpsc::Sender<InboundPacket>) ->
                         corr,
                     );
                 }
+                // Out of the span before the send's await: a guard held
+                // across it may be dropped on another thread (FCP #355).
+                drop(entered);
                 let packet = InboundPacket {
                     transport: TransportKind::Udp,
                     peer,
@@ -811,29 +814,36 @@ pub async fn serve_tcp(listener: TcpListener, tx: mpsc::Sender<InboundPacket>) -
         };
         let tx = tx.clone();
         let per_ip_clone = per_ip.clone();
-        tokio::spawn(async move {
-            let _permit = permit;
-            let span = span_with_transport("tcp_session", TransportLabel::Tcp);
-            let _entered = span.enter();
-            spawn_stream_session(
-                peer,
-                local_addr,
-                stream,
-                TransportKind::Tcp,
-                tx,
-                "tcp read error",
-                "tcp write error",
-            )
-            .await;
-            // Decrement per-IP counter when session ends
-            if let Some(mut count) = per_ip_clone.get_mut(&ip) {
-                *count = count.saturating_sub(1);
-                if *count == 0 {
-                    drop(count);
-                    per_ip_clone.remove(&ip);
+        // The session's span is its future's (`Instrument`): a guard
+        // entered here and held across the session's awaits is dropped on
+        // whichever thread the task ends on, which corrupts the
+        // subscriber's span stack ("tried to clone a span that already
+        // closed" crashed a call manager, FCP #355).
+        let span = span_with_transport("tcp_session", TransportLabel::Tcp);
+        tokio::spawn(
+            async move {
+                let _permit = permit;
+                spawn_stream_session(
+                    peer,
+                    local_addr,
+                    stream,
+                    TransportKind::Tcp,
+                    tx,
+                    "tcp read error",
+                    "tcp write error",
+                )
+                .await;
+                // Decrement per-IP counter when session ends
+                if let Some(mut count) = per_ip_clone.get_mut(&ip) {
+                    *count = count.saturating_sub(1);
+                    if *count == 0 {
+                        drop(count);
+                        per_ip_clone.remove(&ip);
+                    }
                 }
             }
-        });
+            .instrument(span),
+        );
     }
 }
 
@@ -1543,39 +1553,46 @@ pub async fn run_tls_with_swappable_config(
         // handshook with.
         let acceptor = TlsAcceptor::from(swappable.load_full());
         let per_ip_clone = per_ip.clone();
-        tokio::spawn(async move {
-            let _permit = permit;
-            let span = span_with_transport("tls_session", TransportLabel::Tls);
-            let _entered = span.enter();
-            let tls_stream = match acceptor.accept(stream).await {
-                Ok(s) => s,
-                Err(e) => {
-                    error!(%e, "tls handshake error");
-                    transport_metrics().on_error(TransportLabel::Tls, StageLabel::Handshake);
-                    // Decrement per-IP counter on early return
-                    if let Some(mut count) = per_ip_clone.get_mut(&ip) {
-                        *count = count.saturating_sub(1);
-                        if *count == 0 {
-                            drop(count);
-                            per_ip_clone.remove(&ip);
+        // The session's span is its future's (`Instrument`): a guard
+        // entered here and held across the session's awaits is dropped on
+        // whichever thread the task ends on, which corrupts the
+        // subscriber's span stack ("tried to clone a span that already
+        // closed" crashed a call manager, FCP #355).
+        let span = span_with_transport("tls_session", TransportLabel::Tls);
+        tokio::spawn(
+            async move {
+                let _permit = permit;
+                let tls_stream = match acceptor.accept(stream).await {
+                    Ok(s) => s,
+                    Err(e) => {
+                        error!(%e, "tls handshake error");
+                        transport_metrics().on_error(TransportLabel::Tls, StageLabel::Handshake);
+                        // Decrement per-IP counter on early return
+                        if let Some(mut count) = per_ip_clone.get_mut(&ip) {
+                            *count = count.saturating_sub(1);
+                            if *count == 0 {
+                                drop(count);
+                                per_ip_clone.remove(&ip);
+                            }
                         }
+                        return;
                     }
-                    return;
-                }
-            };
-            transport_metrics().on_connect(TransportLabel::Tls);
+                };
+                transport_metrics().on_connect(TransportLabel::Tls);
 
-            // Use TLS-specific session handler with proper shutdown support
-            spawn_tls_session(peer, local_addr, tls_stream, tx).await;
-            // Decrement per-IP counter when session ends
-            if let Some(mut count) = per_ip_clone.get_mut(&ip) {
-                *count = count.saturating_sub(1);
-                if *count == 0 {
-                    drop(count);
-                    per_ip_clone.remove(&ip);
+                // Use TLS-specific session handler with proper shutdown support
+                spawn_tls_session(peer, local_addr, tls_stream, tx).await;
+                // Decrement per-IP counter when session ends
+                if let Some(mut count) = per_ip_clone.get_mut(&ip) {
+                    *count = count.saturating_sub(1);
+                    if *count == 0 {
+                        drop(count);
+                        per_ip_clone.remove(&ip);
+                    }
                 }
             }
-        });
+            .instrument(span),
+        );
     }
 }
 
