@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **siphon-hep 0.1.0** (was 0.0.1), with no code change: a `0.0.x`
   requirement matches only that exact version, so dependents on crates.io
   could not have picked up a patch release.
+- Every published package now carries `LICENSE-MIT` and `LICENSE-APACHE`
+  (symlinks to the root files, which cargo packages as regular files), and
+  `siphon-hep` ships the README. Neither was in the packages before.
 
 ## [2026-11-22] — workspace release
 
