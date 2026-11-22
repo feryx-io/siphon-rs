@@ -1,7 +1,8 @@
 [package]
 name = "siphon-hep"
-version = "0.0.1"
+version = "0.1.0"
 description = "HEP3 (Homer) emission glue for siphon-rs — ships parsed/serialized SIP messages to a HepSink."
+readme = "../../README.md"
 edition.workspace = true
 license.workspace = true
 authors.workspace = true

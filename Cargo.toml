@@ -58,7 +58,7 @@ siphon-uas = { path = "crates/sip-uas", version = "0.5.2" }
 siphon-uac = { path = "crates/sip-uac", version = "0.9.6" }
 siphon-sdp = { path = "crates/sip-sdp", version = "0.3.2" }
 siphon-observe = { path = "crates/sip-observe", version = "0.3.0" }
-siphon-hep = { path = "crates/sip-hep", version = "0.0.1" }
+siphon-hep = { path = "crates/sip-hep", version = "0.1.0" }
 siphon-ratelimit = { path = "crates/sip-ratelimit", version = "0.3.0" }
 
 # hep-rs lives in its own repo. Git for workspace builds; the version is what
