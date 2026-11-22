@@ -19,7 +19,7 @@
 /// # Examples
 ///
 /// ```
-/// use sip_core::{FeatureTag, FeatureValue, Capability};
+/// use siphon_core::{FeatureTag, FeatureValue, Capability};
 ///
 /// // Create audio capability
 /// let audio = Capability::new(FeatureTag::Audio, FeatureValue::Boolean(true)).unwrap();

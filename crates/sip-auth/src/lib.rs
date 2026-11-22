@@ -15,8 +15,8 @@
 //! # Examples
 //!
 //! ```no_run
-//! # use sip_auth::*;
-//! # use sip_core::Request;
+//! # use siphon_auth::*;
+//! # use siphon_core::Request;
 //! // Server-side authentication
 //! let store = MemoryCredentialStore::new();
 //! let auth = DigestAuthenticator::new("example.com", store);
@@ -37,9 +37,9 @@ use bytes::Bytes;
 use dashmap::DashMap;
 use rand::{distr::Alphanumeric, RngExt};
 use sha2::{Digest, Sha256, Sha512};
-use sip_core::{Headers, Method, Request, Response, StatusLine};
-use sip_parse::parse_authorization_header;
-use sip_ratelimit::RateLimiter;
+use siphon_core::{Headers, Method, Request, Response, StatusLine};
+use siphon_parse::parse_authorization_header;
+use siphon_ratelimit::RateLimiter;
 use smol_str::SmolStr;
 use std::fmt::Write;
 use std::sync::Arc;
@@ -1164,8 +1164,8 @@ impl<S> DigestAuthenticator<S> {
     /// # Example
     ///
     /// ```
-    /// use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
-    /// use sip_ratelimit::{RateLimiter, RateLimitConfig};
+    /// use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
+    /// use siphon_ratelimit::{RateLimiter, RateLimitConfig};
     ///
     /// let store = MemoryCredentialStore::new();
     /// let config = RateLimitConfig::auth_preset(); // 10 attempts per 5 minutes
@@ -1941,7 +1941,7 @@ impl DigestClient {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, RequestLine, SipUri};
+    use siphon_core::{Headers, RequestLine, SipUri};
 
     #[test]
     fn digest_algorithm_from_str() {

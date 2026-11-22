@@ -10,7 +10,7 @@
 
 use std::time::Duration;
 
-use sip_transport::{bind_tcp, serve_tcp, InboundPacket};
+use siphon_transport::{bind_tcp, serve_tcp, InboundPacket};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;

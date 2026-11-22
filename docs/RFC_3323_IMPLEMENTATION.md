@@ -128,8 +128,8 @@ pub fn add_privacy_header(
 **Example:**
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 use smol_str::SmolStr;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
@@ -159,8 +159,8 @@ pub fn with_privacy(
 **Example:**
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 use smol_str::SmolStr;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
@@ -202,7 +202,7 @@ pub fn enforce_privacy(
 **Example:**
 
 ```rust
-use sip_core::{Headers, PrivacyHeader, PrivacyValue, enforce_privacy};
+use siphon_core::{Headers, PrivacyHeader, PrivacyValue, enforce_privacy};
 use smol_str::SmolStr;
 
 let mut headers = Headers::new();
@@ -245,7 +245,7 @@ pub fn requires_privacy_enforcement(headers: &Headers) -> bool
 **Example:**
 
 ```rust
-use sip_core::{Headers, requires_privacy_enforcement};
+use siphon_core::{Headers, requires_privacy_enforcement};
 use smol_str::SmolStr;
 
 let mut headers = Headers::new();
@@ -269,7 +269,7 @@ pub fn parse_privacy_header(headers: &Headers) -> Option<PrivacyHeader>
 **Example:**
 
 ```rust
-use sip_core::{parse_privacy_header, Headers};
+use siphon_core::{parse_privacy_header, Headers};
 use smol_str::SmolStr;
 
 let mut headers = Headers::new();
@@ -293,8 +293,8 @@ UAC wants to hide their identity from the callee.
 #### UAC Side (Sending Anonymous INVITE)
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -315,7 +315,7 @@ transaction_manager.send_request(private_invite)?;
 #### Proxy Side (Enforcing Privacy)
 
 ```rust
-use sip_core::{enforce_privacy, parse_privacy_header, Request};
+use siphon_core::{enforce_privacy, parse_privacy_header, Request};
 
 // Receive request
 if let Some(privacy) = parse_privacy_header(request.headers()) {
@@ -340,8 +340,8 @@ if let Some(privacy) = parse_privacy_header(request.headers()) {
 #### UAS Side (Receiving Anonymous Call)
 
 ```rust
-use sip_core::{parse_privacy_header, PrivacyValue};
-use sip_parse::header;
+use siphon_core::{parse_privacy_header, PrivacyValue};
+use siphon_parse::header;
 
 // Receive INVITE
 if let Some(privacy) = parse_privacy_header(invite.headers()) {
@@ -363,8 +363,8 @@ let (response, dialog) = uas.accept_invite(&invite, Some(sdp))?;
 UAC wants complete privacy for a sensitive call.
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -409,8 +409,8 @@ transaction_manager.send_request(invite)?;
 UAC wants to hide call subject but keep identity visible.
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -441,8 +441,8 @@ transaction_manager.send_request(invite)?;
 UAC requires privacy to be enforced or the call must fail.
 
 ```rust
-use sip_core::PrivacyValue;
-use sip_uac::UserAgentClient;
+use siphon_core::PrivacyValue;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -459,7 +459,7 @@ transaction_manager.send_request(critical_invite)?;
 **Proxy Handling:**
 
 ```rust
-use sip_core::{parse_privacy_header, enforce_privacy};
+use siphon_core::{parse_privacy_header, enforce_privacy};
 
 if let Some(privacy) = parse_privacy_header(request.headers()) {
     if privacy.is_critical() {
@@ -483,7 +483,7 @@ if let Some(privacy) = parse_privacy_header(request.headers()) {
 Complete proxy implementation with privacy enforcement.
 
 ```rust
-use sip_core::{enforce_privacy, parse_privacy_header, PrivacyHeader, Request};
+use siphon_core::{enforce_privacy, parse_privacy_header, PrivacyHeader, Request};
 use bytes::Bytes;
 use anyhow::Result;
 
@@ -659,7 +659,7 @@ impl PrivacyEnforcingProxy {
 ### Test Results
 
 ```bash
-$ cargo test -p sip-core -p sip-uac
+$ cargo test -p siphon-core -p siphon-uac
 ```
 
 ---
@@ -710,7 +710,7 @@ assert!(invite.headers().get("From")?.contains("alice@example.com"));
 **Trusted Proxy → External UAS:**
 
 ```rust
-use sip_core::{enforce_privacy, parse_privacy_header, NameAddr, PAssertedIdentityHeader, Request};
+use siphon_core::{enforce_privacy, parse_privacy_header, NameAddr, PAssertedIdentityHeader, Request};
 use smol_str::SmolStr;
 
 // Proxy extracts real identity before enforcing privacy

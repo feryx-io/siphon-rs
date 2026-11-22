@@ -9,7 +9,7 @@
 
 use anyhow::{anyhow, Result};
 use dashmap::DashMap;
-use sip_core::{Headers, Method, Request, Response};
+use siphon_core::{Headers, Method, Request, Response};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tracing::debug;
@@ -347,7 +347,7 @@ pub fn is_reliable_provisional(response: &Response) -> bool {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{RequestLine, SipUri, StatusLine};
+    use siphon_core::{RequestLine, SipUri, StatusLine};
 
     #[test]
     fn parse_rack_header() {

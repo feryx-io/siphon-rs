@@ -46,7 +46,7 @@ impl std::error::Error for PriorityError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::PriorityValue;
+/// use siphon_core::PriorityValue;
 ///
 /// // Standard priorities
 /// let emergency = PriorityValue::Emergency;
@@ -109,7 +109,7 @@ impl PriorityValue {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::PriorityValue;
+    /// use siphon_core::PriorityValue;
     ///
     /// // Standard values
     /// assert_eq!(

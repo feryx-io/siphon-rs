@@ -109,7 +109,7 @@ Creates a new Accept-Contact header.
 
 **Example:**
 ```rust
-use sip_core::AcceptContact;
+use siphon_core::AcceptContact;
 
 let accept = AcceptContact::new();
 ```
@@ -122,7 +122,7 @@ Adds a feature preference (builder pattern) with validation and limits.
 
 **Example:**
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Audio, FeatureValue::Boolean(true))?
@@ -137,7 +137,7 @@ Sets the require modifier (non-matching contacts are discarded).
 
 **Example:**
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Audio, FeatureValue::Boolean(true))?
@@ -153,7 +153,7 @@ Sets the explicit modifier (only explicitly advertised features count).
 
 **Example:**
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Video, FeatureValue::Boolean(true))?
@@ -170,7 +170,7 @@ The q-value is stored but not yet applied by `score_contacts`.
 
 **Example:**
 ```rust
-use sip_core::AcceptContact;
+use siphon_core::AcceptContact;
 
 let accept = AcceptContact::new().with_q(0.8)?;
 ```
@@ -231,7 +231,7 @@ Returns a score between 0.0 and 1.0 indicating match quality:
 
 **Example:**
 ```rust
-use sip_core::{AcceptContact, CapabilitySet, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, CapabilitySet, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Audio, FeatureValue::Boolean(true))?;
@@ -262,7 +262,7 @@ Creates a new Reject-Contact header.
 
 **Example:**
 ```rust
-use sip_core::RejectContact;
+use siphon_core::RejectContact;
 
 let reject = RejectContact::new();
 ```
@@ -275,7 +275,7 @@ Adds a feature to reject (builder pattern) with validation and limits.
 
 **Example:**
 ```rust
-use sip_core::{RejectContact, FeatureTag, FeatureValue};
+use siphon_core::{RejectContact, FeatureTag, FeatureValue};
 
 let reject = RejectContact::new()
     .with_feature(FeatureTag::Automata, FeatureValue::Boolean(true))?
@@ -317,7 +317,7 @@ Returns true if the contact explicitly advertised features matching this Reject-
 
 **Example:**
 ```rust
-use sip_core::{RejectContact, CapabilitySet, FeatureTag, FeatureValue};
+use siphon_core::{RejectContact, CapabilitySet, FeatureTag, FeatureValue};
 
 let reject = RejectContact::new()
     .with_feature(FeatureTag::Automata, FeatureValue::Boolean(true))?;
@@ -356,7 +356,7 @@ Creates a new Request-Disposition with default (empty) values.
 
 **Example:**
 ```rust
-use sip_core::RequestDisposition;
+use siphon_core::RequestDisposition;
 
 let rd = RequestDisposition::new();
 ```
@@ -369,7 +369,7 @@ Sets the proxy directive (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::{RequestDisposition, ProxyDirective};
+use siphon_core::{RequestDisposition, ProxyDirective};
 
 let rd = RequestDisposition::new()
     .with_proxy(ProxyDirective::Proxy);
@@ -457,7 +457,7 @@ or if the input contains control characters.
 
 **Example:**
 ```rust
-use sip_core::{RequestDisposition, ProxyDirective, RecurseDirective, ParallelDirective};
+use siphon_core::{RequestDisposition, ProxyDirective, RecurseDirective, ParallelDirective};
 
 let rd = RequestDisposition::parse("proxy, recurse, parallel")?;
 
@@ -569,7 +569,7 @@ The callee q-value must be finite and is clamped to 0.0-1.0.
 
 **Example:**
 ```rust
-use sip_core::ScoredContact;
+use siphon_core::ScoredContact;
 
 let contact = ScoredContact::new("sip:alice@example.com", 1.0)?;
 ```
@@ -646,7 +646,7 @@ capability list length mismatches, or any q-values are not finite.
 
 **Example:**
 ```rust
-use sip_core::{
+use siphon_core::{
     ScoredContact, AcceptContact, RejectContact,
     CapabilitySet, FeatureTag, FeatureValue
 };
@@ -682,7 +682,7 @@ assert_eq!(scored[0].uri(), "sip:c1@example.com");
 Express preference for video-capable UAs:
 
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Video, FeatureValue::Boolean(true))?
@@ -697,7 +697,7 @@ let accept = AcceptContact::new()
 Require audio support (discard non-audio UAs):
 
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Audio, FeatureValue::Boolean(true))?
@@ -712,7 +712,7 @@ let accept = AcceptContact::new()
 Avoid voicemail systems:
 
 ```rust
-use sip_core::{RejectContact, FeatureTag, FeatureValue};
+use siphon_core::{RejectContact, FeatureTag, FeatureValue};
 use smol_str::SmolStr;
 
 let reject = RejectContact::new()
@@ -728,7 +728,7 @@ let reject = RejectContact::new()
 Express multiple preferences:
 
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 use smol_str::SmolStr;
 
 // Prefer video
@@ -755,7 +755,7 @@ let accept_business = AcceptContact::new()
 Control proxy behavior:
 
 ```rust
-use sip_core::{RequestDisposition, ProxyDirective, RecurseDirective, ParallelDirective};
+use siphon_core::{RequestDisposition, ProxyDirective, RecurseDirective, ParallelDirective};
 
 let rd = RequestDisposition::new()
     .with_proxy(ProxyDirective::Proxy)
@@ -771,7 +771,7 @@ let rd = RequestDisposition::new()
 Call only the best contact:
 
 ```rust
-use sip_core::{RequestDisposition, ForkDirective};
+use siphon_core::{RequestDisposition, ForkDirective};
 
 let rd = RequestDisposition::new()
     .with_fork(ForkDirective::NoFork);
@@ -785,7 +785,7 @@ let rd = RequestDisposition::new()
 Complete proxy routing example:
 
 ```rust
-use sip_core::{
+use siphon_core::{
     ScoredContact, AcceptContact, RejectContact,
     CapabilitySet, FeatureTag, FeatureValue,
     score_contacts
@@ -850,7 +850,7 @@ for contact in scored {
 Only consider UAs that explicitly advertised features:
 
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Video, FeatureValue::Boolean(true))?
@@ -865,7 +865,7 @@ let accept = AcceptContact::new()
 Most restrictive matching:
 
 ```rust
-use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 
 let accept = AcceptContact::new()
     .with_feature(FeatureTag::Video, FeatureValue::Boolean(true))?
@@ -885,7 +885,7 @@ let accept = AcceptContact::new()
 RFC 3841 builds directly on RFC 3840's capability framework:
 
 ```rust
-use sip_core::{
+use siphon_core::{
     CapabilitySet, FeatureTag,
     AcceptContact, FeatureValue
 };
@@ -938,7 +938,7 @@ Proxy processing algorithm:
 7. Fork according to Request-Disposition
 
 ```rust
-use sip_core::{AcceptContact, RejectContact, score_contacts};
+use siphon_core::{AcceptContact, RejectContact, score_contacts};
 
 // Parse headers from INVITE
 let accept_headers: Vec<AcceptContact> = /* parse from request */;
@@ -971,7 +971,7 @@ for contact in scored {
 Control forking behavior:
 
 ```rust
-use sip_core::{RequestDisposition, ForkDirective};
+use siphon_core::{RequestDisposition, ForkDirective};
 
 let rd = RequestDisposition::parse(&request_disposition_value)?;
 
@@ -1042,13 +1042,13 @@ The caller preferences implementation includes 19 comprehensive unit tests:
 
 ```bash
 # Run all caller preferences tests
-cargo test --package sip-core caller_preferences
+cargo test --package siphon-core caller_preferences
 
 # Run specific test
-cargo test --package sip-core accept_contact_matching
+cargo test --package siphon-core accept_contact_matching
 
 # Run with output
-cargo test --package sip-core caller_preferences -- --nocapture
+cargo test --package siphon-core caller_preferences -- --nocapture
 ```
 
 ## Limitations and Future Work

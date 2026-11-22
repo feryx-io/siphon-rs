@@ -136,7 +136,7 @@ Parse Path and Service-Route headers from SIP message headers.
 A proxy adding its Path entry to a REGISTER request:
 
 ```rust
-use sip_core::{PathHeader, Uri};
+use siphon_core::{PathHeader, Uri};
 use smol_str::SmolStr;
 
 // Proxy adds itself to the Path
@@ -156,7 +156,7 @@ request
 Multiple proxies each adding their Path entry:
 
 ```rust
-use sip_core::{parse_path, PathHeader, Uri};
+use siphon_core::{parse_path, PathHeader, Uri};
 
 // Parse existing Path headers from received REGISTER
 let existing_path = parse_path(request.headers())?;
@@ -179,7 +179,7 @@ let path = PathHeader::from_uris(vec![proxy1, proxy2])?;
 Registrar returning Service-Route in 200 OK:
 
 ```rust
-use sip_core::{ServiceRouteHeader, Uri};
+use siphon_core::{ServiceRouteHeader, Uri};
 use smol_str::SmolStr;
 
 // Registrar specifies service route
@@ -199,7 +199,7 @@ response
 UAC receiving and storing Service-Route from REGISTER response:
 
 ```rust
-use sip_core::parse_service_route;
+use siphon_core::parse_service_route;
 
 // Parse Service-Route from 200 OK to REGISTER
 let service_route = parse_service_route(response.headers())?;
@@ -224,7 +224,7 @@ if !service_route.is_empty() {
 Registrar receiving and storing Path from REGISTER:
 
 ```rust
-use sip_core::parse_path;
+use siphon_core::parse_path;
 
 // Parse Path headers from REGISTER request
 let path = parse_path(register_request.headers())?;
@@ -252,7 +252,7 @@ if !path.is_empty() {
 Registrar building route set for request to registered UA:
 
 ```rust
-use sip_core::{NameAddr, PathHeader, RouteHeader, parse_path};
+use siphon_core::{NameAddr, PathHeader, RouteHeader, parse_path};
 use smol_str::SmolStr;
 
 // Retrieve stored Path for this Contact binding
@@ -275,7 +275,7 @@ if !stored_path.is_empty() {
 Verifying that Path/Service-Route entries support loose routing:
 
 ```rust
-use sip_core::{parse_path, parse_service_route};
+use siphon_core::{parse_path, parse_service_route};
 
 // Check Path header
 let path = parse_path(request.headers())?;
@@ -309,7 +309,7 @@ if sr.all_loose_routing() {
 Working with route lists:
 
 ```rust
-use sip_core::parse_path;
+use siphon_core::parse_path;
 
 let path = parse_path(request.headers())?;
 
@@ -499,7 +499,7 @@ The `uris()` method returns an iterator rather than a vector to:
 | Loose routing support | ✅ | all_loose_routing() method |
 | Path storage at registrar | ⚠️ | Application-level (not in core) |
 | Route building from Path | ⚠️ | Application-level (not in core) |
-| Path header parsing | ✅ | parse_path() in sip-parse |
+| Path header parsing | ✅ | parse_path() in siphon-parse |
 | Path header formatting | ✅ | Display trait implementation |
 
 ### RFC 3608 Requirements
@@ -511,7 +511,7 @@ The `uris()` method returns an iterator rather than a vector to:
 | Service-Route URI format | ✅ | Uses Uri with NameAddr |
 | Service-Route in 200 OK | ⚠️ | Application-level (not in core) |
 | UA storage of Service-Route | ⚠️ | Application-level (not in core) |
-| Service-Route header parsing | ✅ | parse_service_route() in sip-parse |
+| Service-Route header parsing | ✅ | parse_service_route() in siphon-parse |
 | Service-Route header formatting | ✅ | Display trait implementation |
 
 **Legend:**
@@ -526,7 +526,7 @@ The `uris()` method returns an iterator rather than a vector to:
 
 ```rust
 // Proxy receives REGISTER, adds Path header
-use sip_core::{parse_path, PathHeader, Uri};
+use siphon_core::{parse_path, PathHeader, Uri};
 use smol_str::SmolStr;
 
 fn proxy_process_register(request: &mut Request, proxy_uri: &str) {
@@ -553,8 +553,8 @@ fn proxy_process_register(request: &mut Request, proxy_uri: &str) {
 
 ```rust
 // Registrar receives REGISTER, stores Path with binding
-use sip_core::parse_path;
-use sip_parse::{header, parse_contact_header};
+use siphon_core::parse_path;
+use siphon_parse::{header, parse_contact_header};
 
 fn registrar_process_register(request: &Request) -> ContactBinding {
     let contact_value = header(request.headers(), "Contact")
@@ -585,7 +585,7 @@ fn build_route_set(binding: &ContactBinding) -> Vec<Uri> {
 
 ```rust
 // UA receives 200 OK to REGISTER, stores Service-Route
-use sip_core::parse_service_route;
+use siphon_core::parse_service_route;
 use smol_str::SmolStr;
 
 fn ua_process_register_response(response: &Response) {

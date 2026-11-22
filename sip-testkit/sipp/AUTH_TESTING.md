@@ -61,7 +61,7 @@ The issue is in SIPp's digest authentication implementation:
 Start siphond with debug logging to see authentication details:
 
 ```bash
-RUST_LOG=sip_auth=debug,siphond=debug \
+RUST_LOG=siphon_auth=debug,siphond=debug \
 cargo run -p siphond -- --mode registrar \
   --auth --auth-realm example.com \
   --auth-users users.json \
@@ -105,12 +105,12 @@ pjsua --registrar sip:127.0.0.1:5060 \
 
 Successful logs from siphond:
 ```
-[DEBUG sip_auth] nonce generated: GxZaX8uT...
-[DEBUG sip_auth] challenge sent: realm="example.com", algorithm=MD5, qop="auth"
-[DEBUG sip_auth] Authorization header received
-[DEBUG sip_auth] digest parameters extracted: username=alice, realm=example.com, qop=Some("auth")
-[DEBUG sip_auth] digest response computed: 5f4dcc3b5aa765d61d8327deb882cf99
-[DEBUG sip_auth] digest response verified successfully, user=alice
+[DEBUG siphon_auth] nonce generated: GxZaX8uT...
+[DEBUG siphon_auth] challenge sent: realm="example.com", algorithm=MD5, qop="auth"
+[DEBUG siphon_auth] Authorization header received
+[DEBUG siphon_auth] digest parameters extracted: username=alice, realm=example.com, qop=Some("auth")
+[DEBUG siphon_auth] digest response computed: 5f4dcc3b5aa765d61d8327deb882cf99
+[DEBUG siphon_auth] digest response verified successfully, user=alice
 [INFO  siphond] Registration successful: alice @ sip:alice@127.0.0.1:5060
 ```
 

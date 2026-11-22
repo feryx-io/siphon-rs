@@ -69,7 +69,7 @@ impl std::error::Error for ReasonError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{ReasonHeader, Q850Cause};
+/// use siphon_core::{ReasonHeader, Q850Cause};
 ///
 /// // Create with Q.850 cause code
 /// let reason = ReasonHeader::q850(Q850Cause::NormalCallClearing).unwrap();

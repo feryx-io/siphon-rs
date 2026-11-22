@@ -1,14 +1,13 @@
 [package]
-name = "sip-ratelimit"
+name = "siphon-ratelimit"
 version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Configurable rate limiting for SIP applications"
-readme = "../../README.md"
+readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 dashmap = { workspace = true }

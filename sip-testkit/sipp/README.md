@@ -182,7 +182,7 @@ Create a custom scenario that manually computes and inserts the Authorization he
 Test manually with siphond in registrar mode:
 ```bash
 # Terminal 1: Start siphond with auth and debug logging
-RUST_LOG=sip_auth=debug,siphond=debug \
+RUST_LOG=siphon_auth=debug,siphond=debug \
 cargo run -p siphond -- --mode registrar \
   --auth --auth-realm example.com \
   --auth-users users.json \
@@ -194,7 +194,7 @@ cargo run -p siphond -- --mode registrar \
 
 When testing with a compatible SIP client (like pjsua or Linphone), you'll see:
 ```
-[DEBUG sip_auth] digest response verified successfully, user=alice
+[DEBUG siphon_auth] digest response verified successfully, user=alice
 [INFO  siphond] Registration successful: alice
 ```
 

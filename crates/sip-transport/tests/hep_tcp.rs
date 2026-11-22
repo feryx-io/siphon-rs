@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //
 //! End-to-end TCP capture test: run_tcp accepts a connection, the
-//! sip-hep emitter sees one HEP packet per SIP message in both
+//! siphon-hep emitter sees one HEP packet per SIP message in both
 //! directions.
 
 use std::net::SocketAddr;
@@ -12,8 +12,8 @@ use std::time::Duration;
 
 use bytes::Bytes;
 use hep_rs::{HepPacket, HepProtocol, HepSink, IpProto};
-use sip_hep::{Direction, SipHepEmitter};
-use sip_transport::{run_tcp, InboundPacket};
+use siphon_hep::{Direction, SipHepEmitter};
+use siphon_transport::{run_tcp, InboundPacket};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;
@@ -37,7 +37,7 @@ async fn run_tcp_emits_hep_for_inbound_and_outbound_frames() {
     // set_emitter — this is the only one.
     let sink = Arc::new(CapturingSink::default());
     let emitter = Arc::new(SipHepEmitter::new(sink.clone() as Arc<dyn HepSink>, 7777));
-    let installed = sip_hep::set_emitter(emitter);
+    let installed = siphon_hep::set_emitter(emitter);
     assert!(
         installed,
         "first install of the test emitter should succeed"
@@ -81,8 +81,8 @@ Content-Length: 0\r\n\r\n";
     let outbound_msg = Bytes::from(
         b"SIP/2.0 200 OK\r\nCall-ID: tcp-hep-call-1@host\r\nContent-Length: 0\r\n\r\n".to_vec(),
     );
-    sip_transport::send_stream(
-        sip_transport::TransportKind::Tcp,
+    siphon_transport::send_stream(
+        siphon_transport::TransportKind::Tcp,
         stream_tx,
         outbound_msg.clone(),
     )

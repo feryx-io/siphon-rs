@@ -11,9 +11,9 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use bytes::Bytes;
-use sip_core::{Headers, Request, Response, StatusLine};
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_core::{Headers, Request, Response, StatusLine};
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
 use smol_str::SmolStr;
 use tracing::info;
 

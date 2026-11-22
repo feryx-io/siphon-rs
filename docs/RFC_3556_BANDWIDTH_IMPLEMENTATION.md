@@ -125,7 +125,7 @@ Fields are private; use the constructors, `bandwidth_type()`, and `is_rtcp()` fo
 ### Parsing Example
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 let sdp = "\
 v=0\r\n\
@@ -174,7 +174,7 @@ assert_eq!(rtcp_bandwidth.len(), 2);
 ### Generation Example
 
 ```rust
-use sip_core::Bandwidth;
+use siphon_core::Bandwidth;
 
 let bandwidth_lines = [
     Bandwidth::application_specific(128).to_string(), // 128 kbps
@@ -203,7 +203,7 @@ m=audio 49170 RTP/AVP 0\r\n",
 You can parse and round-trip the generated SDP if needed:
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 let session = SdpSession::parse(&sdp_string)?;
 let round_trip = session.to_string();
@@ -317,7 +317,7 @@ b=RR:300
 Example function to validate RFC 3556 compliance:
 
 ```rust
-use sip_core::{Bandwidth, BandwidthType, SdpSession};
+use siphon_core::{Bandwidth, BandwidthType, SdpSession};
 
 fn analyze_rtcp_bandwidth(session: &SdpSession) {
     let mut rs_bandwidth = None;

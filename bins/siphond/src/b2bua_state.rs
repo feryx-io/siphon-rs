@@ -9,8 +9,8 @@
 /// - Correlates responses from callee with caller's transaction
 /// - Enables proper B2BUA behavior with response relay
 use dashmap::DashMap;
-use sip_core::{Request, Response, SipUri};
-use sip_dialog::{Dialog, DialogId};
+use siphon_core::{Request, Response, SipUri};
+use siphon_dialog::{Dialog, DialogId};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::mpsc;

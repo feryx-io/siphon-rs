@@ -193,7 +193,7 @@ fn digest_param_requires_quotes(name: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use sip_core::AuthorizationHeader;
+/// use siphon_core::AuthorizationHeader;
 ///
 /// // Create a Digest authorization header
 /// let mut auth = AuthorizationHeader::new("Digest").unwrap();
@@ -230,7 +230,7 @@ impl AuthorizationHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::AuthorizationHeader;
+    /// use siphon_core::AuthorizationHeader;
     ///
     /// let auth = AuthorizationHeader::new("Digest").unwrap();
     /// assert_eq!(auth.scheme(), "Digest");
@@ -302,7 +302,7 @@ impl AuthorizationHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::AuthorizationHeader;
+    /// use siphon_core::AuthorizationHeader;
     ///
     /// let mut auth = AuthorizationHeader::new("Digest").unwrap();
     /// auth.add_param("realm", "example.com").unwrap();
@@ -327,7 +327,7 @@ impl AuthorizationHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::AuthorizationHeader;
+    /// use siphon_core::AuthorizationHeader;
     ///
     /// let mut auth = AuthorizationHeader::new("Digest").unwrap();
     /// auth.add_param("username", "alice").unwrap();

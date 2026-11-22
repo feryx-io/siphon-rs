@@ -12,11 +12,11 @@
 
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::{Headers, Request, Response, StatusLine};
-use sip_dialog::SubscriptionId;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::{Headers, Request, Response, StatusLine};
+use siphon_dialog::SubscriptionId;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use smol_str::SmolStr;
 use tracing::{info, warn};
 
@@ -50,7 +50,7 @@ impl NotifyHandler {
     fn find_subscription(
         request: &Request,
         services: &ServiceRegistry,
-    ) -> Option<sip_dialog::Subscription> {
+    ) -> Option<siphon_dialog::Subscription> {
         let call_id = header(request.headers(), "Call-ID")?.clone();
         let from = header(request.headers(), "From")?;
         let to = header(request.headers(), "To")?;

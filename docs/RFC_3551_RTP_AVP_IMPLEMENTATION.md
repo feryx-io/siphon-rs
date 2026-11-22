@@ -176,7 +176,7 @@ Encoding-name lookups are case-insensitive and reject inputs longer than 32 byte
 ### Looking Up Payload Type Information
 
 ```rust
-use sip_core::rtp_avp::get_static_payload_type;
+use siphon_core::rtp_avp::get_static_payload_type;
 
 // Get PCMU information
 let pcmu = get_static_payload_type(0)?;
@@ -199,7 +199,7 @@ assert!(get_static_payload_type(96).is_none());
 ### Finding Payload Types by Name
 
 ```rust
-use sip_core::rtp_avp::{get_payload_type, get_payload_type_with_rate};
+use siphon_core::rtp_avp::{get_payload_type, get_payload_type_with_rate};
 
 // Find by name (case-insensitive)
 assert_eq!(get_payload_type("PCMU"), Some(0));
@@ -217,7 +217,7 @@ assert_eq!(get_payload_type_with_rate("DVI4", 22050), Some(17));
 ### Checking Payload Type Ranges
 
 ```rust
-use sip_core::rtp_avp::{is_static_range, is_dynamic_range, is_reserved};
+use siphon_core::rtp_avp::{is_static_range, is_dynamic_range, is_reserved};
 
 // Static range (0-95)
 assert!(is_static_range(0));
@@ -239,7 +239,7 @@ assert!(!is_reserved(77));
 ### SDP Integration
 
 ```rust
-use sip_core::{SdpSession, rtp_avp::get_static_payload_type};
+use siphon_core::{SdpSession, rtp_avp::get_static_payload_type};
 
 let sdp = "\
 v=0\r\n\
@@ -321,7 +321,7 @@ if let Some(media) = session.media().first() {
 ### Use Case 1: Basic PCMU Audio Call
 
 ```rust
-use sip_core::rtp_avp::PCMU;
+use siphon_core::rtp_avp::PCMU;
 
 // Create SDP with static PT 0 (PCMU)
 let sdp = format!("\
@@ -339,7 +339,7 @@ m=audio 49170 RTP/AVP {}\r\n\
 ### Use Case 2: Video Conference with H.261
 
 ```rust
-use sip_core::rtp_avp::{PCMU, H261};
+use siphon_core::rtp_avp::{PCMU, H261};
 
 let sdp = format!("\
 v=0\r\n\
@@ -357,7 +357,7 @@ m=video 49172 RTP/AVP {}\r\n\
 ### Use Case 3: Codec Selection
 
 ```rust
-use sip_core::rtp_avp::get_payload_type;
+use siphon_core::rtp_avp::get_payload_type;
 
 // Application supports multiple codecs
 let supported_codecs = vec!["PCMU", "PCMA", "G729"];
@@ -375,7 +375,7 @@ let formats: Vec<String> = supported_codecs
 ### Use Case 4: Mixed Static and Dynamic
 
 ```rust
-use sip_core::rtp_avp::{PCMU, is_dynamic_range};
+use siphon_core::rtp_avp::{PCMU, is_dynamic_range};
 
 // Offer PCMU (static) and Opus (dynamic)
 let sdp = "\

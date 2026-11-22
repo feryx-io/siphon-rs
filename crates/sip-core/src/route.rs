@@ -110,7 +110,7 @@ impl std::error::Error for RouteError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{RouteHeader, NameAddr, Uri, SipUri};
+/// use siphon_core::{RouteHeader, NameAddr, Uri, SipUri};
 /// use std::collections::BTreeMap;
 ///
 /// // Create from NameAddr
@@ -135,7 +135,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{RouteHeader, NameAddr, Uri, SipUri};
+    /// use siphon_core::{RouteHeader, NameAddr, Uri, SipUri};
     /// use std::collections::BTreeMap;
     ///
     /// let uri = Uri::Sip(SipUri::parse("sip:proxy.example.com").unwrap());
@@ -171,7 +171,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RouteHeader;
+    /// use siphon_core::RouteHeader;
     ///
     /// let route = RouteHeader::parse("<sip:proxy.example.com;lr>").unwrap();
     /// assert!(route.has_lr());
@@ -202,7 +202,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{RouteHeader, Uri, SipUri};
+    /// use siphon_core::{RouteHeader, Uri, SipUri};
     ///
     /// let uri = Uri::Sip(SipUri::parse("sip:proxy.example.com").unwrap());
     /// let route = RouteHeader::with_lr(uri).unwrap();
@@ -225,7 +225,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RouteHeader;
+    /// use siphon_core::RouteHeader;
     ///
     /// let route = RouteHeader::parse("<sip:proxy.example.com>;lr;transport=tcp").unwrap();
     /// assert_eq!(route.param_count(), 2); // lr + transport
@@ -242,7 +242,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RouteHeader;
+    /// use siphon_core::RouteHeader;
     ///
     /// let route = RouteHeader::parse("<sip:proxy.example.com>;lr;transport=tcp").unwrap();
     ///
@@ -274,7 +274,7 @@ impl RouteHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RouteHeader;
+    /// use siphon_core::RouteHeader;
     ///
     /// let route = RouteHeader::parse("<sip:proxy.example.com;lr>").unwrap();
     /// assert!(route.has_lr());

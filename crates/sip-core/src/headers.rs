@@ -66,7 +66,7 @@ impl std::error::Error for HeaderError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::Header;
+/// use siphon_core::Header;
 ///
 /// let header = Header::new("Content-Type", "application/sdp").unwrap();
 /// assert_eq!(header.name(), "Content-Type");
@@ -147,7 +147,7 @@ impl Header {
 /// # Examples
 ///
 /// ```
-/// use sip_core::Headers;
+/// use siphon_core::Headers;
 ///
 /// let mut headers = Headers::new();
 /// headers.push("Via", "SIP/2.0/UDP pc33.example.com").unwrap();

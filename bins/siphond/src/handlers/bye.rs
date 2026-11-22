@@ -11,10 +11,10 @@
 /// 4. Clean up dialog from manager
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use tracing::{info, warn};
 
 use super::RequestHandler;
@@ -35,8 +35,8 @@ impl ByeHandler {
         services: &ServiceRegistry,
         call_id: &str,
     ) -> Result<()> {
-        use sip_core::{Headers, Method, RequestLine};
-        use sip_transaction::generate_branch_id;
+        use siphon_core::{Headers, Method, RequestLine};
+        use siphon_transaction::generate_branch_id;
         use smol_str::SmolStr;
 
         info!(call_id, "B2BUA MODE: Processing BYE for bridging");
@@ -85,7 +85,7 @@ impl ByeHandler {
                     };
 
                 // Parse caller's contact URI
-                let caller_contact_uri = match sip_core::Uri::parse(caller_contact) {
+                let caller_contact_uri = match siphon_core::Uri::parse(caller_contact) {
                     Ok(uri) => uri,
                     Err(_) => {
                         warn!(
@@ -200,7 +200,7 @@ impl ByeHandler {
                         }
                     }
 
-                    let bye_request = match sip_core::Request::new(
+                    let bye_request = match siphon_core::Request::new(
                         RequestLine::new(Method::Bye, caller_sip_uri.clone()),
                         bye_headers,
                         bytes::Bytes::new(),
@@ -216,7 +216,7 @@ impl ByeHandler {
                             return Ok(());
                         }
                     };
-                    let payload = sip_parse::serialize_request(&bye_request);
+                    let payload = siphon_parse::serialize_request(&bye_request);
 
                     info!(call_id, caller = %caller_addr, "B2BUA: Sending BYE to caller");
 
@@ -242,13 +242,13 @@ impl ByeHandler {
 
             // Call leg not found
             warn!(call_id, "B2BUA: BYE received for unknown call leg");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
 
             // Try to create and send 481 response, but don't crash if it fails
-            match sip_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
+            match siphon_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
                 Ok(status_line) => {
-                    match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                    match siphon_core::Response::new(status_line, headers, bytes::Bytes::new()) {
                         Ok(response) => {
                             handle.send_final(response).await;
                         }
@@ -268,13 +268,13 @@ impl ByeHandler {
         let Some(call_leg) = call_leg else {
             // This should be unreachable due to logic above, but handle gracefully
             warn!(call_id, "B2BUA: Unexpected None call_leg after guard check");
-            let mut headers = sip_core::Headers::new();
+            let mut headers = siphon_core::Headers::new();
             copy_headers(request, &mut headers);
 
             // Try to create and send 481 response, but don't crash if it fails
-            match sip_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
+            match siphon_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
                 Ok(status_line) => {
-                    match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                    match siphon_core::Response::new(status_line, headers, bytes::Bytes::new()) {
                         Ok(response) => {
                             handle.send_final(response).await;
                         }
@@ -362,7 +362,7 @@ impl ByeHandler {
         let _ = bye_headers.push(SmolStr::new("Content-Length"), SmolStr::new("0"));
 
         // Create BYE request
-        let bye_request = match sip_core::Request::new(
+        let bye_request = match siphon_core::Request::new(
             RequestLine::new(Method::Bye, call_leg.callee_contact.clone()),
             bye_headers,
             bytes::Bytes::new(),
@@ -390,7 +390,7 @@ impl ByeHandler {
 
         // As the INVITE went: over the transport the callee registered with.
         if let Ok(addr) = callee_addr.parse::<std::net::SocketAddr>() {
-            let payload = sip_parse::serialize_request(&bye_request);
+            let payload = siphon_parse::serialize_request(&bye_request);
             if let Err(e) =
                 proxy_utils::send_to_contact(services, &call_leg.callee_contact, addr, payload)
                     .await
@@ -481,13 +481,14 @@ impl RequestHandler for ByeHandler {
                 warn!(call_id, "BYE received for unknown dialog");
 
                 // Send 481 Call/Transaction Does Not Exist
-                let mut headers = sip_core::Headers::new();
+                let mut headers = siphon_core::Headers::new();
                 copy_headers(request, &mut headers);
 
                 // Try to create and send 481 response, but don't crash if it fails
-                match sip_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
+                match siphon_core::StatusLine::new(481, "Call/Transaction Does Not Exist") {
                     Ok(status_line) => {
-                        match sip_core::Response::new(status_line, headers, bytes::Bytes::new()) {
+                        match siphon_core::Response::new(status_line, headers, bytes::Bytes::new())
+                        {
                             Ok(response) => {
                                 handle.send_final(response).await;
                             }
@@ -512,7 +513,7 @@ impl RequestHandler for ByeHandler {
 }
 
 /// Copy essential headers from request to response
-fn copy_headers(request: &Request, headers: &mut sip_core::Headers) {
+fn copy_headers(request: &Request, headers: &mut siphon_core::Headers) {
     if let Some(via) = header(request.headers(), "Via") {
         let _ = headers.push("Via", via.clone());
     }

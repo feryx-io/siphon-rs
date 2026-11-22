@@ -1,5 +1,5 @@
 [package]
-name = "sip-proxy"
+name = "siphon-proxy"
 version = "0.3.0"
 edition = "2021"
 license.workspace = true
@@ -8,12 +8,11 @@ readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-sip-core = { path = "../sip-core" }
-sip-transaction = { path = "../sip-transaction" }
+siphon-core = { workspace = true }
+siphon-transaction = { workspace = true }
 bytes = { workspace = true }
 tokio = { workspace = true, features = ["sync"] }
 dashmap = { workspace = true }

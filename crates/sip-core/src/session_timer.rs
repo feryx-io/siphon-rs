@@ -27,7 +27,7 @@
 //! ### Creating Session-Expires header
 //!
 //! ```
-//! use sip_core::{SessionExpires, RefresherRole};
+//! use siphon_core::{SessionExpires, RefresherRole};
 //!
 //! // Session expires in 30 minutes (1800s), UAC is refresher
 //! let session_expires = SessionExpires::new(1800).unwrap()
@@ -40,7 +40,7 @@
 //! ### Parsing Session-Expires header
 //!
 //! ```
-//! use sip_core::{SessionExpires, RefresherRole};
+//! use siphon_core::{SessionExpires, RefresherRole};
 //!
 //! let se = SessionExpires::parse("1800;refresher=uas").unwrap();
 //! assert_eq!(se.delta_seconds(), 1800);
@@ -50,7 +50,7 @@
 //! ### Creating Min-SE header
 //!
 //! ```
-//! use sip_core::MinSessionExpires;
+//! use siphon_core::MinSessionExpires;
 //!
 //! // Minimum session interval is 120 seconds
 //! let min_se = MinSessionExpires::new(120).unwrap();
@@ -155,7 +155,7 @@ impl std::error::Error for SessionTimerError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{SessionExpires, RefresherRole};
+/// use siphon_core::{SessionExpires, RefresherRole};
 ///
 /// // 30 minute session, no specific refresher
 /// let se1 = SessionExpires::new(1800).unwrap();
@@ -199,7 +199,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// let se = SessionExpires::new(1800).unwrap();
     /// assert_eq!(se.delta_seconds(), 1800);
@@ -237,7 +237,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// let se = SessionExpires::new(1800).unwrap();
     /// assert_eq!(se.delta_seconds(), 1800);
@@ -251,7 +251,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::{SessionExpires, RefresherRole};
+    /// use siphon_core::{SessionExpires, RefresherRole};
     ///
     /// let se = SessionExpires::new(1800).unwrap()
     ///     .with_refresher(RefresherRole::Uac);
@@ -270,7 +270,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::{SessionExpires, RefresherRole};
+    /// use siphon_core::{SessionExpires, RefresherRole};
     ///
     /// let se = SessionExpires::new(1800).unwrap()
     ///     .with_refresher(RefresherRole::Uac);
@@ -299,7 +299,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::{SessionExpires, RefresherRole};
+    /// use siphon_core::{SessionExpires, RefresherRole};
     ///
     /// let se1 = SessionExpires::parse("1800").unwrap();
     /// assert_eq!(se1.delta_seconds(), 1800);
@@ -359,7 +359,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// assert_eq!(SessionExpires::minimum(), 90);
     /// ```
@@ -372,7 +372,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// assert_eq!(SessionExpires::maximum(), 86400);
     /// ```
@@ -385,7 +385,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// assert_eq!(SessionExpires::default_interval(), 1800);
     /// ```
@@ -400,7 +400,7 @@ impl SessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SessionExpires;
+    /// use siphon_core::SessionExpires;
     ///
     /// assert!(SessionExpires::new(1800).unwrap().is_valid());
     /// assert!(SessionExpires::new(90).unwrap().is_valid());
@@ -440,7 +440,7 @@ impl fmt::Display for SessionExpires {
 /// # Examples
 ///
 /// ```
-/// use sip_core::MinSessionExpires;
+/// use siphon_core::MinSessionExpires;
 ///
 /// // Minimum 90 seconds (RFC 4028 default)
 /// let min_se1 = MinSessionExpires::new(90).unwrap();
@@ -481,7 +481,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// let min_se = MinSessionExpires::new(120).unwrap();
     /// assert_eq!(min_se.delta_seconds(), 120);
@@ -515,7 +515,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// let min_se = MinSessionExpires::new(120).unwrap();
     /// assert_eq!(min_se.delta_seconds(), 120);
@@ -540,7 +540,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// let min_se = MinSessionExpires::parse("90").unwrap();
     /// assert_eq!(min_se.delta_seconds(), 90);
@@ -579,7 +579,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// assert_eq!(MinSessionExpires::default_minimum(), 90);
     /// ```
@@ -592,7 +592,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// assert_eq!(MinSessionExpires::maximum(), 7200);
     /// ```
@@ -607,7 +607,7 @@ impl MinSessionExpires {
     /// # Example
     ///
     /// ```
-    /// use sip_core::MinSessionExpires;
+    /// use siphon_core::MinSessionExpires;
     ///
     /// assert!(MinSessionExpires::new(90).unwrap().is_valid());
     /// assert!(MinSessionExpires::new(120).unwrap().is_valid());
@@ -637,7 +637,7 @@ impl fmt::Display for MinSessionExpires {
 /// # Example
 ///
 /// ```
-/// use sip_core::RefresherRole;
+/// use siphon_core::RefresherRole;
 ///
 /// let uac = RefresherRole::Uac;
 /// assert_eq!(uac.as_str(), "uac");
@@ -659,7 +659,7 @@ impl RefresherRole {
     /// # Example
     ///
     /// ```
-    /// use sip_core::RefresherRole;
+    /// use siphon_core::RefresherRole;
     ///
     /// assert_eq!(RefresherRole::Uac.as_str(), "uac");
     /// assert_eq!(RefresherRole::Uas.as_str(), "uas");
@@ -685,7 +685,7 @@ impl RefresherRole {
     /// # Example
     ///
     /// ```
-    /// use sip_core::RefresherRole;
+    /// use siphon_core::RefresherRole;
     ///
     /// assert_eq!(RefresherRole::parse("uac"), Some(RefresherRole::Uac));
     /// assert_eq!(RefresherRole::parse("uas"), Some(RefresherRole::Uas));

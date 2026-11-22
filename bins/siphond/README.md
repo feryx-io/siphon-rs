@@ -553,7 +553,7 @@ RUST_LOG=debug siphond --mode full-uas
 RUST_LOG=trace siphond --mode full-uas
 
 # Module-specific logging
-RUST_LOG=siphond=debug,sip_transaction=trace siphond --mode full-uas
+RUST_LOG=siphond=debug,siphon_transaction=trace siphond --mode full-uas
 ```
 
 ---
@@ -686,10 +686,10 @@ MIT License - See [LICENSE](../../LICENSE) for details
 ## Related
 
 - **siphon-rs**: The complete SIP stack
-- **sip-parse**: SIP message parser
-- **sip-transaction**: Transaction layer
-- **sip-dialog**: Dialog management
-- **sip-registrar**: Registration server
+- **siphon-parse**: SIP message parser
+- **siphon-transaction**: Transaction layer
+- **siphon-dialog**: Dialog management
+- **siphon-registrar**: Registration server
 - **sip-uas/uac**: User agent helpers
 
 ---

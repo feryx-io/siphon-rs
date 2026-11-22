@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the implementation of RFC 3892 ("The Session Initiation Protocol (SIP) Referred-By Mechanism") in the sip-core crate.
+This document describes the implementation of RFC 3892 ("The Session Initiation Protocol (SIP) Referred-By Mechanism") in the siphon-core crate.
 
 ## RFC Implemented
 
@@ -128,7 +128,7 @@ pub struct ReferredByHeader {
 ### Creating Referred-By Headers
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 // Basic header with URI only
 let referred_by = ReferredByHeader::new("sip:bob@example.com");
@@ -140,7 +140,7 @@ println!("{}", referred_by);
 ### With Display Name
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 let referred_by = ReferredByHeader::with_name(
     "Bob Smith",
@@ -154,7 +154,7 @@ println!("{}", referred_by);
 ### With S/MIME Signature Reference
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 let referred_by = ReferredByHeader::new("sip:bob@example.com")
     .with_cid("signature123@example.com");
@@ -169,7 +169,7 @@ println!("{}", referred_by);
 ### With Custom Parameters
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 let referred_by = ReferredByHeader::new("sip:bob@example.com")
     .with_param("tag", "abc123")
@@ -182,7 +182,7 @@ assert_eq!(referred_by.get_param("custom"), Some("value"));
 ### Parsing Referred-By Headers
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 // Parse basic header
 let header = ReferredByHeader::parse(
@@ -237,7 +237,7 @@ Referred-By: <sip:bob@example.com>
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Method, ReferredByHeader};
+use siphon_core::{Request, Method, ReferredByHeader};
 
 // Bob sends REFER to Alice
 let mut refer = Request::new(
@@ -296,7 +296,7 @@ Content-Type: application/pkcs7-signature
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 // Create Referred-By with signature reference
 let referred_by = ReferredByHeader::new("sip:bob@example.com")
@@ -332,7 +332,7 @@ Make policy decisions based on who initiated the transfer.
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 struct TransferPolicy {
     trusted_referrers: Vec<String>,
@@ -388,7 +388,7 @@ Track which agent transferred a call for audit and quality purposes.
 
 **Rust Implementation:**
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 struct TransferLog {
     timestamp: String,
@@ -436,7 +436,7 @@ Handle cases where Referred-By is required but missing.
 
 **Rust Implementation:**
 ```rust
-use sip_core::{Request, Response, ReferredByHeader};
+use siphon_core::{Request, Response, ReferredByHeader};
 
 fn handle_invite(invite: &Request) -> Response {
     // Check if this is a referred request (has Replaces header)
@@ -494,7 +494,7 @@ fn handle_invite(invite: &Request) -> Response {
 The Referred-By header is typically used with REFER requests:
 
 ```rust
-use sip_core::{Request, Method, ReferredByHeader};
+use siphon_core::{Request, Method, ReferredByHeader};
 
 // Create REFER request
 let mut refer = Request::new(
@@ -517,7 +517,7 @@ refer.headers_mut().set("Referred-By", &referred_by.to_string());
 Referred-By and Replaces work together in attended transfers:
 
 ```rust
-use sip_core::{ReferredByHeader, ReplacesHeader};
+use siphon_core::{ReferredByHeader, ReplacesHeader};
 
 // Bob sends REFER to Alice with Replaces in Refer-To
 let replaces = ReplacesHeader::new(
@@ -545,7 +545,7 @@ invite.headers_mut().set("Referred-By", &referred_by.to_string());
 For authenticated transfers using Authenticated Identity Body (AIB):
 
 ```rust
-use sip_core::ReferredByHeader;
+use siphon_core::ReferredByHeader;
 
 // Create Referred-By with signature reference
 let referred_by = ReferredByHeader::new("sip:bob@example.com")
@@ -696,7 +696,7 @@ The implementation includes 17 comprehensive tests covering:
 ### Running Tests
 
 ```bash
-cargo test --package sip-core referred_by
+cargo test --package siphon-core referred_by
 ```
 
 All 17 tests pass successfully.
@@ -706,7 +706,7 @@ All 17 tests pass successfully.
 Here's a complete example of an attended transfer using Referred-By:
 
 ```rust
-use sip_core::{Request, Response, Method, ReferredByHeader, ReplacesHeader};
+use siphon_core::{Request, Response, Method, ReferredByHeader, ReplacesHeader};
 
 // Step 1: Alice calls Bob (Call A)
 // ... call established ...
@@ -818,7 +818,7 @@ fn handle_invite_with_replaces(invite: &Request) -> Response {
 
 ## Module Exports
 
-The following type is exported from sip-core:
+The following type is exported from siphon-core:
 
 ```rust
 pub use referred_by::ReferredByHeader;

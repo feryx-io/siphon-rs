@@ -13,8 +13,8 @@
 /// 2. Parsing and handling tel URIs
 /// 3. Common use cases (PSTN gateway scenarios, mobile networks)
 /// 4. Interoperability between SIP URIs and tel URIs
-use sip_core::{SipUri, TelUri, Uri};
-use sip_uac::UserAgentClient;
+use siphon_core::{SipUri, TelUri, Uri};
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== tel URI Support Example (RFC 3966) ===\n");

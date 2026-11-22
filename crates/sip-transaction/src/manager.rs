@@ -17,9 +17,9 @@ use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use bytes::Bytes;
 use dashmap::DashMap;
-use sip_core::{Headers, Method, Request, Response};
-use sip_parse::serialize_response;
-use sip_transport::pool::ConnectionPool;
+use siphon_core::{Headers, Method, Request, Response};
+use siphon_parse::serialize_response;
+use siphon_transport::pool::ConnectionPool;
 use smol_str::SmolStr;
 use tokio::{
     sync::{mpsc, oneshot},
@@ -71,7 +71,7 @@ const T4_DEFAULT: Duration = Duration::from_secs(5); // Maximum duration a messa
 ///
 /// Using preset configurations:
 /// ```
-/// use sip_transaction::TransactionLimits;
+/// use siphon_transaction::TransactionLimits;
 ///
 /// // Small server (1-10 concurrent calls)
 /// let small = TransactionLimits::small();
@@ -93,7 +93,7 @@ const T4_DEFAULT: Duration = Duration::from_secs(5); // Maximum duration a messa
 ///
 /// Custom limits:
 /// ```
-/// use sip_transaction::TransactionLimits;
+/// use siphon_transaction::TransactionLimits;
 ///
 /// // Different limits for client and server
 /// let custom = TransactionLimits::new(5_000, 2_000);
@@ -235,7 +235,7 @@ pub struct TransportContext {
     /// certificate, and for contexts not built from an inbound packet.
     /// Lets a transaction user authorize by who the connection proved
     /// itself to be rather than by what the message claims.
-    peer_identity: Option<std::sync::Arc<sip_transport::PeerIdentity>>,
+    peer_identity: Option<std::sync::Arc<siphon_transport::PeerIdentity>>,
 }
 
 impl TransportContext {
@@ -293,8 +293,8 @@ impl TransportContext {
     }
 
     /// Returns the peer's verified TLS certificate identity, if the
-    /// connection presented one (see [`sip_transport::PeerIdentity`]).
-    pub fn peer_identity(&self) -> Option<&std::sync::Arc<sip_transport::PeerIdentity>> {
+    /// connection presented one (see [`siphon_transport::PeerIdentity`]).
+    pub fn peer_identity(&self) -> Option<&std::sync::Arc<siphon_transport::PeerIdentity>> {
         self.peer_identity.as_ref()
     }
 
@@ -340,7 +340,7 @@ impl TransportContext {
     /// `InboundPacket::peer_identity`.
     pub fn with_peer_identity(
         mut self,
-        identity: Option<std::sync::Arc<sip_transport::PeerIdentity>>,
+        identity: Option<std::sync::Arc<siphon_transport::PeerIdentity>>,
     ) -> Self {
         self.peer_identity = identity;
         self
@@ -740,7 +740,7 @@ impl TransactionManager {
     /// client transactions that initiate new TCP connections. It sets the channel
     /// on the manager's pool, so it has effect only when that pool is the one the
     /// dispatcher sends through ([`new_with_pool`](Self::new_with_pool)).
-    pub async fn set_inbound_tx(&self, tx: mpsc::Sender<sip_transport::InboundPacket>) {
+    pub async fn set_inbound_tx(&self, tx: mpsc::Sender<siphon_transport::InboundPacket>) {
         self.inner.pool.set_inbound_tx(tx).await;
     }
 
@@ -1663,7 +1663,7 @@ impl TransactionManager {
         if !method.eq_ignore_ascii_case("INVITE") {
             return false;
         }
-        let Some(call_id) = sip_parse::header(prack.headers(), "Call-ID") else {
+        let Some(call_id) = siphon_parse::header(prack.headers(), "Call-ID") else {
             return false;
         };
         let keys = match self.inner.prack_calls.get(call_id.as_str()) {
@@ -1875,7 +1875,7 @@ mod tests {
         assert!(bare.peer_identity().is_none(), "default is no identity");
 
         let identity = std::sync::Arc::new(
-            sip_transport::PeerIdentity::builder("CN=node-1")
+            siphon_transport::PeerIdentity::builder("CN=node-1")
                 .common_name("node-1")
                 .uri_name("sip:node-1@example.com")
                 .build(),
@@ -1891,7 +1891,7 @@ mod tests {
     }
 
     use super::*;
-    use sip_core::{
+    use siphon_core::{
         headers::Headers,
         method::Method,
         msg::{RequestLine, StatusLine},

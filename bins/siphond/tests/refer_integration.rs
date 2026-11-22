@@ -30,7 +30,7 @@
 //!
 //! ## Future Enhancements
 //!
-//! - Integration with sip-testkit crate for test harness
+//! - Integration with siphon-testkit crate for test harness
 //! - Mock SIP client implementation for automated testing
 //! - Docker-based test environment for isolated testing
 
@@ -60,7 +60,7 @@
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_blind_transfer() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // 1. Start siphond instance in B2BUA or call-server mode
     // 2. Create mock SIP clients for Alice, Bob, Charlie
     // 3. Establish Alice-Bob call
@@ -72,7 +72,7 @@ fn test_blind_transfer() {
     // 9. Verify Alice sends NOTIFY with 200 OK when Charlie accepts
     // 10. Verify Alice sends BYE to Bob
     // 11. Verify Alice-Charlie call is established
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test attended transfer (REFER with Replaces header).
@@ -103,7 +103,7 @@ fn test_blind_transfer() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_attended_transfer() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // 1. Start siphond instance in B2BUA mode
     // 2. Create mock SIP clients for Alice, Bob, Charlie
     // 3. Establish Alice-Bob call (call 1)
@@ -116,7 +116,7 @@ fn test_attended_transfer() {
     // 10. Verify Alice sends NOTIFY with 200 OK
     // 11. Verify Alice sends BYE to Bob (call 1 terminated)
     // 12. Verify Alice-Charlie call is established
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test REFER NOTIFY progress tracking.
@@ -141,7 +141,7 @@ fn test_attended_transfer() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_refer_notify_progress() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // 1. Start siphond instance
     // 2. Create mock SIP clients
     // 3. Establish call and send REFER
@@ -152,7 +152,7 @@ fn test_refer_notify_progress() {
     // 5. Verify Content-Type is message/sipfrag
     // 6. Verify sipfrag body format: "SIP/2.0 <code> <reason>"
     // 7. Verify CSeq increments in each NOTIFY
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test REFER failure cases.
@@ -174,7 +174,7 @@ fn test_refer_notify_progress() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_refer_failure_cases() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // Test case 1: REFER outside dialog
     // - Send REFER without established dialog
     // - Verify 481 response
@@ -196,7 +196,7 @@ fn test_refer_failure_cases() {
     // - Send REFER to target that sends 603 Decline
     // - Verify 202 Accepted
     // - Verify NOTIFY with 603 Decline
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test REFER with transport selection (TCP/TLS/UDP).
@@ -218,7 +218,7 @@ fn test_refer_failure_cases() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_refer_transport_selection() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // Test case 1: TCP transport
     // - Send REFER with Refer-To: sip:charlie@example.com;transport=tcp
     // - Verify transfer succeeds
@@ -238,7 +238,7 @@ fn test_refer_transport_selection() {
     // - Send REFER with Refer-To: sip:charlie@example.com;transport=ws
     // - Verify transfer succeeds
     // - Verify ACK sent via WebSocket
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test REFER with late offer SDP negotiation.
@@ -260,14 +260,14 @@ fn test_refer_transport_selection() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_refer_late_offer_sdp() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // 1. Configure siphond with SDP profile
     // 2. Send REFER to initiate transfer
     // 3. Transfer target responds with 200 OK containing SDP offer
     // 4. Verify ACK contains SDP answer
     // 5. Verify SDP negotiation (codec matching, media ports, etc.)
     // 6. Verify NOTIFY reports success (200 OK)
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Test REFER subscription expiry and cleanup.
@@ -289,7 +289,7 @@ fn test_refer_late_offer_sdp() {
 #[test]
 #[ignore = "requires test infrastructure"]
 fn test_refer_subscription_lifecycle() {
-    // TODO: Implement test with sip-testkit
+    // TODO: Implement test with siphon-testkit
     // 1. Send REFER and verify subscription created
     // 2. Check SubscriptionManager contains subscription
     // 3. Verify subscription has correct expiry time
@@ -297,7 +297,7 @@ fn test_refer_subscription_lifecycle() {
     // 5. Verify Subscription-State: terminated in NOTIFY
     // 6. Verify subscription removed from SubscriptionManager
     // 7. Verify no memory leaks (subscription properly cleaned up)
-    panic!("Test not implemented - requires sip-testkit integration");
+    panic!("Test not implemented - requires siphon-testkit integration");
 }
 
 /// Helper documentation for creating test configuration.
@@ -327,7 +327,7 @@ fn test_refer_subscription_lifecycle() {
 /// ## Test Infrastructure
 ///
 /// Future implementation will require:
-/// - sip-testkit crate for test harness
+/// - siphon-testkit crate for test harness
 /// - Mock SIP client implementations
 /// - Docker-based test environment (optional)
 /// - CI/CD integration for automated testing

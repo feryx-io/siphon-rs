@@ -9,14 +9,14 @@
 //!
 //! # Example
 //! ```
-//! use sip_testkit::build_options;
+//! use siphon_testkit::build_options;
 //! let req = build_options("sip:test@example.com");
 //! assert_eq!(req.method().as_str(), "OPTIONS");
 //! ```
 
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-use sip_parse::{serialize_request, serialize_response};
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+use siphon_parse::{serialize_request, serialize_response};
 use smol_str::SmolStr;
 
 /// Constructs a minimal OPTIONS request for the provided URI string.

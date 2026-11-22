@@ -9,8 +9,8 @@
 //!
 //! # Example
 //! ```
-//! use sip_proxy::ProxyHelpers;
-//! # use sip_core::{Request, Headers, RequestLine, Method, SipUri};
+//! use siphon_proxy::ProxyHelpers;
+//! # use siphon_core::{Request, Headers, RequestLine, Method, SipUri};
 //! # use bytes::Bytes;
 //! # let mut req = Request::new(RequestLine::new(Method::Invite, SipUri::parse("sip:bob@example.com").unwrap()), Headers::new(), Bytes::new()).unwrap();
 //! let branch = ProxyHelpers::add_via(&mut req, "proxy.example.com", "UDP".into());
@@ -24,10 +24,10 @@ pub mod service;
 pub mod stateful;
 
 use anyhow::{anyhow, Result};
-use sip_core::{
+use siphon_core::{
     decrement_max_forwards, Header, Headers, Request, RequestLine, RouteHeader, SipUri, Uri,
 };
-use sip_transaction::generate_branch_id;
+use siphon_transaction::generate_branch_id;
 
 /// Stateless proxy helpers for RFC 3261 proxy operations.
 ///
@@ -448,7 +448,7 @@ impl ProxyHelpers {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Method, RequestLine};
+    use siphon_core::{Method, RequestLine};
 
     #[test]
     fn adds_via_header() {

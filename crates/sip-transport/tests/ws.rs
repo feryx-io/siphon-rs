@@ -9,7 +9,7 @@ use std::time::Duration;
 
 use bytes::Bytes;
 use futures_util::{SinkExt, StreamExt};
-use sip_transport::{
+use siphon_transport::{
     run_ws, run_ws_with_policy, send_ws, InboundPacket, TransportKind, WsAcceptPolicy,
 };
 use tokio::sync::mpsc;

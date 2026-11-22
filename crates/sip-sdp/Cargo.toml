@@ -1,5 +1,5 @@
 [package]
-name = "sip-sdp"
+name = "siphon-sdp"
 version = "0.3.2"
 edition = "2021"
 license.workspace = true
@@ -8,7 +8,6 @@ readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 smol_str = { workspace = true }

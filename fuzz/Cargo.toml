@@ -13,12 +13,12 @@ cargo-fuzz = true
 # from. It did, and so the fuzz crate did not build at all.
 [dependencies]
 libfuzzer-sys = "0.4"
-sip-parse = { path = "../crates/sip-parse" }
-sip-core = { path = "../crates/sip-core" }
-sip-dialog = { path = "../crates/sip-dialog" }
-sip-registrar = { path = "../crates/sip-registrar" }
-sip-sdp = { path = "../crates/sip-sdp" }
-sip-transaction = { path = "../crates/sip-transaction" }
+siphon-parse = { path = "../crates/sip-parse" }
+siphon-core = { path = "../crates/sip-core" }
+siphon-dialog = { path = "../crates/sip-dialog" }
+siphon-registrar = { path = "../crates/sip-registrar" }
+siphon-sdp = { path = "../crates/sip-sdp" }
+siphon-transaction = { path = "../crates/sip-transaction" }
 smol_str = "0.3"
 bytes = "1"
 

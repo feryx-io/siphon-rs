@@ -34,7 +34,7 @@
 //! metrics for all transactions:
 //!
 //! ```rust
-//! use sip_transaction::TransactionManager;
+//! use siphon_transaction::TransactionManager;
 //! use std::sync::Arc;
 //!
 //! # async fn example(manager: Arc<TransactionManager>) {
@@ -45,11 +45,11 @@
 //! let snapshot = manager.metrics().snapshot();
 //!
 //! // Query by transport
-//! if let Some(tcp_stats) = snapshot.by_transport.get(&sip_transaction::metrics::TransportType::Tcp) {
+//! if let Some(tcp_stats) = snapshot.by_transport.get(&siphon_transaction::metrics::TransportType::Tcp) {
 //!     println!("TCP transactions: {}", tcp_stats.count);
 //!     println!("Average duration: {:?}", tcp_stats.avg_duration);
 //!     println!("Success rate: {:.1}%",
-//!         tcp_stats.outcomes.get(&sip_transaction::metrics::TransactionOutcome::Completed)
+//!         tcp_stats.outcomes.get(&siphon_transaction::metrics::TransactionOutcome::Completed)
 //!             .map(|c| (*c as f64 / tcp_stats.count as f64) * 100.0)
 //!             .unwrap_or(0.0)
 //!     );
@@ -61,7 +61,7 @@
 //! }
 //!
 //! // Timer statistics
-//! use sip_transaction::TransactionTimer;
+//! use siphon_transaction::TransactionTimer;
 //! if let Some(timer_k_stats) = snapshot.timer_stats.get(&TransactionTimer::K) {
 //!     println!("Timer K fired {} times", timer_k_stats.fire_count);
 //! }
@@ -73,7 +73,7 @@
 //! For custom instrumentation or testing:
 //!
 //! ```rust
-//! use sip_transaction::metrics::{TransactionMetrics, TransportType, TransactionOutcome};
+//! use siphon_transaction::metrics::{TransactionMetrics, TransportType, TransactionOutcome};
 //! use std::time::Duration;
 //!
 //! let metrics = TransactionMetrics::new();
@@ -87,7 +87,7 @@
 //! metrics.record_transaction_outcome(TransportType::Tcp, TransactionOutcome::Completed);
 //!
 //! // Record timer firings
-//! metrics.record_timer_fired(sip_transaction::TransactionTimer::E);
+//! metrics.record_timer_fired(siphon_transaction::TransactionTimer::E);
 //!
 //! // Get aggregated statistics
 //! let snapshot = metrics.snapshot();
@@ -99,8 +99,8 @@
 //! Use `TransactionTracker` for automatic duration measurement:
 //!
 //! ```rust
-//! use sip_transaction::metrics::{TransactionMetrics, TransactionTracker, TransportType, TransactionOutcome};
-//! use sip_core::Method;
+//! use siphon_transaction::metrics::{TransactionMetrics, TransactionTracker, TransportType, TransactionOutcome};
+//! use siphon_core::Method;
 //!
 //! # async fn example(metrics: TransactionMetrics) {
 //! // Start tracking
@@ -137,7 +137,7 @@
 //! - Formatted metric displays
 
 use parking_lot::RwLock;
-use sip_core::Method;
+use siphon_core::Method;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::{Duration, Instant};

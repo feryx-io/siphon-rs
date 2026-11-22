@@ -13,8 +13,8 @@
 #![no_main]
 use bytes::Bytes;
 use libfuzzer_sys::fuzz_target;
-use sip_core::SipUri;
-use sip_dialog::{Dialog, DialogId};
+use siphon_core::SipUri;
+use siphon_dialog::{Dialog, DialogId};
 
 fuzz_target!(|data: &[u8]| {
     if data.len() < 16 || data.len() > 8192 {
@@ -23,7 +23,7 @@ fuzz_target!(|data: &[u8]| {
     let bytes = Bytes::copy_from_slice(data);
 
     // A request: the identity a UAS would give the dialog it creates.
-    if let Some(request) = sip_parse::parse_request(&bytes) {
+    if let Some(request) = siphon_parse::parse_request(&bytes) {
         if let Some(id) = DialogId::from_request(&request) {
             // The three parts are text from the wire; reading them back
             // must not panic however they were spelled.
@@ -38,7 +38,7 @@ fuzz_target!(|data: &[u8]| {
 
     // A response: both the UAC's and the UAS's view of the same dialog,
     // and the dialog each would build from it.
-    if let Some(response) = sip_parse::parse_response(&bytes) {
+    if let Some(response) = siphon_parse::parse_response(&bytes) {
         let _ = DialogId::from_response_uac(&response);
         let _ = DialogId::from_response_uas(&response);
 
@@ -62,7 +62,7 @@ fuzz_target!(|data: &[u8]| {
               Contact: <sip:local@10.0.0.1>\r\n\
               Content-Length: 0\r\n\r\n",
         );
-        if let Some(request) = sip_parse::parse_request(&invite) {
+        if let Some(request) = siphon_parse::parse_request(&invite) {
             for dialog in [
                 Dialog::new_uac(&request, &response, local.clone(), remote.clone()),
                 Dialog::new_uas(&request, &response, local.clone(), remote.clone()),

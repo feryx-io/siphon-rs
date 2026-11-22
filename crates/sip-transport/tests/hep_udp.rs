@@ -2,8 +2,8 @@
 // Copyright (C) 2026 siphon-rs contributors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //
-//! Drives an end-to-end UDP recv + send through `sip-transport` with
-//! a `sip-hep` emitter wired up, and asserts the resulting `HepPacket`s
+//! Drives an end-to-end UDP recv + send through `siphon-transport` with
+//! a `siphon-hep` emitter wired up, and asserts the resulting `HepPacket`s
 //! describe both directions of the conversation.
 
 use std::net::SocketAddr;
@@ -11,8 +11,8 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use hep_rs::{HepPacket, HepProtocol, HepSink, IpProto};
-use sip_hep::{Direction, SipHepEmitter};
-use sip_transport::{run_udp, send_udp, InboundPacket};
+use siphon_hep::{Direction, SipHepEmitter};
+use siphon_transport::{run_udp, send_udp, InboundPacket};
 use tokio::net::UdpSocket;
 use tokio::sync::mpsc;
 use tokio::time::timeout;
@@ -36,7 +36,7 @@ async fn run_udp_and_send_udp_emit_hep_on_both_legs() {
     // emitter-using tests to the same binary.
     let sink = Arc::new(CapturingSink::default());
     let emitter = Arc::new(SipHepEmitter::new(sink.clone() as Arc<dyn HepSink>, 7777));
-    let installed = sip_hep::set_emitter(emitter);
+    let installed = siphon_hep::set_emitter(emitter);
     assert!(
         installed,
         "first install of the test emitter should succeed"

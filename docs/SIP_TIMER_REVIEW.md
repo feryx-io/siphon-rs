@@ -263,7 +263,7 @@ pub enum RefresherRole {
 **Example Usage:**
 
 ```rust
-use sip_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
+use siphon_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
 
 // Create manager
 let manager = SessionTimerManager::new();
@@ -296,7 +296,7 @@ tokio::spawn(async move {
 **UAS Validation Example:**
 
 ```rust
-use sip_uas::UserAgentServer;
+use siphon_uas::UserAgentServer;
 
 // Validate incoming INVITE
 match UserAgentServer::validate_session_timer(&invite, None) {
@@ -355,7 +355,7 @@ match UserAgentServer::validate_session_timer(&invite, None) {
 
 **Assessment:**
 - ❌ Not implemented
-- ⏳ Acceptable - `sip-proxy` crate is marked as placeholder in documentation
+- ⏳ Acceptable - `siphon-proxy` crate is marked as placeholder in documentation
 - **Note:** Will need implementation when proxy functionality is completed
 
 ---
@@ -449,7 +449,7 @@ None. All essential transaction timers are functional.
 ### Low Priority (Future)
 
 7. **Implement Timer C for Proxy**
-   - Will be needed when `sip-proxy` is completed
+   - Will be needed when `siphon-proxy` is completed
    - Set to > 3 minutes per RFC 3261 §16.6
 
 ---

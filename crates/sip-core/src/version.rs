@@ -18,7 +18,7 @@ use std::fmt;
 /// # Examples
 ///
 /// ```
-/// use sip_core::SipVersion;
+/// use siphon_core::SipVersion;
 ///
 /// // Get version string
 /// assert_eq!(SipVersion::V2.as_str(), "SIP/2.0");
@@ -61,7 +61,7 @@ impl SipVersion {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::SipVersion;
+    /// use siphon_core::SipVersion;
     ///
     /// assert_eq!(SipVersion::V2.as_str(), "SIP/2.0");
     /// ```
@@ -89,7 +89,7 @@ impl SipVersion {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::SipVersion;
+    /// use siphon_core::SipVersion;
     ///
     /// // Valid version
     /// assert_eq!(SipVersion::parse("SIP/2.0").unwrap(), SipVersion::V2);
@@ -158,7 +158,7 @@ impl SipVersion {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::SipVersion;
+    /// use siphon_core::SipVersion;
     ///
     /// assert_eq!(SipVersion::V2.major(), 2);
     /// ```
@@ -173,7 +173,7 @@ impl SipVersion {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::SipVersion;
+    /// use siphon_core::SipVersion;
     ///
     /// assert_eq!(SipVersion::V2.minor(), 0);
     /// ```

@@ -10,10 +10,10 @@
 /// 3. Response with registered contacts and expiry
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_registrar::Registrar;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_registrar::Registrar;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
 use tracing::{info, warn};
 
 use super::RequestHandler;
@@ -56,10 +56,11 @@ impl RequestHandler for RegisterHandler {
             Some(reg) => reg,
             None => {
                 warn!(call_id, "REGISTER rejected: registrar not enabled");
-                let mut headers = sip_core::Headers::new();
+                let mut headers = siphon_core::Headers::new();
                 copy_headers(request, &mut headers);
-                let response = sip_core::Response::new(
-                    sip_core::StatusLine::new(501, "Not Implemented").expect("valid status line"),
+                let response = siphon_core::Response::new(
+                    siphon_core::StatusLine::new(501, "Not Implemented")
+                        .expect("valid status line"),
                     headers,
                     bytes::Bytes::new(),
                 )
@@ -110,7 +111,7 @@ impl RequestHandler for RegisterHandler {
 }
 
 /// Copy essential headers from request to response
-fn copy_headers(request: &Request, headers: &mut sip_core::Headers) {
+fn copy_headers(request: &Request, headers: &mut siphon_core::Headers) {
     if let Some(via) = header(request.headers(), "Via") {
         let _ = headers.push("Via", via.clone());
     }
@@ -133,9 +134,9 @@ fn copy_headers(request: &Request, headers: &mut sip_core::Headers) {
 /// rate-limit responder so clients see a consistent throttle response.
 async fn send_rate_limited(request: &Request, handle: ServerTransactionHandle) {
     use bytes::Bytes;
-    use sip_core::{Response, StatusLine};
+    use siphon_core::{Response, StatusLine};
 
-    let mut headers = sip_core::Headers::new();
+    let mut headers = siphon_core::Headers::new();
     copy_headers(request, &mut headers);
     let _ = headers.push("Retry-After", "30");
     let response = Response::new(

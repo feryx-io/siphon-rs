@@ -4,7 +4,7 @@
 
 #![no_main]
 use libfuzzer_sys::fuzz_target;
-use sip_core::multipart::MultipartBody;
+use siphon_core::multipart::MultipartBody;
 
 fuzz_target!(|data: &[u8]| {
     // The first line is the Content-Type; the rest is the body.

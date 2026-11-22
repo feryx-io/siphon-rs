@@ -8,8 +8,8 @@
 //! - UDP: Full timer values with retransmissions
 //! - TCP/TLS: Zero wait times, no retransmissions
 
-use sip_transaction::timers::{Transport, TransportAwareTimers};
-use sip_transaction::TransactionTimer;
+use siphon_transaction::timers::{Transport, TransportAwareTimers};
+use siphon_transaction::TransactionTimer;
 use std::time::Duration;
 
 #[test]

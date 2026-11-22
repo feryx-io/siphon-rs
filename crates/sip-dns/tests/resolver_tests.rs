@@ -2,8 +2,8 @@
 // Copyright (C) 2025 James Ferris <ferrous.communications@gmail.com>
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use sip_core::SipUri;
-use sip_dns::{DnsTarget, Resolver, SipResolver, StaticResolver, Transport};
+use siphon_core::SipUri;
+use siphon_dns::{DnsTarget, Resolver, SipResolver, StaticResolver, Transport};
 
 #[tokio::test]
 async fn resolve_numeric_ipv4() {

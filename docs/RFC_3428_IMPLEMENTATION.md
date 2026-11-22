@@ -56,7 +56,7 @@ RFC 3428 defines the MESSAGE method for instant messaging:
 |---------|--------|-------|
 | **1300 Byte Enforcement** | ⚠️ Not Enforced | Documented but user responsibility |
 | **S/MIME Encryption** | ⚠️ Not Implemented | Optional security feature |
-| **CPIM Format** | ⚠️ Not Automatic | CPIM helpers exist in `sip-core` (RFC 3860) but MESSAGE body is user-supplied |
+| **CPIM Format** | ⚠️ Not Automatic | CPIM helpers exist in `siphon-core` (RFC 3860) but MESSAGE body is user-supplied |
 | **Message Composition Indication** | ⚠️ Not Implemented | "isComposing" notifications (RFC 3994) |
 
 ---
@@ -88,8 +88,8 @@ pub fn create_message(
 
 **Example:**
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 let uac = UserAgentClient::new(
     SipUri::parse("sip:alice@example.com")?,
@@ -140,8 +140,8 @@ pub fn create_message_with_headers(
 
 **Example:**
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::{SipUri, Headers};
+use siphon_uac::UserAgentClient;
+use siphon_core::{SipUri, Headers};
 
 let uac = UserAgentClient::new(
     SipUri::parse("sip:alice@example.com")?,
@@ -168,8 +168,8 @@ let message = uac.create_message_with_headers(
 ### Basic Text Message
 
 ```rust
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 let uac = UserAgentClient::new(
     SipUri::parse("sip:alice@example.com")?,
@@ -220,7 +220,7 @@ let message = uac.create_message(
 ### Message with Expiration
 
 ```rust
-use sip_core::Headers;
+use siphon_core::Headers;
 
 let mut extra_headers = Headers::new();
 extra_headers.push("Expires", "3600")?;  // Expires in 1 hour
@@ -351,7 +351,7 @@ match response.code() {
 #### ⚠️ Optional Features Not Implemented
 
 1. **S/MIME Encryption** (RFC 3428 Section 7): Optional content encryption
-2. **CPIM Format** (RFC 3860): Available via `sip_core::CpimMessage`, but not applied automatically by the MESSAGE builder
+2. **CPIM Format** (RFC 3860): Available via `siphon_core::CpimMessage`, but not applied automatically by the MESSAGE builder
 3. **Message Composition Indication** (RFC 3994): "isComposing" notifications
 
 ### Header Requirements
@@ -447,9 +447,9 @@ fn check_message_size(message: &Request) -> Result<(), String> {
 ### With Transport Layer
 
 ```rust
-use sip_transport::send_udp;
-use sip_uac::UserAgentClient;
-use sip_core::SipUri;
+use siphon_transport::send_udp;
+use siphon_uac::UserAgentClient;
+use siphon_core::SipUri;
 
 async fn send_instant_message(
     uac: &UserAgentClient,
@@ -478,7 +478,7 @@ async fn send_instant_message(
 
 ```rust
 // MESSAGE is out-of-dialog, but can be sent to dialog participants
-use sip_dialog::Dialog;
+use siphon_dialog::Dialog;
 
 fn send_message_to_dialog_peer(
     uac: &UserAgentClient,
@@ -556,14 +556,14 @@ All 8 MESSAGE tests pass:
 ### Running Tests
 
 ```bash
-# Run all sip-uac tests
-cargo test --package sip-uac
+# Run all siphon-uac tests
+cargo test --package siphon-uac
 
 # Run only MESSAGE tests
-cargo test --package sip-uac message
+cargo test --package siphon-uac message
 
 # Run specific MESSAGE test
-cargo test --package sip-uac message_has_no_contact_header
+cargo test --package siphon-uac message_has_no_contact_header
 ```
 
 ### Test Results

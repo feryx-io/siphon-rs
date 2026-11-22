@@ -31,7 +31,7 @@
 //! When the issuer knows the REFER won't fork and doesn't need NOTIFY updates:
 //!
 //! ```
-//! use sip_core::ReferSubHeader;
+//! use siphon_core::ReferSubHeader;
 //!
 //! // Suppress implicit subscription
 //! let refer_sub = ReferSubHeader::new(false);
@@ -46,7 +46,7 @@
 //! When receiving a REFER with `Refer-Sub: false`:
 //!
 //! ```
-//! use sip_core::ReferSubHeader;
+//! use siphon_core::ReferSubHeader;
 //!
 //! // Parse from REFER request
 //! let refer_sub = ReferSubHeader::parse("false").unwrap();
@@ -122,7 +122,7 @@ const MAX_INPUT_LENGTH: usize = 16;
 /// # Examples
 ///
 /// ```
-/// use sip_core::ReferSubHeader;
+/// use siphon_core::ReferSubHeader;
 ///
 /// // Suppress subscription
 /// let no_sub = ReferSubHeader::new(false);
@@ -157,7 +157,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// // Suppress subscription
     /// let refer_sub = ReferSubHeader::new(false);
@@ -178,7 +178,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let refer_sub = ReferSubHeader::suppressed();
     /// assert!(!refer_sub.is_enabled());
@@ -196,7 +196,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let refer_sub = ReferSubHeader::enabled();
     /// assert!(refer_sub.is_enabled());
@@ -211,7 +211,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let refer_sub = ReferSubHeader::new(true);
     /// assert!(refer_sub.is_enabled());
@@ -242,7 +242,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let sub = ReferSubHeader::parse("false").unwrap();
     /// assert!(!sub.is_enabled());
@@ -283,7 +283,7 @@ impl ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let refer_sub = ReferSubHeader::new(false);
     /// assert!(refer_sub.is_suppressed());
@@ -308,7 +308,7 @@ impl Default for ReferSubHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::ReferSubHeader;
+    /// use siphon_core::ReferSubHeader;
     ///
     /// let default = ReferSubHeader::default();
     /// assert!(default.is_enabled());

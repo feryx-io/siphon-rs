@@ -1,5 +1,5 @@
 [package]
-name = "sip-testkit"
+name = "siphon-testkit"
 version = "0.1.1"
 edition = "2021"
 license.workspace = true
@@ -8,12 +8,11 @@ readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 bytes = { workspace = true }
-sip-core = { path = "../sip-core" }
-sip-parse = { path = "../sip-parse" }
+siphon-core = { workspace = true }
+siphon-parse = { workspace = true }
 smol_str = { workspace = true }
 proptest = { version = "1", optional = true }
 

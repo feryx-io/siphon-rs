@@ -11,8 +11,8 @@
 /// 4. Accept or reject the call
 /// 5. Handle BYE to terminate the dialog
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, SipUri};
-use sip_uas::UserAgentServer;
+use siphon_core::{Headers, Method, Request, RequestLine, SipUri};
+use siphon_uas::UserAgentServer;
 use smol_str::SmolStr;
 
 fn main() {

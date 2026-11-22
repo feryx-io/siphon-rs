@@ -7,9 +7,9 @@
 /// This allows the CANCEL handler to send 487 Request Terminated responses
 /// to the original INVITE transaction when a CANCEL is received.
 use dashmap::DashMap;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::ServerTransactionHandle;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::ServerTransactionHandle;
 use smol_str::SmolStr;
 use std::time::{Duration, Instant};
 

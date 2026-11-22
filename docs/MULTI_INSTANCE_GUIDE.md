@@ -3,8 +3,8 @@
 This stack stays infra-neutral. You choose whether state is local or shared; the code exposes hooks to plug your own storage and sharding.
 
 ## State surfaces
-- Dialogs: `sip-dialog::storage::DialogStore` (default: in-memory).
-- Transactions: `sip-transaction::storage::TransactionStore` (default: in-memory).
+- Dialogs: `siphon-dialog::storage::DialogStore` (default: in-memory).
+- Transactions: `siphon-transaction::storage::TransactionStore` (default: in-memory).
 - Location/registrations: app-level (not mandated here).
 
 ## Using custom stores
@@ -23,7 +23,7 @@ impl DialogStore for RedisDialogStore {
 ```
 
 ## Sharding / stickiness
-Helpers in `sip-transaction::sharding`:
+Helpers in `siphon-transaction::sharding`:
 - `shard_by_call_id(call_id)`
 - `shard_by_transaction_key(&TransactionKey)`
 - `shard_by_dialog_id(call_id, local_tag, remote_tag)`

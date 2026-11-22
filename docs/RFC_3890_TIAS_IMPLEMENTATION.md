@@ -129,7 +129,7 @@ impl Bandwidth {
 ### Parsing Example
 
 ```rust
-use sip_core::SdpSession;
+use siphon_core::SdpSession;
 
 // Parse SDP with TIAS
 let sdp = "\
@@ -165,7 +165,7 @@ for media in &session.media {
 ### Generation Example
 
 ```rust
-use sip_core::{SdpSession, Bandwidth, MediaDescription, Origin, Connection};
+use siphon_core::{SdpSession, Bandwidth, MediaDescription, Origin, Connection};
 
 // Create session
 let mut session = SdpSession::new(
@@ -302,7 +302,7 @@ a=maxprate:18
 Helper function to calculate AS from TIAS:
 
 ```rust
-use sip_core::{SdpSession, BandwidthType};
+use siphon_core::{SdpSession, BandwidthType};
 
 fn calculate_as_from_tias(
     tias_bps: u64,
@@ -537,7 +537,7 @@ While the current implementation is fully compliant with RFC 3890, potential fut
 Complete bandwidth specification example:
 
 ```rust
-use sip_core::{SdpSession, Bandwidth, MediaDescription};
+use siphon_core::{SdpSession, Bandwidth, MediaDescription};
 
 fn create_streaming_sdp(
     video_tias_bps: u64,

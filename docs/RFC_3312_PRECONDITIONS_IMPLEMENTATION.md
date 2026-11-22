@@ -248,8 +248,8 @@ a=des:qos mandatory e2e sendrecv
 
 **Code**:
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
 
 // Parse offer
 let offer = SdpSession::parse(offer_sdp)?;
@@ -297,8 +297,8 @@ a=des:qos mandatory remote sendrecv
 
 **Code**:
 ```rust
-use sip_core::sdp::{PreconditionDirection, SdpSession};
-use sip_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
+use siphon_core::sdp::{PreconditionDirection, SdpSession};
+use siphon_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
 
 let offer = SdpSession::parse(offer_sdp)?;
 let engine = OfferAnswerEngine::new();
@@ -325,8 +325,8 @@ assert_eq!(curr.len(), 2);
 
 **Code**:
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
 
 let offer_sdp = "v=0\r\n\
                  o=alice 123 456 IN IP4 192.0.2.1\r\n\
@@ -351,7 +351,7 @@ assert_eq!(des[0].to_string(), "qos mandatory e2e sendrecv");  // Upgraded!
 
 **Code**:
 ```rust
-use sip_core::sdp::SdpSession;
+use siphon_core::sdp::SdpSession;
 
 let base_sdp = "v=0\r\n\
                 o=alice 123 456 IN IP4 192.0.2.1\r\n\
@@ -376,7 +376,7 @@ assert!(!session.are_preconditions_met(0));
 
 **Code**:
 ```rust
-use sip_core::sdp::{CurrentStatus, DesiredStatus, ConfirmStatus};
+use siphon_core::sdp::{CurrentStatus, DesiredStatus, ConfirmStatus};
 
 // Parse current status
 let curr = CurrentStatus::parse("qos e2e sendrecv")?;
@@ -400,7 +400,7 @@ assert_eq!(conf.to_string(), "qos remote recv");
 
 **Code**:
 ```rust
-use sip_core::sdp::{StatusType, PreconditionDirection};
+use siphon_core::sdp::{StatusType, PreconditionDirection};
 
 // Status type inversion (for offer/answer)
 assert_eq!(StatusType::E2E.invert(), StatusType::E2E);
@@ -619,8 +619,8 @@ direction.invert() -> PreconditionDirection
 ### Offer/Answer with Preconditions
 
 ```rust
-use sip_core::sdp::PreconditionDirection;
-use sip_core::sdp_offer_answer::AnswerOptions;
+use siphon_core::sdp::PreconditionDirection;
+use siphon_core::sdp_offer_answer::AnswerOptions;
 
 let options = AnswerOptions::default()
     .with_qos_local_status(PreconditionDirection::SendRecv)
@@ -635,7 +635,7 @@ let answer = engine.generate_answer(&offer, options)?;
 ### Pattern 1: Adding Preconditions to Offer
 
 ```rust
-use sip_core::sdp::SdpSession;
+use siphon_core::sdp::SdpSession;
 
 // Build an offer SDP string with e2e QoS preconditions
 let offer_sdp = "v=0\r\n\
@@ -654,7 +654,7 @@ let session = SdpSession::parse(offer_sdp)?;
 ### Pattern 2: Updating Current Status After Resource Reservation
 
 ```rust
-use sip_core::sdp::SdpSession;
+use siphon_core::sdp::SdpSession;
 
 // Update current status by rebuilding the SDP string
 let updated_sdp = session
@@ -717,8 +717,8 @@ if !offer.are_preconditions_met(0) {
 ### 3. Report Accurate Current Status
 
 ```rust
-use sip_core::sdp::PreconditionDirection;
-use sip_core::sdp_offer_answer::AnswerOptions;
+use siphon_core::sdp::PreconditionDirection;
+use siphon_core::sdp_offer_answer::AnswerOptions;
 
 // Only report resources actually reserved
 let options = AnswerOptions::default().with_qos_local_status(if resources_reserved {

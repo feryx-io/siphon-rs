@@ -40,7 +40,7 @@ cargo run -p siphond -- --mode full-uas --sips-bind 0.0.0.0:5061 --tls-cert cert
 cargo test --all
 
 # Run tests for a specific crate
-cargo test -p sip-parse
+cargo test -p siphon-parse
 
 # Run a single test by name
 cargo test test_name
@@ -96,7 +96,7 @@ not committed, so they cannot go stale against the parser:
 
 ```bash
 SIPHON_FUZZ_SEED_DIR="$PWD/fuzz/corpus" \
-  cargo test -p sip-parse -p sip-sdp --test fuzz_seeds
+  cargo test -p siphon-parse -p siphon-sdp --test fuzz_seeds
 ```
 
 Those tests also assert on every ordinary `cargo test` run that each seed
@@ -133,32 +133,32 @@ with `cargo fuzz run <target> <file>`.
 The project is organized as a Cargo workspace with the following crates:
 
 **Core Layer:**
-- `sip-core` - Shared types: `Method`, `SipUri`, `TelUri`, `Uri`, `Request`, `Response`, `Headers`, `SipMessage`, and typed header structures. Includes RFC 3966 tel URI support.
-- `sip-parse` - nom-based parser for SIP messages; handles request/response lines, headers, and message serialization. Supports both SIP and tel URIs.
+- `siphon-core` - Shared types: `Method`, `SipUri`, `TelUri`, `Uri`, `Request`, `Response`, `Headers`, `SipMessage`, and typed header structures. Includes RFC 3966 tel URI support.
+- `siphon-parse` - nom-based parser for SIP messages; handles request/response lines, headers, and message serialization. Supports both SIP and tel URIs.
 
 **Transport Layer:**
-- `sip-transport` - Async transport manager for UDP, TCP, TLS (rustls). Includes connection pooling and framing
-- `sip-dns` - RFC 3263 compliant DNS resolution (NAPTR/SRV/A/AAAA) with priority/weight handling and failover
+- `siphon-transport` - Async transport manager for UDP, TCP, TLS (rustls). Includes connection pooling and framing
+- `siphon-dns` - RFC 3263 compliant DNS resolution (NAPTR/SRV/A/AAAA) with priority/weight handling and failover
 
 **Transaction Layer:**
-- `sip-transaction` - Implements RFC 3261 client/server transaction state machines with transport-aware timers (T1, T2, T4, A-K). Manages retransmissions and transaction lifecycle
+- `siphon-transaction` - Implements RFC 3261 client/server transaction state machines with transport-aware timers (T1, T2, T4, A-K). Manages retransmissions and transaction lifecycle
   - Key types: `TransactionManager`, `TransactionKey`, `ClientTransactionUser`, `TransportDispatcher`
   - `TransportAwareTimers`: RFC 3261 §17.1.2.2 compliant timer adjustments (zero wait times for TCP/TLS)
   - `TransactionMetrics`: Performance monitoring with duration tracking, timer statistics, and outcome analysis
   - Handles branch ID generation (`z9hG4bK` magic cookie per RFC 3261)
 
 **Service Layer:**
-- `sip-dialog` - RFC 3261 §12 compliant dialog state management with Early/Confirmed/Terminated states, route sets, target refresh, CSeq tracking, and session timers. Also includes RFC 3265 subscription management for event notifications and RFC 3262 RSeq management for reliable provisionals.
-- `sip-auth` - RFC 7616/7617 compliant Digest authentication with MD5/SHA-256/SHA-512, qop (auth/auth-int), nonce management, and Proxy-Authenticate support
-- `sip-registrar` - RFC 3261 §10 compliant REGISTER handling with location service, binding management, wildcard deregistration, q-value support, and expiry tracking
-- `sip-proxy` - Proxy helper primitives (Via header insertion, Record-Route, Max-Forwards checking, Request-URI modification) for building stateful/stateless proxies
-- `sip-uas` - UAS (User Agent Server) helpers for receiving and responding to requests with dialog management, including REFER/call transfer support
-- `sip-uac` - UAC (User Agent Client) helpers for sending requests with authentication, dialog management, and call transfer capabilities
+- `siphon-dialog` - RFC 3261 §12 compliant dialog state management with Early/Confirmed/Terminated states, route sets, target refresh, CSeq tracking, and session timers. Also includes RFC 3265 subscription management for event notifications and RFC 3262 RSeq management for reliable provisionals.
+- `siphon-auth` - RFC 7616/7617 compliant Digest authentication with MD5/SHA-256/SHA-512, qop (auth/auth-int), nonce management, and Proxy-Authenticate support
+- `siphon-registrar` - RFC 3261 §10 compliant REGISTER handling with location service, binding management, wildcard deregistration, q-value support, and expiry tracking
+- `siphon-proxy` - Proxy helper primitives (Via header insertion, Record-Route, Max-Forwards checking, Request-URI modification) for building stateful/stateless proxies
+- `siphon-uas` - UAS (User Agent Server) helpers for receiving and responding to requests with dialog management, including REFER/call transfer support
+- `siphon-uac` - UAC (User Agent Client) helpers for sending requests with authentication, dialog management, and call transfer capabilities
 
 **Extension Layer:**
-- `sip-sdp` - SDP (Session Description Protocol) model (placeholder)
-- `sip-observe` - Observability and metrics (tracing integration)
-- `sip-testkit` - Integration test harness and sipp bindings
+- `siphon-sdp` - SDP (Session Description Protocol) model (placeholder)
+- `siphon-observe` - Observability and metrics (tracing integration)
+- `siphon-testkit` - Integration test harness and sipp bindings
 
 **Binaries:**
 - `siphond` - Multi-mode SIP testing daemon (Swiss Army knife for SIP testing):
@@ -340,7 +340,7 @@ The stack provides complete support for telephone number URIs:
 
 **Parser Integration:**
 - `Uri::parse()` automatically detects SIP or tel URI scheme
-- `parse_request()` in sip-parse supports tel URIs in Request-URI
+- `parse_request()` in siphon-parse supports tel URIs in Request-URI
 - Request-URI changed from `SipUri` to `Uri` for full tel support
 - Backward compatible via `impl Into<Uri>` on RequestLine constructor
 
@@ -425,7 +425,7 @@ Features:
 
 The UAC and UAS helper layers provide high-level APIs for building SIP applications:
 
-**UAC (User Agent Client) - `sip-uac`:**
+**UAC (User Agent Client) - `siphon-uac`:**
 - `UserAgentClient` - Helper for sending SIP requests
 - Request builders: `create_register()`, `create_invite()`, `create_ack()`, `create_bye()`
 - Subscription/event methods: `create_subscribe()`, `create_notify()`, `process_subscribe_response()`
@@ -450,7 +450,7 @@ Features:
 - NOTIFY with message/sipfrag body for REFER progress reporting
 - PRACK for acknowledging reliable provisional responses (RFC 3262)
 
-**UAS (User Agent Server) - `sip-uas`:**
+**UAS (User Agent Server) - `siphon-uas`:**
 - `UserAgentServer` - Helper for receiving and responding to SIP requests
 - Response builders: `create_trying()`, `create_ringing()`, `create_ok()`, `create_busy()`, `create_decline()`
 - Dialog management: `accept_invite()` creates dialog and 200 OK response
@@ -535,10 +535,10 @@ Transport is abstracted through traits:
 The transport layer integrates with the transaction layer via `TransportDispatcher` trait.
 
 **Ingress rate limiting:** every receive path applies a per-source-IP token-bucket
-limit built on `sip-ratelimit` (default 200 packets or frames/sec with equal burst).
-Configure or disable at startup with `sip_transport::set_udp_rate_limit()` /
+limit built on `siphon-ratelimit` (default 200 packets or frames/sec with equal burst).
+Configure or disable at startup with `siphon_transport::set_udp_rate_limit()` /
 `set_stream_rate_limit()` (once each, before traffic arrives). Every dropped packet
-is counted via `TransportMetrics::on_rate_limited` (sip-observe) and a throttled
+is counted via `TransportMetrics::on_rate_limited` (siphon-observe) and a throttled
 warning (at most one per second per source IP, independently per limiter) logs
 the peer's drop count and the cumulative drop count. siphond exposes the limits as
 `--udp-rate-limit` / `--stream-rate-limit` (0 disables). Sources a deployment trusts
@@ -582,7 +582,7 @@ predicate over the source IP, replaceable at any time).
 
 - Use `tracing` crate for structured logging
 - Span context should include: transaction_id, dialog_id, call_id, from_tag, to_tag
-- `sip-observe` crate provides `TracingTransportMetrics` for transport-level metrics
+- `siphon-observe` crate provides `TracingTransportMetrics` for transport-level metrics
 - Log at appropriate levels: trace for packet-level, debug for transaction events, info for service-level
 
 ## RFC Compliance

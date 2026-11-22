@@ -8,8 +8,8 @@
 //! used by INVITE and REFER handlers.
 
 use anyhow::{anyhow, Result};
-use sip_core::SipUri;
-use sip_sdp::{
+use siphon_core::SipUri;
+use siphon_sdp::{
     negotiate as sdp_negotiate, parse as sdp_parse,
     profiles::{create_from_profile, MediaProfileBuilder, SdpProfile as SdpProfileProfile},
     serialize as sdp_serialize,
@@ -104,13 +104,13 @@ pub fn generate_sdp_answer(config: &DaemonConfig, offer: &str) -> Result<String>
         }
         crate::config::SdpProfile::AudioOnly => {
             let profile = MediaProfileBuilder::audio_only();
-            sip_sdp::profiles::negotiate_answer(
+            siphon_sdp::profiles::negotiate_answer(
                 &offer_sdp, &profile, &username, &local_ip, audio_port, None,
             )
         }
         crate::config::SdpProfile::AudioVideo => {
             let profile = MediaProfileBuilder::audio_video();
-            sip_sdp::profiles::negotiate_answer(
+            siphon_sdp::profiles::negotiate_answer(
                 &offer_sdp,
                 &profile,
                 &username,

@@ -1,5 +1,5 @@
 [package]
-name = "sip-auth"
+name = "siphon-auth"
 version = "0.4.0"
 edition = "2021"
 license.workspace = true
@@ -8,19 +8,18 @@ readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
 smol_str = { workspace = true }
-sip-core = { path = "../sip-core" }
-sip-ratelimit = { path = "../sip-ratelimit" }
+siphon-core = { workspace = true }
+siphon-ratelimit = { workspace = true }
 rand = { workspace = true }
 md5 = "0.7"
 sha2 = "0.10"
 hex = "0.4"
 bytes = { workspace = true }
-sip-parse = { path = "../sip-parse" }
+siphon-parse = { workspace = true }
 tracing = { workspace = true }
 dashmap = { workspace = true }
 async-trait = "0.1"

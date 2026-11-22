@@ -203,20 +203,20 @@ impl PoolEntry {
 /// same convention `lib.rs`'s TLS path already uses. Keepalive pings
 /// (`\r\n\r\n`) must not reach here; they're not SIP.
 fn emit_pool_hep(
-    direction: sip_hep::Direction,
+    direction: siphon_hep::Direction,
     local: Option<SocketAddr>,
     peer: SocketAddr,
     data: &[u8],
 ) {
-    let (Some(emitter), Some(local)) = (sip_hep::sip_hep(), local) else {
+    let (Some(emitter), Some(local)) = (siphon_hep::sip_hep(), local) else {
         return;
     };
-    let corr = sip_hep::extract_call_id(data);
+    let corr = siphon_hep::extract_call_id(data);
     let (src, dst) = match direction {
-        sip_hep::Direction::Outbound => (local, peer),
-        sip_hep::Direction::Inbound => (peer, local),
+        siphon_hep::Direction::Outbound => (local, peer),
+        siphon_hep::Direction::Inbound => (peer, local),
     };
-    emitter.emit_sip(direction, sip_hep::IpProto::Tcp, src, dst, data, corr);
+    emitter.emit_sip(direction, siphon_hep::IpProto::Tcp, src, dst, data, corr);
 }
 
 async fn run_stream_writer_with_keepalive<W>(
@@ -259,7 +259,7 @@ async fn run_stream_writer_with_keepalive<W>(
                 }
                 // Real SIP traffic — capture it. Only this branch emits;
                 // the keepalive branch below is `\r\n\r\n`, not a message.
-                emit_pool_hep(sip_hep::Direction::Outbound, hep_local, hep_peer, &buf);
+                emit_pool_hep(siphon_hep::Direction::Outbound, hep_local, hep_peer, &buf);
                 // Real traffic means the NAT binding is fresh; reset
                 // the keepalive countdown.
                 if let Some(t) = keepalive_timer.as_mut() {
@@ -723,7 +723,7 @@ impl ConnectionPool {
                                         // same reason as the writer's
                                         // outbound half (#341).
                                         emit_pool_hep(
-                                            sip_hep::Direction::Inbound,
+                                            siphon_hep::Direction::Inbound,
                                             hep_local,
                                             peer,
                                             &payload,
@@ -1351,7 +1351,7 @@ impl TlsPool {
                                     // Inbound half of the pooled TLS
                                     // connection (#341).
                                     emit_pool_hep(
-                                        sip_hep::Direction::Inbound,
+                                        siphon_hep::Direction::Inbound,
                                         hep_local,
                                         peer,
                                         &payload,

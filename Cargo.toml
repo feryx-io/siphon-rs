@@ -27,7 +27,6 @@ edition = "2021"
 authors = ["siphon-rs contributors"]
 repository = "https://github.com/feryx-io/siphon-rs"
 homepage = "https://github.com/feryx-io/siphon-rs"
-documentation = "https://docs.rs/siphon-rs"
 
 [workspace.dependencies]
 anyhow = "1"
@@ -42,3 +41,26 @@ dashmap = "5"
 parking_lot = "0.12"
 once_cell = "1.19"
 httpdate = "1.0"
+
+# Workspace crates. `path` is what a workspace build uses; `version` is what a
+# published crate's dependents resolve against on crates.io. Bumping a crate's
+# version means updating its line here too (see RELEASING.md).
+siphon-core = { path = "crates/sip-core", version = "0.7.8" }
+siphon-parse = { path = "crates/sip-parse", version = "0.4.0" }
+siphon-transport = { path = "crates/sip-transport", version = "0.7.1" }
+siphon-transaction = { path = "crates/sip-transaction", version = "0.9.1" }
+siphon-dns = { path = "crates/sip-dns", version = "0.3.0" }
+siphon-dialog = { path = "crates/sip-dialog", version = "0.4.0" }
+siphon-auth = { path = "crates/sip-auth", version = "0.4.0" }
+siphon-registrar = { path = "crates/sip-registrar", version = "0.3.2" }
+siphon-proxy = { path = "crates/sip-proxy", version = "0.3.0" }
+siphon-uas = { path = "crates/sip-uas", version = "0.5.2" }
+siphon-uac = { path = "crates/sip-uac", version = "0.9.6" }
+siphon-sdp = { path = "crates/sip-sdp", version = "0.3.2" }
+siphon-observe = { path = "crates/sip-observe", version = "0.3.0" }
+siphon-hep = { path = "crates/sip-hep", version = "0.0.1" }
+siphon-ratelimit = { path = "crates/sip-ratelimit", version = "0.3.0" }
+
+# hep-rs lives in its own repo. Git for workspace builds; the version is what
+# the published crates require, so hep-rs must be on crates.io before they are.
+hep-rs = { git = "https://github.com/feryx-io/hep-rs", branch = "main", version = "0.0.1" }

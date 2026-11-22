@@ -74,7 +74,7 @@ impl std::error::Error for MimeTypeError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::MimeType;
+/// use siphon_core::MimeType;
 ///
 /// // Create a simple MIME type
 /// let mime = MimeType::new("application", "sdp").unwrap();
@@ -112,7 +112,7 @@ impl MimeType {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::MimeType;
+    /// use siphon_core::MimeType;
     ///
     /// let mime = MimeType::new("application", "sdp").unwrap();
     /// assert_eq!(mime.top_level(), "application");
@@ -202,7 +202,7 @@ impl MimeType {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::MimeType;
+    /// use siphon_core::MimeType;
     ///
     /// let mime = MimeType::new("application", "sdp").unwrap();
     /// assert_eq!(mime.as_str(), "application/sdp");
@@ -216,7 +216,7 @@ impl MimeType {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::MimeType;
+    /// use siphon_core::MimeType;
     ///
     /// let mime = MimeType::new("text", "plain")
     ///     .unwrap()
@@ -251,7 +251,7 @@ impl MimeType {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::MimeType;
+    /// use siphon_core::MimeType;
     ///
     /// let mime = MimeType::new("text", "plain")
     ///     .unwrap()
@@ -300,7 +300,7 @@ impl std::str::FromStr for MimeType {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::MimeType;
+    /// use siphon_core::MimeType;
     /// use std::str::FromStr;
     ///
     /// let mime = MimeType::from_str("text/plain;charset=utf-8").unwrap();

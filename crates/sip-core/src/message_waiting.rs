@@ -26,7 +26,7 @@
 /// # Examples
 ///
 /// ```
-/// use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+/// use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 ///
 /// let mut summary = MessageSummary::new(true);
 /// summary.set_account("sip:alice@vmail.example.com").unwrap();

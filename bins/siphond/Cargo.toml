@@ -8,7 +8,6 @@ readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 tokio = { workspace = true }
@@ -16,19 +15,19 @@ tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 bytes = { workspace = true }
 anyhow = { workspace = true }
-sip-transport = { path = "../../crates/sip-transport", features = ["tls"] }
-sip-parse = { path = "../../crates/sip-parse" }
-sip-core = { path = "../../crates/sip-core" }
-sip-observe = { path = "../../crates/sip-observe" }
-sip-transaction = { path = "../../crates/sip-transaction" }
-sip-dialog = { path = "../../crates/sip-dialog" }
-sip-auth = { path = "../../crates/sip-auth" }
-sip-registrar = { path = "../../crates/sip-registrar" }
-sip-proxy = { path = "../../crates/sip-proxy" }
-sip-uas = { path = "../../crates/sip-uas" }
-sip-uac = { path = "../../crates/sip-uac" }
-sip-sdp = { path = "../../crates/sip-sdp" }
-sip-ratelimit = { path = "../../crates/sip-ratelimit" }
+siphon-transport = { workspace = true, features = ["tls"] }
+siphon-parse = { workspace = true }
+siphon-core = { workspace = true }
+siphon-observe = { workspace = true }
+siphon-transaction = { workspace = true }
+siphon-dialog = { workspace = true }
+siphon-auth = { workspace = true }
+siphon-registrar = { workspace = true }
+siphon-proxy = { workspace = true }
+siphon-uas = { workspace = true }
+siphon-uac = { workspace = true }
+siphon-sdp = { workspace = true }
+siphon-ratelimit = { workspace = true }
 clap = { version = "4", features = ["derive"] }
 smol_str = { workspace = true }
 async-trait = "0.1"
@@ -43,7 +42,7 @@ webpki-roots = { version = "0.26", optional = true }
 [features]
 default = ["tls"]
 tls = ["tokio-rustls", "webpki-roots"]
-ws = ["sip-transport/ws"]
+ws = ["siphon-transport/ws"]
 webrtc = ["ws"]
 
 [dev-dependencies]

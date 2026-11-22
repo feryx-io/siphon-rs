@@ -21,7 +21,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 use tracing::{debug, info, warn};
 
-use sip_transaction::metrics::{TransactionMetrics, TransactionOutcome, TransportType};
+use siphon_transaction::metrics::{TransactionMetrics, TransactionOutcome, TransportType};
 
 /// Maximum HTTP request size we'll accept — plenty for `GET /metrics
 /// HTTP/1.1\r\nHost: ...\r\n\r\n` plus a few headers.
@@ -324,7 +324,7 @@ fn outcome_label(o: TransactionOutcome) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sip_transaction::metrics::{TransactionRole, TransportType};
+    use siphon_transaction::metrics::{TransactionRole, TransportType};
 
     async fn spawn_test_server() -> (SocketAddr, MetricsState) {
         let metrics = Arc::new(TransactionMetrics::new());

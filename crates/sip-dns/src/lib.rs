@@ -9,9 +9,9 @@
 //!
 //! # Example
 //! ```no_run
-//! use sip_dns::{Resolver, SipResolver, Transport};
+//! use siphon_dns::{Resolver, SipResolver, Transport};
 //! # async fn example() -> anyhow::Result<()> {
-//! # use sip_core::SipUri;
+//! # use siphon_core::SipUri;
 //! let resolver = SipResolver::from_system()?;
 //! let uri = SipUri::parse("sip:bob@example.com").unwrap();
 //! let targets = resolver.resolve(&uri).await?;
@@ -33,7 +33,7 @@ use hickory_resolver::{
     TokioResolver,
 };
 use rand::RngExt;
-use sip_core::SipUri;
+use siphon_core::SipUri;
 use smol_str::SmolStr;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -103,7 +103,7 @@ impl Transport {
     /// # Examples
     ///
     /// ```
-    /// use sip_dns::Transport;
+    /// use siphon_dns::Transport;
     ///
     /// assert_eq!(Transport::Udp.as_proto_str(), "udp");
     /// assert_eq!(Transport::Tcp.as_proto_str(), "tcp");
@@ -123,7 +123,7 @@ impl Transport {
     /// # Examples
     ///
     /// ```
-    /// use sip_dns::Transport;
+    /// use siphon_dns::Transport;
     ///
     /// assert_eq!(Transport::Udp.as_service_str(false), "_sip");
     /// assert_eq!(Transport::Tls.as_service_str(false), "_sips");
@@ -142,7 +142,7 @@ impl Transport {
     /// # Examples
     ///
     /// ```
-    /// use sip_dns::Transport;
+    /// use siphon_dns::Transport;
     ///
     /// assert_eq!(Transport::Udp.as_via_str(), "UDP");
     /// assert_eq!(Transport::Tcp.as_via_str(), "TCP");
@@ -842,7 +842,7 @@ impl TftpServerName {
 /// # Example
 ///
 /// ```
-/// use sip_dns::parse_dhcp_option_66;
+/// use siphon_dns::parse_dhcp_option_66;
 ///
 /// let data = b"tftp.example.com";
 /// let server = parse_dhcp_option_66(data).unwrap();
@@ -870,7 +870,7 @@ pub fn parse_dhcp_option_66(data: &[u8]) -> Result<TftpServerName> {
 /// # Example
 ///
 /// ```
-/// use sip_dns::parse_dhcp_option_150;
+/// use siphon_dns::parse_dhcp_option_150;
 ///
 /// // Two TFTP server addresses
 /// let data = vec![192, 168, 1, 1, 10, 0, 0, 1];
@@ -964,7 +964,7 @@ pub trait DhcpProvider: Send + Sync {
 /// # Example
 ///
 /// ```
-/// use sip_dns::parse_dhcp_option_120;
+/// use siphon_dns::parse_dhcp_option_120;
 ///
 /// // Encoding 1: Two IPv4 addresses
 /// let data = vec![1, 192, 168, 1, 1, 10, 0, 0, 1];
@@ -1080,7 +1080,7 @@ fn parse_dhcp_ipv4_addresses(data: &[u8]) -> Result<Vec<DhcpSipServer>> {
 /// # Example
 ///
 /// ```
-/// use sip_dns::{StaticDhcpProvider, DhcpSipServer, TftpServerName};
+/// use siphon_dns::{StaticDhcpProvider, DhcpSipServer, TftpServerName};
 /// use smol_str::SmolStr;
 ///
 /// let provider = StaticDhcpProvider::new(vec![
@@ -1150,8 +1150,8 @@ impl DhcpProvider for StaticDhcpProvider {
 /// # Example
 ///
 /// ```no_run
-/// use sip_dns::{DhcpResolver, StaticDhcpProvider, SipResolver, DhcpSipServer, Resolver};
-/// use sip_core::SipUri;
+/// use siphon_dns::{DhcpResolver, StaticDhcpProvider, SipResolver, DhcpSipServer, Resolver};
+/// use siphon_core::SipUri;
 /// use smol_str::SmolStr;
 ///
 /// # async fn example() -> anyhow::Result<()> {
@@ -1247,8 +1247,8 @@ impl<D: DhcpProvider, R: Resolver> Resolver for DhcpResolver<D, R> {
 /// # Example
 ///
 /// ```no_run
-/// use sip_dns::{HybridResolver, StaticDhcpProvider, SipResolver, Resolver};
-/// use sip_core::SipUri;
+/// use siphon_dns::{HybridResolver, StaticDhcpProvider, SipResolver, Resolver};
+/// use siphon_core::SipUri;
 ///
 /// # async fn example() -> anyhow::Result<()> {
 /// let dhcp = StaticDhcpProvider::empty(); // No DHCP in this example
@@ -1401,7 +1401,7 @@ mod tests {
     #[test]
     fn query_timeout_defaults_to_3s() {
         // Safety check: the default matches the documented 3s SIP budget
-        // (under the 5s TCP/TLS connect timeout in sip-transport).
+        // (under the 5s TCP/TLS connect timeout in siphon-transport).
         let resolver = SipResolver::from_system().expect("system resolver");
         assert_eq!(resolver.query_timeout, DEFAULT_QUERY_TIMEOUT);
         assert_eq!(resolver.query_timeout, std::time::Duration::from_secs(3));

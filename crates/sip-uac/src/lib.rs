@@ -9,8 +9,8 @@
 //!
 //! # Example
 //! ```
-//! use sip_uac::UserAgentClient;
-//! # use sip_core::SipUri;
+//! use siphon_uac::UserAgentClient;
+//! # use siphon_core::SipUri;
 //! let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
 //! let contact_uri = SipUri::parse("sip:alice@192.168.1.100").unwrap();
 //! let uac = UserAgentClient::new(local_uri, contact_uri);
@@ -22,17 +22,17 @@ pub mod integrated;
 pub use integrated::{
     CredentialProvider, Flow, InviteOutcome, SessionTimerState, SessionTimerStop,
 };
-pub use sip_sdp::profiles::{MediaProfileBuilder, SdpProfile};
+pub use siphon_sdp::profiles::{MediaProfileBuilder, SdpProfile};
 
 use anyhow::{anyhow, Result};
 use bytes::Bytes;
 use rand::{distr::Alphanumeric, RngExt};
-use sip_auth::{DigestAlgorithm, DigestClient, Qop};
-use sip_core::{
+use siphon_auth::{DigestAlgorithm, DigestClient, Qop};
+use siphon_core::{
     Header, Headers, Method, Request, RequestLine, Response, ServiceRouteHeader, SipUri,
 };
-use sip_dialog::{Dialog, DialogManager, Subscription, SubscriptionManager, SubscriptionState};
-use sip_parse::header;
+use siphon_dialog::{Dialog, DialogManager, Subscription, SubscriptionManager, SubscriptionState};
+use siphon_parse::header;
 use smol_str::SmolStr;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -45,7 +45,7 @@ const MAX_CONTENT_TYPE_LENGTH: usize = 128;
 const MAX_BODY_LENGTH: usize = 1_048_576; // 1 MB max body
 const MAX_REGISTRAR_CALL_IDS: usize = 100; // Max registrars to track
 const MAX_EARLY_DIALOGS: usize = 100; // Max early dialogs per INVITE (forking limit)
-const MAX_USER_AGENT_LENGTH: usize = 256; // Matches sip-uas's limit for the same header
+const MAX_USER_AGENT_LENGTH: usize = 256; // Matches siphon-uas's limit for the same header
 
 /// Default User-Agent product token, derived from this crate's version at
 /// compile time so it can never go stale.
@@ -142,7 +142,7 @@ impl std::error::Error for UacError {}
 
 /// A product token goes out on every request this client builds, so it
 /// is validated on the way in rather than at each of the ten sites that
-/// stamp it. Same limits as `sip-uas` applies to its `Server`.
+/// stamp it. Same limits as `siphon-uas` applies to its `Server`.
 fn validate_user_agent(agent: &str) -> std::result::Result<(), UacError> {
     if agent.len() > MAX_USER_AGENT_LENGTH {
         return Err(UacError::UserAgentTooLong {
@@ -222,7 +222,7 @@ impl InviteBody {
     }
 
     /// A multipart body (RFC 5621), with its `multipart/…;boundary=` type.
-    pub fn multipart(body: &sip_core::MultipartBody) -> Self {
+    pub fn multipart(body: &siphon_core::MultipartBody) -> Self {
         Self {
             content_type: SmolStr::new(body.content_type()),
             bytes: body.to_bytes(),
@@ -293,7 +293,7 @@ pub struct InviteOptions {
     /// no TLS name of its own is verified against the configured
     /// `tls_server_name` or, failing that, the Request-URI's host
     /// (RFC 5922 §4), not its IP.
-    pub destination: Option<sip_dns::DnsTarget>,
+    pub destination: Option<siphon_dns::DnsTarget>,
 }
 
 impl InviteOptions {
@@ -825,8 +825,8 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```ignore
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::{SipUri, Response, StatusLine, Headers};
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::{SipUri, Response, StatusLine, Headers};
     /// use bytes::Bytes;
     /// use smol_str::SmolStr;
     ///
@@ -854,7 +854,7 @@ impl UserAgentClient {
     /// // Now subsequent requests will include the service route
     /// ```
     pub fn process_register_response(&mut self, register_response: &Response) {
-        use sip_parse::parse_service_route;
+        use siphon_parse::parse_service_route;
 
         // Only process 200 OK responses
         if register_response.code() != 200 {
@@ -913,8 +913,8 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```ignore
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::SipUri;
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::SipUri;
     ///
     /// let mut uac = UserAgentClient::new(
     ///     SipUri::parse("sip:alice@example.com").unwrap(),
@@ -1967,7 +1967,7 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_dialog::session_timer_manager::SessionTimerEvent;
+    /// use siphon_dialog::session_timer_manager::SessionTimerEvent;
     ///
     /// // Listen for refresh events
     /// while let Some(event) = timer_events.recv().await {
@@ -2154,8 +2154,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::PrivacyValue;
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::PrivacyValue;
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -2169,8 +2169,11 @@ impl UserAgentClient {
     ///     PrivacyValue::Critical,
     /// ]);
     /// ```
-    pub fn add_privacy_header(request: &mut Request, privacy_values: Vec<sip_core::PrivacyValue>) {
-        use sip_core::PrivacyHeader;
+    pub fn add_privacy_header(
+        request: &mut Request,
+        privacy_values: Vec<siphon_core::PrivacyValue>,
+    ) {
+        use siphon_core::PrivacyHeader;
 
         let privacy = PrivacyHeader::new(privacy_values).expect("valid privacy values");
         request
@@ -2194,8 +2197,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::PrivacyValue;
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::PrivacyValue;
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -2208,7 +2211,7 @@ impl UserAgentClient {
     /// ```
     pub fn with_privacy(
         mut request: Request,
-        privacy_values: Vec<sip_core::PrivacyValue>,
+        privacy_values: Vec<siphon_core::PrivacyValue>,
     ) -> Request {
         Self::add_privacy_header(&mut request, privacy_values);
         request
@@ -2223,8 +2226,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::{ReasonHeader, Q850Cause};
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::{ReasonHeader, Q850Cause};
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let mut bye = uac.create_bye(&dialog);
@@ -2233,7 +2236,7 @@ impl UserAgentClient {
     /// let reason = ReasonHeader::q850(Q850Cause::NormalCallClearing);
     /// UserAgentClient::add_reason_header(&mut bye, reason);
     /// ```
-    pub fn add_reason_header(request: &mut Request, reason: sip_core::ReasonHeader) {
+    pub fn add_reason_header(request: &mut Request, reason: siphon_core::ReasonHeader) {
         request
             .headers_mut()
             .push(SmolStr::new("Reason"), SmolStr::new(reason.to_string()))
@@ -2254,8 +2257,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::{ReasonHeader, Q850Cause};
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::{ReasonHeader, Q850Cause};
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     ///
@@ -2274,7 +2277,7 @@ impl UserAgentClient {
     pub fn create_bye_with_reason(
         &self,
         dialog: &Dialog,
-        reason: sip_core::ReasonHeader,
+        reason: siphon_core::ReasonHeader,
     ) -> Request {
         let mut bye = self.create_bye(dialog);
         Self::add_reason_header(&mut bye, reason);
@@ -2293,8 +2296,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::{PPreferredIdentityHeader, SipUri};
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::{PPreferredIdentityHeader, SipUri};
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -2310,7 +2313,7 @@ impl UserAgentClient {
     /// ```
     pub fn add_p_preferred_identity_header(
         request: &mut Request,
-        header: sip_core::PPreferredIdentityHeader,
+        header: siphon_core::PPreferredIdentityHeader,
     ) {
         request
             .headers_mut()
@@ -2336,8 +2339,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::{PPreferredIdentityHeader, SipUri};
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::{PPreferredIdentityHeader, SipUri};
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -2349,7 +2352,7 @@ impl UserAgentClient {
     /// ```
     pub fn with_p_preferred_identity(
         mut request: Request,
-        header: sip_core::PPreferredIdentityHeader,
+        header: siphon_core::PPreferredIdentityHeader,
     ) -> Request {
         Self::add_p_preferred_identity_header(&mut request, header);
         request
@@ -2376,8 +2379,8 @@ impl UserAgentClient {
     /// # Examples
     ///
     /// ```ignore
-    /// use sip_core::{PAssertedIdentityHeader, SipUri};
-    /// use sip_uac::UserAgentClient;
+    /// use siphon_core::{PAssertedIdentityHeader, SipUri};
+    /// use siphon_uac::UserAgentClient;
     ///
     /// let uac = UserAgentClient::new(local_uri, contact_uri);
     /// let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -2389,7 +2392,7 @@ impl UserAgentClient {
     /// ```
     pub fn add_p_asserted_identity_header(
         request: &mut Request,
-        header: sip_core::PAssertedIdentityHeader,
+        header: siphon_core::PAssertedIdentityHeader,
     ) {
         request
             .headers_mut()
@@ -2865,8 +2868,8 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```no_run
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::SipUri;
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::SipUri;
     ///
     /// let uac = UserAgentClient::new(
     ///     SipUri::parse("sip:alice@example.com").unwrap(),
@@ -2912,10 +2915,10 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```no_run
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::{SipUri, RegInfo, RegInfoState, Registration, RegistrationState,
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::{SipUri, RegInfo, RegInfoState, Registration, RegistrationState,
     ///                Contact, ContactState, ContactEvent};
-    /// use sip_dialog::{Subscription, SubscriptionState};
+    /// use siphon_dialog::{Subscription, SubscriptionState};
     /// use smol_str::SmolStr;
     ///
     /// let uac = UserAgentClient::new(
@@ -2955,7 +2958,7 @@ impl UserAgentClient {
         &self,
         subscription: &Subscription,
         state: SubscriptionState,
-        reginfo: &sip_core::RegInfo,
+        reginfo: &siphon_core::RegInfo,
     ) -> Request {
         let mut headers = Headers::new();
 
@@ -3298,8 +3301,8 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```no_run
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::SipUri;
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::SipUri;
     ///
     /// let uac = UserAgentClient::new(
     ///     SipUri::parse("sip:alice@example.com").unwrap(),
@@ -3398,8 +3401,8 @@ impl UserAgentClient {
     /// # Example
     ///
     /// ```no_run
-    /// use sip_uac::UserAgentClient;
-    /// use sip_core::{SipUri, Headers};
+    /// use siphon_uac::UserAgentClient;
+    /// use siphon_core::{SipUri, Headers};
     /// use smol_str::SmolStr;
     ///
     /// let uac = UserAgentClient::new(
@@ -3842,8 +3845,8 @@ fn extract_to_uri(response: &Response) -> Option<SipUri> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sip_core::{StatusLine, Uri};
-    use sip_dialog::{Dialog, DialogId, DialogStateType};
+    use siphon_core::{StatusLine, Uri};
+    use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
     /// A filter is the only place a caller can reach a request this crate
     /// built: it sees the whole of it and may add, replace or remove
@@ -3896,10 +3899,10 @@ mod tests {
 
         // An emergency INVITE (RFC 6442): SDP and a PIDF-LO in one body, the
         // location referenced by cid:, the callback number as the caller.
-        let body = sip_core::MultipartBody::mixed()
-            .with_part(sip_core::BodyPart::new("application/sdp", "v=0\r\n").unwrap())
+        let body = siphon_core::MultipartBody::mixed()
+            .with_part(siphon_core::BodyPart::new("application/sdp", "v=0\r\n").unwrap())
             .with_part(
-                sip_core::BodyPart::new("application/pidf+xml", "<presence/>")
+                siphon_core::BodyPart::new("application/pidf+xml", "<presence/>")
                     .unwrap()
                     .with_content_id("loc@pbx.example")
                     .unwrap(),
@@ -3927,7 +3930,7 @@ mod tests {
         assert_eq!(invite.headers().get("Geolocation-Routing"), Some("yes"));
         let content_type = invite.headers().get("Content-Type").unwrap().to_string();
         assert_eq!(content_type, body.content_type());
-        let parsed = sip_core::MultipartBody::parse(&content_type, invite.body()).unwrap();
+        let parsed = siphon_core::MultipartBody::parse(&content_type, invite.body()).unwrap();
         assert_eq!(parsed.parts().len(), 2);
         assert_eq!(
             invite.headers().get("Content-Length"),
@@ -4883,7 +4886,7 @@ mod tests {
 
     #[test]
     fn creates_notify_request() {
-        use sip_dialog::SubscriptionState;
+        use siphon_dialog::SubscriptionState;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -4960,8 +4963,8 @@ mod tests {
 
     #[test]
     fn creates_prack_request() {
-        use sip_core::RefresherRole;
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::RefresherRole;
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
         use std::time::Duration;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
@@ -5063,7 +5066,7 @@ mod tests {
 
     #[test]
     fn creates_info_request() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5126,7 +5129,7 @@ mod tests {
 
     #[test]
     fn creates_info_with_json_payload() {
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5177,7 +5180,7 @@ mod tests {
 
     #[test]
     fn adds_privacy_header_to_request() {
-        use sip_core::PrivacyValue;
+        use siphon_core::PrivacyValue;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5196,7 +5199,7 @@ mod tests {
 
     #[test]
     fn adds_multiple_privacy_values() {
-        use sip_core::PrivacyValue;
+        use siphon_core::PrivacyValue;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5218,7 +5221,7 @@ mod tests {
 
     #[test]
     fn with_privacy_creates_request_with_header() {
-        use sip_core::PrivacyValue;
+        use siphon_core::PrivacyValue;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5241,7 +5244,7 @@ mod tests {
 
     #[test]
     fn adds_privacy_to_register() {
-        use sip_core::PrivacyValue;
+        use siphon_core::PrivacyValue;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5261,8 +5264,8 @@ mod tests {
 
     #[test]
     fn adds_reason_header_to_bye() {
-        use sip_core::{Q850Cause, ReasonHeader};
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::{Q850Cause, ReasonHeader};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5304,8 +5307,8 @@ mod tests {
 
     #[test]
     fn creates_bye_with_reason_q850() {
-        use sip_core::{Q850Cause, ReasonHeader};
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::{Q850Cause, ReasonHeader};
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5351,8 +5354,8 @@ mod tests {
 
     #[test]
     fn creates_bye_with_reason_sip() {
-        use sip_core::ReasonHeader;
-        use sip_dialog::{Dialog, DialogId, DialogStateType};
+        use siphon_core::ReasonHeader;
+        use siphon_dialog::{Dialog, DialogId, DialogStateType};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5395,7 +5398,7 @@ mod tests {
 
     #[test]
     fn adds_reason_to_any_request() {
-        use sip_core::{Q850Cause, ReasonHeader};
+        use siphon_core::{Q850Cause, ReasonHeader};
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5416,7 +5419,7 @@ mod tests {
 
     #[test]
     fn adds_p_preferred_identity_sip() {
-        use sip_core::PPreferredIdentityHeader;
+        use siphon_core::PPreferredIdentityHeader;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5438,7 +5441,7 @@ mod tests {
 
     #[test]
     fn adds_p_preferred_identity_tel() {
-        use sip_core::PPreferredIdentityHeader;
+        use siphon_core::PPreferredIdentityHeader;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5459,7 +5462,7 @@ mod tests {
 
     #[test]
     fn with_p_preferred_identity() {
-        use sip_core::PPreferredIdentityHeader;
+        use siphon_core::PPreferredIdentityHeader;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5481,7 +5484,7 @@ mod tests {
 
     #[test]
     fn adds_p_asserted_identity() {
-        use sip_core::PAssertedIdentityHeader;
+        use siphon_core::PAssertedIdentityHeader;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();
         let contact_uri = SipUri::parse("sip:alice@192.168.1.100:5060").unwrap();
@@ -5949,7 +5952,7 @@ mod tests {
 
     #[test]
     fn prack_from_provisional_uses_response_cseq_and_rseq() {
-        use sip_dialog::{DialogId, DialogStateType};
+        use siphon_dialog::{DialogId, DialogStateType};
         use std::time::Duration;
 
         let local_uri = SipUri::parse("sip:alice@example.com").unwrap();

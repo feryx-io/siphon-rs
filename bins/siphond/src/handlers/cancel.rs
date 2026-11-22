@@ -10,10 +10,10 @@
 /// 3. In B2BUA mode: Forward CANCEL to the other leg
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use tracing::{info, warn};
 
 use super::RequestHandler;
@@ -27,8 +27,8 @@ impl CancelHandler {
     }
 
     /// Create a 487 Request Terminated response for the INVITE (from PendingInvite)
-    fn create_487_response(pending: &crate::invite_state::PendingInvite) -> sip_core::Response {
-        use sip_core::{Headers, Response, StatusLine};
+    fn create_487_response(pending: &crate::invite_state::PendingInvite) -> siphon_core::Response {
+        use siphon_core::{Headers, Response, StatusLine};
 
         let mut headers = Headers::new();
 
@@ -50,8 +50,8 @@ impl CancelHandler {
     }
 
     /// Create a 487 Request Terminated response for the INVITE (from Request - B2BUA mode)
-    fn create_487_from_request(invite_request: &Request) -> sip_core::Response {
-        use sip_core::{Headers, Response, StatusLine};
+    fn create_487_from_request(invite_request: &Request) -> siphon_core::Response {
+        use siphon_core::{Headers, Response, StatusLine};
 
         let mut headers = Headers::new();
 
@@ -121,9 +121,9 @@ impl CancelHandler {
             }
         }
 
-        let mut cancel_req = sip_core::Request::new(
-            sip_core::RequestLine::new(
-                sip_core::Method::Cancel,
+        let mut cancel_req = siphon_core::Request::new(
+            siphon_core::RequestLine::new(
+                siphon_core::Method::Cancel,
                 call_leg.outgoing_invite.uri().clone(),
             ),
             headers,
@@ -132,7 +132,7 @@ impl CancelHandler {
         .expect("valid CANCEL request");
 
         // Update Content-Length
-        let mut new_headers = sip_core::Headers::new();
+        let mut new_headers = siphon_core::Headers::new();
         for h in cancel_req.headers().iter() {
             if !h.name().eq_ignore_ascii_case("Content-Length") {
                 let _ = new_headers.push(h.name(), h.value());
@@ -149,7 +149,7 @@ impl CancelHandler {
         )
         .parse::<std::net::SocketAddr>()?;
 
-        let payload = sip_parse::serialize_request(&cancel_req);
+        let payload = siphon_parse::serialize_request(&cancel_req);
         proxy_utils::send_to_contact(services, &call_leg.callee_contact, callee_addr, payload)
             .await?;
 
@@ -202,7 +202,7 @@ impl RequestHandler for CancelHandler {
         }
 
         // Parse local URI from config
-        let local_uri = match sip_core::SipUri::parse(&services.config.local_uri) {
+        let local_uri = match siphon_core::SipUri::parse(&services.config.local_uri) {
             Ok(uri) => uri,
             Err(_) => {
                 warn!("Invalid local_uri in config");

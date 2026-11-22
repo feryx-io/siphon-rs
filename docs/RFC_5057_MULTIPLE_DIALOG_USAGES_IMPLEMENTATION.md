@@ -298,8 +298,8 @@ subscription_manager.remove(&subscription_id);
 Alice calls Bob and subscribes to his presence within the call dialog:
 
 ```rust
-use sip_core::{Method, Request, Response, SipUri};
-use sip_dialog::{Dialog, DialogManager, Subscription, SubscriptionManager};
+use siphon_core::{Method, Request, Response, SipUri};
+use siphon_dialog::{Dialog, DialogManager, Subscription, SubscriptionManager};
 
 let dialog_mgr = DialogManager::new();
 let sub_mgr = SubscriptionManager::new();
@@ -457,7 +457,7 @@ dialog_mgr.remove(&dialog_id);
 Using REFER within a dialog without creating a subscription:
 
 ```rust
-use sip_core::{Method, Request, ReferSubHeader};
+use siphon_core::{Method, Request, ReferSubHeader};
 
 // Existing dialog from INVITE
 let dialog = dialog_mgr.get(&dialog_id)?;
@@ -619,7 +619,7 @@ When last subscription terminates:
 All dialog tests verify RFC 5057 compliance:
 
 ```bash
-$ cargo test --package sip-dialog
+$ cargo test --package siphon-dialog
 running 24 tests
 test tests::uac_dialog_creation ... ok
 test tests::uas_dialog_creation ... ok

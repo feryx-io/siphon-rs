@@ -49,7 +49,7 @@ impl std::error::Error for MaxForwardsError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{Headers, decrement_max_forwards};
+/// use siphon_core::{Headers, decrement_max_forwards};
 ///
 /// let mut headers = Headers::new();
 /// headers.push("Max-Forwards", "70").unwrap();
@@ -119,7 +119,7 @@ pub fn decrement_max_forwards(headers: &mut Headers) -> Result<u32, MaxForwardsE
 /// # Examples
 ///
 /// ```
-/// use sip_core::is_valid_branch;
+/// use siphon_core::is_valid_branch;
 ///
 /// assert!(is_valid_branch("z9hG4bKabc123"));
 /// assert!(!is_valid_branch("badbranch"));

@@ -15,8 +15,8 @@
 ///
 /// This demonstrates the transferor (Bob) initiating a blind transfer
 /// to send the transferee (Alice) to a transfer target (Charlie).
-use sip_core::SipUri;
-use sip_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== Blind Call Transfer Example (RFC 3515) ===\n");
@@ -48,8 +48,8 @@ fn main() {
     println!();
 
     // Mock dialog for demonstration (in real code, this comes from accept_invite)
-    use sip_core::RefresherRole;
-    use sip_dialog::{Dialog, DialogId, DialogStateType};
+    use siphon_core::RefresherRole;
+    use siphon_dialog::{Dialog, DialogId, DialogStateType};
     use std::time::Duration;
 
     let alice_uri = SipUri::parse("sip:alice@example.com").expect("valid Alice URI");
@@ -124,7 +124,7 @@ fn main() {
     println!("--- Step 5: Progress Notifications ---");
 
     // Mock subscription created from REFER (implicit subscription)
-    use sip_dialog::{Subscription, SubscriptionId, SubscriptionState};
+    use siphon_dialog::{Subscription, SubscriptionId, SubscriptionState};
     let subscription_id =
         SubscriptionId::unchecked_new("call-abc-123", "bob-tag-456", "alice-tag-789", "refer");
     let subscription = Subscription::unchecked_new(

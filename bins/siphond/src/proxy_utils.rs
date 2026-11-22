@@ -4,10 +4,10 @@
 
 /// Proxy utility helpers for forwarding requests with strict transport selection.
 use anyhow::{anyhow, Result};
-use sip_core::{Headers, Request, SipUri};
-use sip_parse::header;
-use sip_proxy::ProxyHelpers;
-use sip_transaction::TransportKind;
+use siphon_core::{Headers, Request, SipUri};
+use siphon_parse::header;
+use siphon_proxy::ProxyHelpers;
+use siphon_transaction::TransportKind;
 use smol_str::SmolStr;
 use tracing::warn;
 
@@ -142,7 +142,7 @@ pub fn next_hop_from_request(request: &Request, local_uri: &SipUri) -> (SipUri, 
 }
 
 /// Whether a contact's URI says `transport=tcp`.
-fn contact_over_tcp(contact: &sip_core::SipUri) -> bool {
+fn contact_over_tcp(contact: &siphon_core::SipUri) -> bool {
     contact
         .params()
         .get(&smol_str::SmolStr::new("transport"))
@@ -151,7 +151,7 @@ fn contact_over_tcp(contact: &sip_core::SipUri) -> bool {
 }
 
 /// The Via transport of a request [`send_to_contact`] sends to `contact`.
-pub fn contact_via_transport(contact: &sip_core::SipUri) -> &'static str {
+pub fn contact_via_transport(contact: &siphon_core::SipUri) -> &'static str {
     if contact_over_tcp(contact) {
         "TCP"
     } else {
@@ -164,7 +164,7 @@ pub fn contact_via_transport(contact: &sip_core::SipUri) -> &'static str {
 /// `transport=tcp`, else UDP.
 pub async fn send_to_contact(
     services: &ServiceRegistry,
-    contact: &sip_core::SipUri,
+    contact: &siphon_core::SipUri,
     addr: std::net::SocketAddr,
     payload: bytes::Bytes,
 ) -> Result<()> {
@@ -175,7 +175,7 @@ pub async fn send_to_contact(
             .udp_socket
             .get()
             .ok_or_else(|| anyhow!("UDP socket not available"))?;
-        sip_transport::send_udp(socket.as_ref(), &addr, &payload).await
+        siphon_transport::send_udp(socket.as_ref(), &addr, &payload).await
     }
 }
 
@@ -212,8 +212,8 @@ pub async fn cancel_forwarded_invite(
     services: &ServiceRegistry,
 ) -> Result<()> {
     let invite = &forwarded.request;
-    let mut headers = sip_core::Headers::new();
-    let copy = |headers: &mut sip_core::Headers, name: &str| -> Result<()> {
+    let mut headers = siphon_core::Headers::new();
+    let copy = |headers: &mut siphon_core::Headers, name: &str| -> Result<()> {
         if let Some(value) = invite.headers().get(name) {
             headers
                 .push(name, value)
@@ -255,19 +255,19 @@ pub async fn cancel_forwarded_invite(
         .push("Content-Length", "0")
         .map_err(|e| anyhow!("Content-Length: {e:?}"))?;
     let cancel = Request::new(
-        sip_core::RequestLine::new(sip_core::Method::Cancel, invite.uri().clone()),
+        siphon_core::RequestLine::new(siphon_core::Method::Cancel, invite.uri().clone()),
         headers,
         bytes::Bytes::new(),
     )
     .map_err(|e| anyhow!("CANCEL: {e:?}"))?;
-    let payload = sip_parse::serialize_request(&cancel);
+    let payload = siphon_parse::serialize_request(&cancel);
     match forwarded.transport {
         TransportKind::Udp => {
             let socket = services
                 .udp_socket
                 .get()
                 .ok_or_else(|| anyhow!("UDP socket not available"))?;
-            sip_transport::send_udp(socket.as_ref(), &forwarded.target, &payload).await?;
+            siphon_transport::send_udp(socket.as_ref(), &forwarded.target, &payload).await?;
         }
         TransportKind::Tcp => send_tcp_pooled(services, forwarded.target, payload).await?,
         TransportKind::Tls => {
@@ -277,8 +277,8 @@ pub async fn cancel_forwarded_invite(
                     .tls_client_config
                     .get()
                     .ok_or_else(|| anyhow!("TLS client config not available"))?;
-                let tls = sip_transport::TlsConfig::new(forwarded.host.clone(), config.clone());
-                sip_transport::send_tls(&forwarded.target, &payload, &tls).await?;
+                let tls = siphon_transport::TlsConfig::new(forwarded.host.clone(), config.clone());
+                siphon_transport::send_tls(&forwarded.target, &payload, &tls).await?;
             }
             #[cfg(not(feature = "tls"))]
             return Err(anyhow!("TLS support not enabled"));
@@ -291,7 +291,7 @@ pub async fn cancel_forwarded_invite(
 pub async fn forward_request(
     request: &Request,
     services: &ServiceRegistry,
-    ctx: &sip_transaction::TransportContext,
+    ctx: &siphon_transaction::TransportContext,
     call_id: &str,
     options: ProxyForwardOptions,
 ) -> Result<()> {
@@ -353,12 +353,12 @@ pub async fn forward_request(
         });
 
     if options.add_record_route {
-        if let Ok(proxy_uri) = sip_core::SipUri::parse(&services.config.local_uri) {
+        if let Ok(proxy_uri) = siphon_core::SipUri::parse(&services.config.local_uri) {
             ProxyHelpers::add_record_route(&mut proxied_req, &proxy_uri);
         }
     }
 
-    let local_uri = sip_core::SipUri::parse(&services.config.local_uri)
+    let local_uri = siphon_core::SipUri::parse(&services.config.local_uri)
         .map_err(|_| anyhow!("Invalid local_uri"))?;
 
     let (target_uri, remove_route) = next_hop_from_request(&proxied_req, &local_uri);
@@ -378,7 +378,7 @@ pub async fn forward_request(
     .parse::<std::net::SocketAddr>()?;
 
     let transport = select_transport(&target_uri);
-    let payload = sip_parse::serialize_request(&proxied_req);
+    let payload = siphon_parse::serialize_request(&proxied_req);
 
     match transport {
         TransportKind::Udp => {
@@ -386,7 +386,7 @@ pub async fn forward_request(
                 .udp_socket
                 .get()
                 .ok_or_else(|| anyhow!("UDP socket not available for proxy forwarding"))?;
-            sip_transport::send_udp(socket.as_ref(), &target_addr, &payload).await?;
+            siphon_transport::send_udp(socket.as_ref(), &target_addr, &payload).await?;
         }
         TransportKind::Tcp => {
             send_tcp_pooled(services, target_addr, payload).await?;
@@ -399,8 +399,8 @@ pub async fn forward_request(
                     .get()
                     .ok_or_else(|| anyhow!("TLS client config not available"))?;
                 let tls =
-                    sip_transport::TlsConfig::new(target_uri.host().to_string(), config.clone());
-                sip_transport::send_tls(&target_addr, &payload, &tls).await?;
+                    siphon_transport::TlsConfig::new(target_uri.host().to_string(), config.clone());
+                siphon_transport::send_tls(&target_addr, &payload, &tls).await?;
             }
             #[cfg(not(feature = "tls"))]
             {
@@ -418,9 +418,9 @@ pub async fn forward_request(
                 let ws_url = format!("{}://{}:{}", scheme, target_uri.host(), target_addr.port());
                 let data = bytes::Bytes::from(payload.to_vec());
                 if transport == TransportKind::Wss {
-                    sip_transport::send_wss(&ws_url, data).await?;
+                    siphon_transport::send_wss(&ws_url, data).await?;
                 } else {
-                    sip_transport::send_ws(&ws_url, data).await?;
+                    siphon_transport::send_ws(&ws_url, data).await?;
                 }
             }
             #[cfg(not(feature = "ws"))]

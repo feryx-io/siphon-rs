@@ -122,8 +122,8 @@ pub enum NegotiationError {
 ### Example 1: Basic Offer/Answer Exchange
 
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
 
 // Alice sends INVITE with SDP offer
 let offer_sdp = "v=0\r\n\
@@ -173,8 +173,8 @@ println!("{}", answer);
 ### Example 2: Codec Negotiation
 
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{AnswerOptions, CodecInfo, OfferAnswerEngine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{AnswerOptions, CodecInfo, OfferAnswerEngine};
 
 // Offer with 3 codecs
 let offer_sdp = "v=0\r\n\
@@ -210,8 +210,8 @@ assert!(answer.media()[0].fmt().contains(&"8".to_string())); // PCMA
 ### Example 3: Rejecting Media Streams
 
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
 
 // Offer with audio and video
 let offer_sdp = "v=0\r\n\
@@ -255,8 +255,8 @@ println!("{}", answer);
 ### Example 4: Direction Negotiation
 
 ```rust
-use sip_core::sdp::{SdpSession, Direction};
-use sip_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
+use siphon_core::sdp::{SdpSession, Direction};
+use siphon_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
 
 // ===== Scenario 1: Music on Hold (sendonly) =====
 
@@ -298,8 +298,8 @@ assert_eq!(answer_dir, Direction::SendOnly);
 ### Example 5: Hold and Resume
 
 ```rust
-use sip_core::sdp::{Direction, SdpSession};
-use sip_core::sdp_offer_answer::OfferAnswerEngine;
+use siphon_core::sdp::{Direction, SdpSession};
+use siphon_core::sdp_offer_answer::OfferAnswerEngine;
 
 // ===== Initial Active Call =====
 
@@ -344,8 +344,8 @@ println!("Resume offer:\n{}", resume_offer);
 ### Example 6: Static Payload Types
 
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
 
 // Offer without explicit rtpmap (uses static payload types)
 let offer_sdp = "v=0\r\n\
@@ -378,8 +378,8 @@ assert!(has_pcmu_rtpmap);
 ### Example 7: Format Parameters (fmtp)
 
 ```rust
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{AnswerOptions, OfferAnswerEngine};
 
 // Offer with fmtp for H.264
 let offer_sdp = "v=0\r\n\
@@ -410,9 +410,9 @@ assert!(has_fmtp);
 ### Example 8: SIP Integration
 
 ```rust
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
-use sip_core::sdp::SdpSession;
-use sip_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri, StatusLine};
+use siphon_core::sdp::SdpSession;
+use siphon_core::sdp_offer_answer::{OfferAnswerEngine, AnswerOptions};
 use bytes::Bytes;
 use smol_str::SmolStr;
 
@@ -567,7 +567,7 @@ let resume_offer = engine.create_resume_offer(&hold_offer);
 Comprehensive test coverage with 16 tests:
 
 ```bash
-$ cargo test --package sip-core sdp_offer_answer::
+$ cargo test --package siphon-core sdp_offer_answer::
 running 16 tests
 test sdp_offer_answer::tests::generate_basic_answer ... ok
 test sdp_offer_answer::tests::codec_negotiation_selects_common ... ok

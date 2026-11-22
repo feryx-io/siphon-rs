@@ -19,7 +19,7 @@
 //! ## Usage
 //!
 //! ```rust,ignore
-//! use sip_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
+//! use siphon_dialog::session_timer_manager::{SessionTimerManager, SessionTimerEvent};
 //!
 //! let manager = SessionTimerManager::new();
 //!
@@ -327,7 +327,7 @@ pub fn calculate_refresh_time(session_expires: Duration) -> Duration {
 ///
 /// ```rust,ignore
 /// use std::time::Duration;
-/// use sip_dialog::session_timer_manager::negotiate_session_expires;
+/// use siphon_dialog::session_timer_manager::negotiate_session_expires;
 ///
 /// // UAC requests 1800s, UAS Min-SE is 90s
 /// let result = negotiate_session_expires(

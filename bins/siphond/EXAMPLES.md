@@ -170,7 +170,7 @@ RUST_LOG=trace siphond --mode full-uas 2>&1 | tee siphond.log
 
 **Alternative - module-specific:**
 ```bash
-RUST_LOG=siphond=debug,sip_transaction=trace,sip_dialog=debug siphond --mode full-uas
+RUST_LOG=siphond=debug,siphon_transaction=trace,siphon_dialog=debug siphond --mode full-uas
 ```
 
 ---

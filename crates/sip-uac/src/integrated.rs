@@ -20,9 +20,9 @@
 /// # Example
 ///
 /// ```ignore
-/// use sip_uac::integrated::{IntegratedUAC, UACConfig};
-/// use sip_transaction::TransactionManager;
-/// use sip_dns::SipResolver;
+/// use siphon_uac::integrated::{IntegratedUAC, UACConfig};
+/// use siphon_transaction::TransactionManager;
+/// use siphon_dns::SipResolver;
 /// use std::sync::Arc;
 ///
 /// # async fn example() -> anyhow::Result<()> {
@@ -58,12 +58,12 @@
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, Response, SipUri};
-use sip_dialog::{Dialog, DialogManager, DialogStateType, Subscription, SubscriptionManager};
-use sip_dns::{DnsTarget, Resolver, SipResolver};
-use sip_parse::serialize_request;
-use sip_sdp::{profiles, SessionDescription};
-use sip_transaction::{
+use siphon_core::{Headers, Method, Request, RequestLine, Response, SipUri};
+use siphon_dialog::{Dialog, DialogManager, DialogStateType, Subscription, SubscriptionManager};
+use siphon_dns::{DnsTarget, Resolver, SipResolver};
+use siphon_parse::serialize_request;
+use siphon_sdp::{profiles, SessionDescription};
+use siphon_transaction::{
     ClientTransactionUser, TransactionKey, TransactionManager, TransportContext,
     TransportDispatcher,
 };
@@ -313,7 +313,7 @@ impl RequestTarget {
             RequestTarget::Uri(uri) => Some(uri.clone()),
             RequestTarget::Resolved(dns) => {
                 let scheme = match dns.transport() {
-                    sip_dns::Transport::Tls => "sips",
+                    siphon_dns::Transport::Tls => "sips",
                     _ => "sip",
                 };
                 SipUri::parse(&format!("{}:{}:{}", scheme, dns.host(), dns.port())).ok()
@@ -432,7 +432,7 @@ fn request_from_tag(request: &Request) -> SmolStr {
     request
         .headers()
         .get_smol("From")
-        .and_then(sip_dialog::extract_tag)
+        .and_then(siphon_dialog::extract_tag)
         .unwrap_or_default()
 }
 
@@ -449,7 +449,7 @@ fn apply_tls_server_name(target: DnsTarget, tls_server_name: Option<&str>) -> Dn
     };
     let tls_transport = matches!(
         target.transport(),
-        sip_dns::Transport::Tls | sip_dns::Transport::Wss | sip_dns::Transport::TlsSctp
+        siphon_dns::Transport::Tls | siphon_dns::Transport::Wss | siphon_dns::Transport::TlsSctp
     );
     if tls_transport && target.sni().parse::<std::net::IpAddr>().is_ok() {
         target.with_tls_name(name)
@@ -539,7 +539,7 @@ fn request_has_to_tag(request: &Request) -> bool {
         .headers()
         .get_smol("To")
         .or_else(|| request.headers().get_smol("t"));
-    to.and_then(sip_dialog::extract_tag)
+    to.and_then(siphon_dialog::extract_tag)
         .is_some_and(|tag| !tag.is_empty())
 }
 
@@ -921,10 +921,10 @@ impl CallHandle {
                 };
 
                 // Decide keepalive payload based on transport
-                let is_udp = matches!(ctx.transport(), sip_transaction::TransportKind::Udp);
+                let is_udp = matches!(ctx.transport(), siphon_transaction::TransportKind::Udp);
                 let is_stream = matches!(
                     ctx.transport(),
-                    sip_transaction::TransportKind::Tcp | sip_transaction::TransportKind::Tls
+                    siphon_transaction::TransportKind::Tcp | siphon_transaction::TransportKind::Tls
                 );
 
                 if (is_udp && !enable_udp) || (is_stream && !enable_stream) {
@@ -1328,7 +1328,7 @@ impl IntegratedUAC {
             RequestTarget::Resolved(dns) => {
                 // Reconstruct URI from DNS target
                 let scheme = match dns.transport() {
-                    sip_dns::Transport::Tls => "sips",
+                    siphon_dns::Transport::Tls => "sips",
                     _ => "sip",
                 };
                 SipUri::parse(&format!("{}:{}:{}", scheme, dns.host(), dns.port()))
@@ -1341,7 +1341,7 @@ impl IntegratedUAC {
     async fn auto_fill_headers(
         &self,
         request: &mut Request,
-        transport: Option<sip_dns::Transport>,
+        transport: Option<siphon_dns::Transport>,
     ) {
         self.auto_fill_headers_for_flow(request, transport, None)
             .await
@@ -1354,7 +1354,7 @@ impl IntegratedUAC {
     async fn auto_fill_headers_for_flow(
         &self,
         request: &mut Request,
-        transport: Option<sip_dns::Transport>,
+        transport: Option<siphon_dns::Transport>,
         flow_local: Option<SocketAddr>,
     ) {
         let resolved_public = self.resolve_public_addr().await;
@@ -1380,7 +1380,7 @@ impl IntegratedUAC {
     async fn fill_via_header(
         &self,
         request: &mut Request,
-        transport: Option<sip_dns::Transport>,
+        transport: Option<siphon_dns::Transport>,
         resolved_public: Option<SocketAddr>,
         flow_local: Option<SocketAddr>,
     ) {
@@ -1514,7 +1514,7 @@ impl IntegratedUAC {
             RequestTarget::Uri(uri) if !self.config.auto_dns_resolution => {
                 // No auto resolution - create simple target
                 let port = uri.port().unwrap_or(5060);
-                sip_dns::DnsTarget::unchecked_new(uri.host(), port, sip_dns::Transport::Udp)
+                siphon_dns::DnsTarget::unchecked_new(uri.host(), port, siphon_dns::Transport::Udp)
             }
             RequestTarget::Uri(uri) => {
                 // Auto-resolve via DNS
@@ -1758,7 +1758,7 @@ impl IntegratedUAC {
     /// when the edge can't be resolved — the flow is then the only try.
     async fn flow_fallback_context(
         &self,
-        transport: sip_transaction::TransportKind,
+        transport: siphon_transaction::TransportKind,
         dns_target: &DnsTarget,
     ) -> Option<TransportContext> {
         match Self::resolve_peer_addr(dns_target).await {
@@ -1779,16 +1779,16 @@ impl IntegratedUAC {
 
     /// Creates a TransportContext from a DnsTarget.
     async fn create_transport_context(&self, dns_target: &DnsTarget) -> Result<TransportContext> {
-        use sip_transaction::TransportKind;
+        use siphon_transaction::TransportKind;
 
         let transport = match dns_target.transport() {
-            sip_dns::Transport::Udp => TransportKind::Udp,
-            sip_dns::Transport::Tcp => TransportKind::Tcp,
-            sip_dns::Transport::Tls => TransportKind::Tls,
-            sip_dns::Transport::Ws => TransportKind::Ws,
-            sip_dns::Transport::Wss => TransportKind::Wss,
-            sip_dns::Transport::Sctp => TransportKind::Sctp,
-            sip_dns::Transport::TlsSctp => TransportKind::TlsSctp,
+            siphon_dns::Transport::Udp => TransportKind::Udp,
+            siphon_dns::Transport::Tcp => TransportKind::Tcp,
+            siphon_dns::Transport::Tls => TransportKind::Tls,
+            siphon_dns::Transport::Ws => TransportKind::Ws,
+            siphon_dns::Transport::Wss => TransportKind::Wss,
+            siphon_dns::Transport::Sctp => TransportKind::Sctp,
+            siphon_dns::Transport::TlsSctp => TransportKind::TlsSctp,
         };
 
         let peer = Self::resolve_peer_addr(dns_target).await?;
@@ -1862,7 +1862,7 @@ impl IntegratedUAC {
     /// # Example
     ///
     /// ```ignore
-    /// # use sip_uac::integrated::IntegratedUAC;
+    /// # use siphon_uac::integrated::IntegratedUAC;
     /// # async fn example(uac: &IntegratedUAC) -> anyhow::Result<()> {
     /// // Early offer (SDP in INVITE)
     /// let sdp = "v=0\r\no=- 123 456 IN IP4 192.168.1.100\r\n...";
@@ -1891,7 +1891,7 @@ impl IntegratedUAC {
     ///
     /// # Example
     /// ```no_run
-    /// # use sip_uac::integrated::IntegratedUAC;
+    /// # use siphon_uac::integrated::IntegratedUAC;
     /// # async fn example(uac: &IntegratedUAC) {
     /// // Set display name before making a call
     /// uac.set_display_name(Some("Bob Smith".to_string())).await;
@@ -2139,10 +2139,10 @@ impl IntegratedUAC {
                     flow.local_addr,
                 )
                 .await;
-                use sip_transaction::TransportKind;
+                use siphon_transaction::TransportKind;
                 let transport = match dns_target.transport() {
-                    sip_dns::Transport::Tls => TransportKind::Tls,
-                    sip_dns::Transport::Tcp => TransportKind::Tcp,
+                    siphon_dns::Transport::Tls => TransportKind::Tls,
+                    siphon_dns::Transport::Tcp => TransportKind::Tcp,
                     _ => TransportKind::Tls, // Default to TLS for flow-based routing
                 };
                 TransportContext::new(transport, flow.peer_addr, Some(flow.stream))
@@ -2173,14 +2173,14 @@ impl IntegratedUAC {
             .cloned()
             .ok_or_else(|| anyhow!("the INVITE has no Call-ID; a RequestFilter removed it?"))?;
         let helper = self.helper.lock().await;
-        let dialog_id = sip_dialog::DialogId::unchecked_new(
+        let dialog_id = siphon_dialog::DialogId::unchecked_new(
             call_id,
             request_from_tag(&request),
             SmolStr::new("pending"),
         );
         let placeholder_dialog = Dialog::unchecked_new(
             dialog_id,
-            sip_dialog::DialogStateType::Early,
+            siphon_dialog::DialogStateType::Early,
             // Same rule as the confirmed dialog built on the 2xx: the
             // local URI is the request's From URI, not the configured
             // identity (siphon-ai #549). Keeping the placeholder in step
@@ -2400,10 +2400,10 @@ impl IntegratedUAC {
         dns_target: &DnsTarget,
         flow: &Flow,
     ) -> Result<Response> {
-        use sip_transaction::TransportKind;
+        use siphon_transaction::TransportKind;
         let transport = match dns_target.transport() {
-            sip_dns::Transport::Tls => TransportKind::Tls,
-            sip_dns::Transport::Tcp => TransportKind::Tcp,
+            siphon_dns::Transport::Tls => TransportKind::Tls,
+            siphon_dns::Transport::Tcp => TransportKind::Tcp,
             _ => TransportKind::Tls, // Default to TLS for flow-based routing
         };
         let ctx = TransportContext::new(transport, flow.peer_addr, Some(flow.stream.clone()))
@@ -2501,7 +2501,7 @@ impl IntegratedUAC {
     pub async fn notify(
         &self,
         subscription: &Subscription,
-        state: sip_dialog::SubscriptionState,
+        state: siphon_dialog::SubscriptionState,
         body: Option<&str>,
     ) -> Result<Response> {
         // Generate NOTIFY using helper
@@ -3200,14 +3200,14 @@ impl IntegratedUAC {
         dns_target: &DnsTarget,
         flow: Flow,
     ) -> Result<CallHandle> {
-        use sip_transaction::TransportKind;
+        use siphon_transaction::TransportKind;
         let (prov_tx, prov_rx) = mpsc::channel(16);
         let (final_tx, final_rx) = oneshot::channel();
         let (term_tx, term_rx) = oneshot::channel();
 
         let transport = match dns_target.transport() {
-            sip_dns::Transport::Tls => TransportKind::Tls,
-            sip_dns::Transport::Tcp => TransportKind::Tcp,
+            siphon_dns::Transport::Tls => TransportKind::Tls,
+            siphon_dns::Transport::Tcp => TransportKind::Tcp,
             _ => TransportKind::Tls, // Default to TLS for flow-based routing
         };
         let ctx = TransportContext::new(transport, flow.peer_addr, Some(flow.stream))
@@ -3489,7 +3489,7 @@ impl CallHandle {
     /// call.cancel().await?;
     /// ```
     pub async fn cancel(&self) -> Result<Response> {
-        use sip_core::{Method, RequestLine};
+        use siphon_core::{Method, RequestLine};
 
         info!(
             "Sending CANCEL for transaction {}",
@@ -3500,7 +3500,7 @@ impl CallHandle {
         // CANCEL uses same Call-ID, From, To, CSeq number as INVITE
         // But uses new branch parameter in Via
 
-        let mut cancel_headers = sip_core::Headers::new();
+        let mut cancel_headers = siphon_core::Headers::new();
 
         // Snapshot the live attempt's INVITE: after an auth retry the
         // original transaction is already complete, so the CANCEL must
@@ -3580,7 +3580,7 @@ impl CallHandle {
         // is confirmed from the start (RFC 3261 §14.1 lets it be
         // cancelled), so only its outcome answers for it.
         if (!self.in_dialog
-            && self.dialog.read().await.state() == sip_dialog::DialogStateType::Confirmed)
+            && self.dialog.read().await.state() == siphon_dialog::DialogStateType::Confirmed)
             || *self.outcome.borrow() != InviteOutcome::Pending
         {
             return Err(anyhow!(
@@ -3792,13 +3792,13 @@ impl InviteTransactionUser {
             }
         } else {
             let via_transport = match ctx.transport() {
-                sip_transaction::TransportKind::Udp => "UDP",
-                sip_transaction::TransportKind::Tcp => "TCP",
-                sip_transaction::TransportKind::Tls => "TLS",
-                sip_transaction::TransportKind::Ws => "WS",
-                sip_transaction::TransportKind::Wss => "WSS",
-                sip_transaction::TransportKind::Sctp => "SCTP",
-                sip_transaction::TransportKind::TlsSctp => "TLS-SCTP",
+                siphon_transaction::TransportKind::Udp => "UDP",
+                siphon_transaction::TransportKind::Tcp => "TCP",
+                siphon_transaction::TransportKind::Tls => "TLS",
+                siphon_transaction::TransportKind::Ws => "WS",
+                siphon_transaction::TransportKind::Wss => "WSS",
+                siphon_transaction::TransportKind::Sctp => "SCTP",
+                siphon_transaction::TransportKind::TlsSctp => "TLS-SCTP",
             };
             format!(
                 "SIP/2.0/{} {};branch={}",
@@ -3924,7 +3924,7 @@ impl InviteTransactionUser {
     /// store for every call (FCP #372). The handle's own record of them
     /// (`CallHandle::get_early_dialogs`) is kept.
     async fn forget_early_dialogs(&self) {
-        let early: Vec<sip_dialog::DialogId> = self
+        let early: Vec<siphon_dialog::DialogId> = self
             .early_dialogs
             .lock()
             .await
@@ -3938,7 +3938,7 @@ impl InviteTransactionUser {
         for id in early {
             if store
                 .get(&id)
-                .is_some_and(|d| d.state() == sip_dialog::DialogStateType::Early)
+                .is_some_and(|d| d.state() == siphon_dialog::DialogStateType::Early)
             {
                 store.remove(&id);
             }
@@ -4104,7 +4104,7 @@ impl ClientTransactionUser for InviteTransactionUser {
         let to_tag = response
             .headers()
             .get_smol("To")
-            .and_then(sip_dialog::extract_tag)
+            .and_then(siphon_dialog::extract_tag)
             .unwrap_or_default();
         let mut pracked = self.pracked_rseqs.lock().await;
         if let Some(rseq) = rseq {
@@ -4519,8 +4519,8 @@ impl IntegratedUACBuilder {
     ///
     /// ```no_run
     /// # use std::sync::Arc;
-    /// # use sip_dialog::DialogManager;
-    /// # use sip_uac::integrated::IntegratedUAC;
+    /// # use siphon_dialog::DialogManager;
+    /// # use siphon_uac::integrated::IntegratedUAC;
     /// # fn example(shared: Arc<DialogManager>) -> anyhow::Result<()> {
     /// let uac = IntegratedUAC::builder()
     ///     .local_uri("sip:agent@example.com")?
@@ -4561,7 +4561,7 @@ impl IntegratedUACBuilder {
     ///
     /// # Example
     /// ```ignore
-    /// use sip_uac::integrated::{IntegratedUAC, SdpAnswerGenerator};
+    /// use siphon_uac::integrated::{IntegratedUAC, SdpAnswerGenerator};
     /// use std::sync::Arc;
     ///
     /// struct MySdpGenerator;
@@ -4570,9 +4570,9 @@ impl IntegratedUACBuilder {
     /// impl SdpAnswerGenerator for MySdpGenerator {
     ///     async fn generate_answer(
     ///         &self,
-    ///         offer: &sip_sdp::SessionDescription,
-    ///         dialog: &sip_dialog::Dialog,
-    ///     ) -> anyhow::Result<sip_sdp::SessionDescription> {
+    ///         offer: &siphon_sdp::SessionDescription,
+    ///         dialog: &siphon_dialog::Dialog,
+    ///     ) -> anyhow::Result<siphon_sdp::SessionDescription> {
     ///         // Parse offer and generate answer...
     ///         println!("Got offer for dialog {:?}", dialog.id);
     ///         Ok(offer.clone())
@@ -4597,8 +4597,8 @@ impl IntegratedUACBuilder {
     ///
     /// # Example
     /// ```no_run
-    /// use sip_uac::integrated::IntegratedUAC;
-    /// use sip_sdp::profiles::SdpProfile;
+    /// use siphon_uac::integrated::IntegratedUAC;
+    /// use siphon_sdp::profiles::SdpProfile;
     ///
     /// let uac = IntegratedUAC::builder()
     ///     .sdp_profile(SdpProfile::AudioOnly)
@@ -4762,7 +4762,7 @@ fn carries_sdp_offer(request: &Request) -> bool {
     match media_type.as_str() {
         "application/sdp" => true,
         m if m.starts_with("multipart/") => {
-            sip_core::MultipartBody::parse(content_type, request.body())
+            siphon_core::MultipartBody::parse(content_type, request.body())
                 .map(|body| body.part_by_type("application/sdp").is_some())
                 .unwrap_or(false)
         }
@@ -4808,8 +4808,8 @@ mod tests {
         );
     }
     use bytes::Bytes;
-    use sip_core::{Headers, RequestLine, StatusLine};
-    use sip_dialog::{DialogId, DialogStateType};
+    use siphon_core::{Headers, RequestLine, StatusLine};
+    use siphon_dialog::{DialogId, DialogStateType};
     use std::time::Duration;
 
     fn base_dialog() -> Dialog {
@@ -4865,7 +4865,7 @@ mod tests {
             .unwrap()
         };
         let sdp = Bytes::from_static(b"v=0\r\n");
-        let pidf = || sip_core::BodyPart::new("application/pidf+xml", "<presence/>").unwrap();
+        let pidf = || siphon_core::BodyPart::new("application/pidf+xml", "<presence/>").unwrap();
 
         assert!(!carries_sdp_offer(&invite_supporting(None)));
         assert!(carries_sdp_offer(&with_body(
@@ -4881,14 +4881,14 @@ mod tests {
             Bytes::new()
         )));
 
-        let both = sip_core::MultipartBody::mixed()
-            .with_part(sip_core::BodyPart::new("application/sdp", sdp.clone()).unwrap())
+        let both = siphon_core::MultipartBody::mixed()
+            .with_part(siphon_core::BodyPart::new("application/sdp", sdp.clone()).unwrap())
             .with_part(pidf());
         assert!(carries_sdp_offer(&with_body(
             &both.content_type(),
             both.to_bytes()
         )));
-        let location_only = sip_core::MultipartBody::mixed().with_part(pidf());
+        let location_only = siphon_core::MultipartBody::mixed().with_part(pidf());
         assert!(!carries_sdp_offer(&with_body(
             &location_only.content_type(),
             location_only.to_bytes()
@@ -4953,7 +4953,7 @@ mod tests {
     /// use the configured trunk hostname for SNI/verification, not the IP.
     #[test]
     fn tls_server_name_overrides_ip_literal_sni() {
-        let target = DnsTarget::unchecked_new("203.0.113.5", 5061, sip_dns::Transport::Tls);
+        let target = DnsTarget::unchecked_new("203.0.113.5", 5061, siphon_dns::Transport::Tls);
         let out = apply_tls_server_name(target, Some("example.pstn.twilio.com"));
         assert_eq!(out.sni(), "example.pstn.twilio.com");
         assert_eq!(out.host(), "203.0.113.5", "connect addr is unchanged");
@@ -4963,26 +4963,27 @@ mod tests {
     /// RFC 3263 reference identity, or non-TLS transports.
     #[test]
     fn tls_server_name_leaves_hostnames_and_non_tls_alone() {
-        let hostname = DnsTarget::unchecked_new("edge.example.com", 5061, sip_dns::Transport::Tls);
+        let hostname =
+            DnsTarget::unchecked_new("edge.example.com", 5061, siphon_dns::Transport::Tls);
         assert_eq!(
             apply_tls_server_name(hostname, Some("other.example.com")).sni(),
             "edge.example.com"
         );
 
-        let with_ref = DnsTarget::unchecked_new("203.0.113.5", 5061, sip_dns::Transport::Tls)
+        let with_ref = DnsTarget::unchecked_new("203.0.113.5", 5061, siphon_dns::Transport::Tls)
             .with_tls_name("resolved.example.com");
         assert_eq!(
             apply_tls_server_name(with_ref, Some("other.example.com")).sni(),
             "resolved.example.com"
         );
 
-        let udp = DnsTarget::unchecked_new("203.0.113.5", 5060, sip_dns::Transport::Udp);
+        let udp = DnsTarget::unchecked_new("203.0.113.5", 5060, siphon_dns::Transport::Udp);
         assert_eq!(
             apply_tls_server_name(udp, Some("other.example.com")).sni(),
             "203.0.113.5"
         );
 
-        let no_override = DnsTarget::unchecked_new("203.0.113.5", 5061, sip_dns::Transport::Tls);
+        let no_override = DnsTarget::unchecked_new("203.0.113.5", 5061, siphon_dns::Transport::Tls);
         assert_eq!(
             apply_tls_server_name(no_override, None).sni(),
             "203.0.113.5"
@@ -5195,7 +5196,7 @@ mod tests {
                 assert!(ctx.stream().is_some(), "REFER must carry the flow stream");
                 assert_eq!(ctx.peer(), "192.0.2.10:49152".parse().unwrap());
                 assert_eq!(ctx.local_addr(), Some("127.0.0.1:5071".parse().unwrap()));
-                break sip_parse::parse_request(&payload).expect("valid REFER on the wire");
+                break siphon_parse::parse_request(&payload).expect("valid REFER on the wire");
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5307,7 +5308,7 @@ mod tests {
             if let Some((ctx, payload)) = dispatcher.sent.lock().await.first().cloned() {
                 assert!(ctx.stream().is_some(), "INFO must carry the flow stream");
                 assert_eq!(ctx.peer(), "192.0.2.10:49152".parse().unwrap());
-                break sip_parse::parse_request(&payload).expect("valid INFO on the wire");
+                break siphon_parse::parse_request(&payload).expect("valid INFO on the wire");
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5392,7 +5393,7 @@ mod tests {
 
         let request = loop {
             if let Some((_, payload)) = dispatcher.sent.lock().await.first().cloned() {
-                break sip_parse::parse_request(&payload).expect("valid BYE on the wire");
+                break siphon_parse::parse_request(&payload).expect("valid BYE on the wire");
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5446,7 +5447,7 @@ mod tests {
             if let Some((ctx, payload)) = dispatcher.sent.lock().await.get(index).cloned() {
                 break (
                     ctx,
-                    sip_parse::parse_request(&payload).expect("a valid request"),
+                    siphon_parse::parse_request(&payload).expect("a valid request"),
                 );
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
@@ -5550,7 +5551,7 @@ mod tests {
         };
         let (ctx, sent) = loop {
             if let Some((ctx, payload)) = dispatcher.sent.lock().await.get(2).cloned() {
-                break (ctx, sip_parse::parse_request(&payload).unwrap());
+                break (ctx, siphon_parse::parse_request(&payload).unwrap());
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5630,7 +5631,7 @@ mod tests {
         };
         let sent = loop {
             if let Some((_, payload)) = dispatcher.sent.lock().await.get(2).cloned() {
-                break sip_parse::parse_request(&payload).unwrap();
+                break siphon_parse::parse_request(&payload).unwrap();
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5707,7 +5708,7 @@ mod tests {
         let request = loop {
             if let Some((ctx, payload)) = dispatcher.sent.lock().await.first().cloned() {
                 assert!(ctx.stream().is_some(), "BYE must reuse the inbound flow");
-                break sip_parse::parse_request(&payload).expect("valid BYE on the wire");
+                break siphon_parse::parse_request(&payload).expect("valid BYE on the wire");
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5804,7 +5805,7 @@ mod tests {
                     ctx.stream().is_some(),
                     "the NOTIFY must reuse the inbound flow"
                 );
-                break sip_parse::parse_request(&payload).expect("valid NOTIFY on the wire");
+                break siphon_parse::parse_request(&payload).expect("valid NOTIFY on the wire");
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         };
@@ -5926,7 +5927,7 @@ mod tests {
             if let Some((ctx, payload)) = dispatcher.pool_sent.lock().await.first().cloned() {
                 break (
                     ctx,
-                    sip_parse::parse_request(&payload).expect("valid BYE on the wire"),
+                    siphon_parse::parse_request(&payload).expect("valid BYE on the wire"),
                 );
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
@@ -6427,7 +6428,7 @@ mod tests {
             .lock()
             .await
             .iter()
-            .filter_map(|(_, payload)| sip_parse::parse_request(payload))
+            .filter_map(|(_, payload)| siphon_parse::parse_request(payload))
             .collect()
     }
 
@@ -6605,7 +6606,7 @@ mod tests {
             tokio::spawn(async move {
                 let outcome = call.invite_outcome().await;
                 let confirmed =
-                    call.dialog.read().await.state() == sip_dialog::DialogStateType::Confirmed;
+                    call.dialog.read().await.state() == siphon_dialog::DialogStateType::Confirmed;
                 let acked = sent_requests(&dispatcher).await.iter().any(|r| {
                     r.method() == &Method::Ack && r.headers().get("CSeq") == Some("2 ACK")
                 });
@@ -6745,10 +6746,10 @@ mod tests {
         let uac = auth_test_uac(dispatcher.clone(), manager.clone(), None);
 
         let options = InviteOptions {
-            destination: Some(sip_dns::DnsTarget::unchecked_new(
+            destination: Some(siphon_dns::DnsTarget::unchecked_new(
                 "127.0.0.1",
                 5099,
-                sip_dns::Transport::Udp,
+                siphon_dns::Transport::Udp,
             )),
             ..InviteOptions::with_sdp(Some("v=0\r\n"))
         };
@@ -6780,7 +6781,7 @@ mod tests {
                 .await
                 .iter()
                 .find_map(|(ctx, payload)| {
-                    sip_parse::parse_request(payload)
+                    siphon_parse::parse_request(payload)
                         .filter(|r| pred(r))
                         .map(|r| (ctx.clone(), r))
                 });
@@ -6901,10 +6902,10 @@ mod tests {
         let uac = auth_test_uac(dispatcher.clone(), manager.clone(), None);
 
         let options = InviteOptions {
-            destination: Some(sip_dns::DnsTarget::unchecked_new(
+            destination: Some(siphon_dns::DnsTarget::unchecked_new(
                 "127.0.0.1",
                 5061,
-                sip_dns::Transport::Tls,
+                siphon_dns::Transport::Tls,
             )),
             ..InviteOptions::with_sdp(Some("v=0\r\n"))
         };
@@ -6923,7 +6924,8 @@ mod tests {
     #[test]
     fn a_destinations_tls_name_keeps_its_precedence() {
         let uri = SipUri::parse("sip:+15185550100@carrier.invalid").unwrap();
-        let ip = || sip_dns::DnsTarget::unchecked_new("192.0.2.1", 5061, sip_dns::Transport::Tls);
+        let ip =
+            || siphon_dns::DnsTarget::unchecked_new("192.0.2.1", 5061, siphon_dns::Transport::Tls);
         assert_eq!(
             destination_with_tls_name(ip(), Some("trunk.example.com"), &uri).sni(),
             "trunk.example.com"
@@ -6958,10 +6960,10 @@ mod tests {
         let destination: SocketAddr = "127.0.0.1:5099".parse().unwrap();
 
         let options = InviteOptions {
-            destination: Some(sip_dns::DnsTarget::unchecked_new(
+            destination: Some(siphon_dns::DnsTarget::unchecked_new(
                 "127.0.0.1",
                 5099,
-                sip_dns::Transport::Udp,
+                siphon_dns::Transport::Udp,
             )),
             ..InviteOptions::with_sdp(Some("v=0\r\n"))
         };

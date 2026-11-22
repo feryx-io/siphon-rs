@@ -13,8 +13,8 @@
 //! cargo run --example metrics_demo
 //! ```
 
-use sip_transaction::metrics::{TransactionMetrics, TransactionOutcome, TransportType};
-use sip_transaction::TransactionTimer;
+use siphon_transaction::metrics::{TransactionMetrics, TransactionOutcome, TransportType};
+use siphon_transaction::TransactionTimer;
 use std::time::Duration;
 
 fn main() {

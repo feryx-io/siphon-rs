@@ -5,8 +5,8 @@
 /// Example demonstrating SIP DNS resolution per RFC 3263
 ///
 /// Run with: cargo run --example dns_resolution
-use sip_core::SipUri;
-use sip_dns::{DnsTarget, Resolver, SipResolver, StaticResolver, Transport};
+use siphon_core::SipUri;
+use siphon_dns::{DnsTarget, Resolver, SipResolver, StaticResolver, Transport};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

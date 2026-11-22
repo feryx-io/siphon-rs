@@ -142,7 +142,7 @@ impl ReferredByHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReferredByHeader;
+    /// use siphon_core::ReferredByHeader;
     ///
     /// let referred_by = ReferredByHeader::new("sip:alice@example.com").unwrap();
     /// ```
@@ -174,7 +174,7 @@ impl ReferredByHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReferredByHeader;
+    /// use siphon_core::ReferredByHeader;
     ///
     /// let referred_by = ReferredByHeader::with_name(
     ///     "Alice",
@@ -218,7 +218,7 @@ impl ReferredByHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReferredByHeader;
+    /// use siphon_core::ReferredByHeader;
     ///
     /// let referred_by = ReferredByHeader::new("sip:alice@example.com")
     ///     .unwrap()
@@ -245,7 +245,7 @@ impl ReferredByHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReferredByHeader;
+    /// use siphon_core::ReferredByHeader;
     ///
     /// let referred_by = ReferredByHeader::new("sip:alice@example.com")
     ///     .unwrap()
@@ -338,7 +338,7 @@ impl ReferredByHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::ReferredByHeader;
+    /// use siphon_core::ReferredByHeader;
     ///
     /// let header = ReferredByHeader::parse(
     ///     r#""Alice" <sip:alice@example.com>;cid="sig123@example.com""#

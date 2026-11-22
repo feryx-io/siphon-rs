@@ -113,7 +113,7 @@ Creates a new message summary.
 
 **Example:**
 ```rust
-use sip_core::MessageSummary;
+use siphon_core::MessageSummary;
 
 let summary = MessageSummary::new(true);
 ```
@@ -126,7 +126,7 @@ Sets the message account URI with validation.
 
 **Example:**
 ```rust
-use sip_core::MessageSummary;
+use siphon_core::MessageSummary;
 
 let mut summary = MessageSummary::new(true);
 summary.set_account("sip:alice@vmail.example.com")?;
@@ -141,7 +141,7 @@ Returns an error if adding a new class would exceed `MAX_MESSAGE_CLASSES`.
 
 **Example:**
 ```rust
-use sip_core::{
+use siphon_core::{
     message_waiting::MessageWaitingError, MessageSummary, MessageContextClass, MessageCounts,
 };
 
@@ -197,7 +197,7 @@ Returns the total number of new messages across all classes.
 
 **Example:**
 ```rust
-use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 
 let mut summary = MessageSummary::new(true);
 summary.add_message_class(MessageContextClass::Voice, MessageCounts::new(2, 5))?;
@@ -226,7 +226,7 @@ Formats the message summary as application/simple-message-summary.
 
 **Example:**
 ```rust
-use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 
 let mut summary = MessageSummary::new(true);
 summary.set_account("sip:alice@vmail.example.com")?;
@@ -264,7 +264,7 @@ Returns the header name for this context class.
 
 **Example:**
 ```rust
-use sip_core::MessageContextClass;
+use siphon_core::MessageContextClass;
 
 assert_eq!(MessageContextClass::Voice.header_name(), "Voice-Message");
 assert_eq!(MessageContextClass::Fax.header_name(), "Fax-Message");
@@ -278,7 +278,7 @@ Parses a context class from a header name.
 
 **Example:**
 ```rust
-use sip_core::MessageContextClass;
+use siphon_core::MessageContextClass;
 
 assert_eq!(
     MessageContextClass::from_header_name("Voice-Message"),
@@ -294,7 +294,7 @@ Returns the context class identifier.
 
 **Example:**
 ```rust
-use sip_core::MessageContextClass;
+use siphon_core::MessageContextClass;
 
 assert_eq!(MessageContextClass::Voice.as_str(), "voice");
 assert_eq!(MessageContextClass::Multimedia.as_str(), "multimedia");
@@ -320,7 +320,7 @@ Creates new message counts with new and old totals.
 
 **Example:**
 ```rust
-use sip_core::MessageCounts;
+use siphon_core::MessageCounts;
 
 let counts = MessageCounts::new(3, 5);
 assert_eq!(counts.new_count(), 3);
@@ -335,7 +335,7 @@ Sets the urgent message counts (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::MessageCounts;
+use siphon_core::MessageCounts;
 
 let counts = MessageCounts::new(2, 8)
     .with_urgent(0, 2);
@@ -422,7 +422,7 @@ Sets the To header (builder pattern).
 
 **Example:**
 ```rust
-use sip_core::MessageHeader;
+use siphon_core::MessageHeader;
 
 let header = MessageHeader::new()
     .with_to("alice@example.com")?
@@ -530,7 +530,7 @@ Input is capped at `MAX_PARSE_SIZE` (100KB).
 
 **Example:**
 ```rust
-use sip_core::parse_message_summary;
+use siphon_core::parse_message_summary;
 
 let body = "Messages-Waiting: yes\n\
             Message-Account: sip:alice@vmail.example.com\n\
@@ -550,7 +550,7 @@ assert_eq!(summary.total_new(), 2);
 Send a simple MWI notification:
 
 ```rust
-use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 
 let mut summary = MessageSummary::new(true);
 summary.set_account("sip:alice@vmail.example.com")?;
@@ -575,7 +575,7 @@ Voice-Message: 2/8
 Report multiple message types:
 
 ```rust
-use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 
 let mut summary = MessageSummary::new(true);
 summary.set_account("sip:alice@vmail.example.com")?;
@@ -612,7 +612,7 @@ Text-Message: 5/10 (2/0)
 Clear message waiting indicator:
 
 ```rust
-use sip_core::MessageSummary;
+use siphon_core::MessageSummary;
 
 let summary = MessageSummary::new(false);
 let body = summary.to_string();
@@ -628,7 +628,7 @@ Messages-Waiting: no
 Include details about new messages (for incremental updates):
 
 ```rust
-use sip_core::{
+use siphon_core::{
     message_waiting::MessageWaitingError, MessageSummary, MessageContextClass, MessageCounts,
     MessageHeader,
 };
@@ -664,7 +664,7 @@ Subject: carpool tomorrow?
 Parse a NOTIFY body:
 
 ```rust
-use sip_core::{parse_message_summary, MessageContextClass};
+use siphon_core::{parse_message_summary, MessageContextClass};
 
 let body = "Messages-Waiting: yes\n\
             Message-Account: sip:alice@vmail.example.com\n\
@@ -738,7 +738,7 @@ Voice-Message: 2/8 (0/2)
 Voicemail system implementation:
 
 ```rust
-use sip_core::{MessageSummary, MessageContextClass, MessageCounts};
+use siphon_core::{MessageSummary, MessageContextClass, MessageCounts};
 
 struct VoicemailBox {
     owner: String,
@@ -780,7 +780,7 @@ impl VoicemailBox {
 UA handling MWI notifications:
 
 ```rust
-use sip_core::{parse_message_summary, MessageContextClass};
+use siphon_core::{parse_message_summary, MessageContextClass};
 
 fn handle_mwi_notify(body: &str) {
     if let Ok(summary) = parse_message_summary(body) {
@@ -814,7 +814,7 @@ fn handle_mwi_notify(body: &str) {
 Send incremental updates with only new message details:
 
 ```rust
-use sip_core::{
+use siphon_core::{
     message_waiting::MessageWaitingError, MessageSummary, MessageContextClass, MessageCounts,
     MessageHeader,
 };
@@ -889,13 +889,13 @@ The message waiting implementation includes 16 comprehensive unit tests:
 
 ```bash
 # Run all message waiting tests
-cargo test --package sip-core message_waiting
+cargo test --package siphon-core message_waiting
 
 # Run specific test
-cargo test --package sip-core message_summary_basic
+cargo test --package siphon-core message_summary_basic
 
 # Run with output
-cargo test --package sip-core message_waiting -- --nocapture
+cargo test --package siphon-core message_waiting -- --nocapture
 ```
 
 ## Limitations and Future Work

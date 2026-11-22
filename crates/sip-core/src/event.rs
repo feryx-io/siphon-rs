@@ -62,7 +62,7 @@ impl std::error::Error for EventHeaderError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::EventHeader;
+/// use siphon_core::EventHeader;
 ///
 /// let event = EventHeader::new("presence")
 ///     .unwrap()

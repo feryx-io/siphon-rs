@@ -8,7 +8,7 @@
 //! including in Request-URI, From/To headers, and Contact headers.
 
 use bytes::Bytes;
-use sip_core::{Headers, Method, Request, RequestLine, SipUri, TelUri, Uri};
+use siphon_core::{Headers, Method, Request, RequestLine, SipUri, TelUri, Uri};
 use smol_str::SmolStr;
 
 #[test]

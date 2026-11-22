@@ -161,8 +161,8 @@ pub fn add_reason_header(
 **Example:**
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut bye = uac.create_bye(&dialog);
@@ -189,8 +189,8 @@ pub fn create_bye_with_reason(
 **Example:**
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -216,8 +216,8 @@ let bye = uac.create_bye_with_reason(&dialog, reason);
 User ends the call normally.
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -238,8 +238,8 @@ Reason: Q.850;cause=16;text="Normal Call Clearing"
 Called party is busy or rejects the call.
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -260,8 +260,8 @@ Reason: Q.850;cause=17;text="User Busy"
 User doesn't answer within timeout period.
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -282,8 +282,8 @@ Reason: Q.850;cause=19;text="No Answer"
 Terminate due to SIP-level issue (e.g., proxy unavailable).
 
 ```rust
-use sip_core::ReasonHeader;
-use sip_uac::UserAgentClient;
+use siphon_core::ReasonHeader;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -304,8 +304,8 @@ Reason: SIP;cause=480;text="Temporarily Unavailable"
 Provide custom explanatory text.
 
 ```rust
-use sip_core::ReasonHeader;
-use sip_uac::UserAgentClient;
+use siphon_core::ReasonHeader;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -326,8 +326,8 @@ Reason: SIP;cause=600;text="All agents busy, please try later"
 Indicate call was redirected.
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -343,8 +343,8 @@ transaction_manager.send_request(bye)?;
 Indicate system-level failure.
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 
@@ -362,7 +362,7 @@ transaction_manager.send_request(bye)?;
 ### 8. UAS Receiving and Parsing Reason
 
 ```rust
-use sip_core::{parse_reason_header, Q850Cause};
+use siphon_core::{parse_reason_header, Q850Cause};
 
 // UAS receives BYE with Reason
 if let Some(reason) = parse_reason_header(bye_request.headers()) {
@@ -550,11 +550,11 @@ Common SIP response codes with default text:
 ### Test Results
 
 ```bash
-$ cargo test -p sip-core reason --lib
+$ cargo test -p siphon-core reason --lib
 running 25 tests
 test result: ok. 25 passed; 0 failed
 
-$ cargo test -p sip-uac --lib
+$ cargo test -p siphon-uac --lib
 running 26 tests
 test result: ok. 26 passed; 0 failed
 ```
@@ -630,7 +630,7 @@ let bye = uac.create_bye_with_reason(&dialog, reason);
 ### Error Handling
 
 ```rust
-use sip_core::{parse_reason_header, Q850Cause};
+use siphon_core::{parse_reason_header, Q850Cause};
 
 // Parse and validate Reason header
 if let Some(reason) = parse_reason_header(request.headers()) {
@@ -714,9 +714,9 @@ if let Some(reason) = parse_reason_header(request.headers()) {
 ### Complete Call Termination Flow
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause, parse_reason_header};
-use sip_uac::UserAgentClient;
-use sip_uas::UserAgentServer;
+use siphon_core::{ReasonHeader, Q850Cause, parse_reason_header};
+use siphon_uac::UserAgentClient;
+use siphon_uas::UserAgentServer;
 
 // UAC: Terminate call with reason
 let uac = UserAgentClient::new(local_uri, contact_uri);
@@ -755,8 +755,8 @@ transaction_manager.send_response(ok)?;
 ### Call Forwarding with Reason
 
 ```rust
-use sip_core::{ReasonHeader, Q850Cause};
-use sip_uac::UserAgentClient;
+use siphon_core::{ReasonHeader, Q850Cause};
+use siphon_uac::UserAgentClient;
 
 // Original call leg
 let uac = UserAgentClient::new(local_uri, contact_uri);

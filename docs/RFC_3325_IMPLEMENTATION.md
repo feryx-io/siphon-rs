@@ -166,8 +166,8 @@ pub fn add_p_preferred_identity_header(
 
 **Example:**
 ```rust
-use sip_core::{PPreferredIdentityHeader, SipUri};
-use sip_uac::UserAgentClient;
+use siphon_core::{PPreferredIdentityHeader, SipUri};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -191,8 +191,8 @@ pub fn with_p_preferred_identity(
 
 **Example:**
 ```rust
-use sip_core::{PPreferredIdentityHeader, SipUri};
-use sip_uac::UserAgentClient;
+use siphon_core::{PPreferredIdentityHeader, SipUri};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -218,8 +218,8 @@ pub fn add_p_asserted_identity_header(
 
 **Example:**
 ```rust
-use sip_core::{PAssertedIdentityHeader, SipUri};
-use sip_uac::UserAgentClient;
+use siphon_core::{PAssertedIdentityHeader, SipUri};
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut invite = uac.create_invite(&remote_uri, Some(sdp));
@@ -239,8 +239,8 @@ UserAgentClient::add_p_asserted_identity_header(&mut invite, pai);
 A user agent client with multiple identities expressing a preference:
 
 ```rust
-use sip_core::{PPreferredIdentityHeader, SipUri};
-use sip_uac::UserAgentClient;
+use siphon_core::{PPreferredIdentityHeader, SipUri};
+use siphon_uac::UserAgentClient;
 
 // UAC has multiple identities, prefer work identity
 let local_uri = SipUri::parse("sip:alice@example.com")?;
@@ -263,8 +263,8 @@ UserAgentClient::add_p_preferred_identity_header(&mut invite, ppi);
 Expressing preference for a telephone number identity:
 
 ```rust
-use sip_core::PPreferredIdentityHeader;
-use sip_uac::UserAgentClient;
+use siphon_core::PPreferredIdentityHeader;
+use siphon_uac::UserAgentClient;
 
 let uac = UserAgentClient::new(local_uri, contact_uri);
 let mut invite = uac.create_invite(&remote_uri, None);
@@ -281,7 +281,7 @@ UserAgentClient::add_p_preferred_identity_header(&mut invite, ppi);
 A trusted proxy asserting both SIP and telephone identities:
 
 ```rust
-use sip_core::{parse_p_preferred_identity, PAssertedIdentityHeader, SipUri};
+use siphon_core::{parse_p_preferred_identity, PAssertedIdentityHeader, SipUri};
 use smol_str::SmolStr;
 
 // Parse incoming P-Preferred-Identity from UAC
@@ -311,7 +311,7 @@ request.headers_mut().remove("P-Preferred-Identity");
 Extracting identity information from P-Asserted-Identity:
 
 ```rust
-use sip_core::parse_p_asserted_identity;
+use siphon_core::parse_p_asserted_identity;
 
 // Parse P-Asserted-Identity from incoming request
 if let Some(pai) = parse_p_asserted_identity(request.headers())? {
@@ -336,7 +336,7 @@ if let Some(pai) = parse_p_asserted_identity(request.headers())? {
 Respecting Privacy header when handling P-Asserted-Identity:
 
 ```rust
-use sip_core::{enforce_privacy, parse_privacy_header};
+use siphon_core::{enforce_privacy, parse_privacy_header};
 
 // Check if privacy is requested
 if let Some(privacy) = parse_privacy_header(request.headers()) {
@@ -366,7 +366,7 @@ fn sanitize_at_trust_boundary(request: &mut Request) {
 Creating P-Asserted-Identity with multiple identities:
 
 ```rust
-use sip_core::{PIdentity, PAssertedIdentityHeader, SipUri, Uri};
+use siphon_core::{PIdentity, PAssertedIdentityHeader, SipUri, Uri};
 
 // Create multiple identity entries
 let sip_uri = SipUri::parse("sip:alice@example.com")?;
@@ -386,7 +386,7 @@ let pai = PAssertedIdentityHeader::new(vec![sip_identity, tel_identity])?;
 Parsing P-Preferred-Identity and validating before asserting:
 
 ```rust
-use sip_core::{parse_p_preferred_identity, PAssertedIdentityHeader, SipUri};
+use siphon_core::{parse_p_preferred_identity, PAssertedIdentityHeader, SipUri};
 
 // Parse P-Preferred-Identity from UAC request
 if let Some(ppi) = parse_p_preferred_identity(request.headers())? {
@@ -461,7 +461,7 @@ The `enforce_privacy()` helper removes P-Asserted-Identity/P-Preferred-Identity 
 
 Example:
 ```rust
-use sip_core::{PrivacyHeader, PrivacyValue};
+use siphon_core::{PrivacyHeader, PrivacyValue};
 
 // UAC requests identity privacy
 let privacy = PrivacyHeader::new(vec![PrivacyValue::Id, PrivacyValue::Critical]);

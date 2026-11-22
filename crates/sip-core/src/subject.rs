@@ -24,7 +24,7 @@
 //! # Example
 //!
 //! ```
-//! use sip_core::SubjectHeader;
+//! use siphon_core::SubjectHeader;
 //!
 //! let subject = SubjectHeader::new("Need more boxes").unwrap();
 //! assert_eq!(subject.value(), "Need more boxes");
@@ -113,7 +113,7 @@ fn validate_subject(value: &str) -> Result<(), SubjectError> {
 /// # Examples
 ///
 /// ```
-/// use sip_core::SubjectHeader;
+/// use siphon_core::SubjectHeader;
 ///
 /// // Create a subject header
 /// let subject = SubjectHeader::new("Tech Support").unwrap();
@@ -145,7 +145,7 @@ impl SubjectHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SubjectHeader;
+    /// use siphon_core::SubjectHeader;
     ///
     /// let subject = SubjectHeader::new("Tech Support").unwrap();
     /// assert_eq!(subject.value(), "Tech Support");
@@ -162,7 +162,7 @@ impl SubjectHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SubjectHeader;
+    /// use siphon_core::SubjectHeader;
     ///
     /// let subject = SubjectHeader::new("Tech Support").unwrap();
     /// assert_eq!(subject.value(), "Tech Support");
@@ -181,7 +181,7 @@ impl SubjectHeader {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SubjectHeader;
+    /// use siphon_core::SubjectHeader;
     ///
     /// let subject = SubjectHeader::parse("Need more boxes").unwrap();
     /// assert_eq!(subject.value(), "Need more boxes");

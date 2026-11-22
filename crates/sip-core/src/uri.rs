@@ -572,7 +572,7 @@ impl Uri {
     ///
     /// # Examples
     /// ```
-    /// use sip_core::Uri;
+    /// use siphon_core::Uri;
     ///
     /// // Parse SIP URI
     /// let uri = Uri::parse("sip:alice@example.com").unwrap();

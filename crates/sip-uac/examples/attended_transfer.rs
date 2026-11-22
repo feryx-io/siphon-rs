@@ -17,11 +17,11 @@
 ///
 /// This demonstrates attended transfer where the transferor (Bob) consults
 /// with the transfer target (Charlie) before completing the transfer.
-use sip_core::{RefresherRole, SipUri};
-use sip_dialog::{
+use siphon_core::{RefresherRole, SipUri};
+use siphon_dialog::{
     Dialog, DialogId, DialogStateType, Subscription, SubscriptionId, SubscriptionState,
 };
-use sip_uac::UserAgentClient;
+use siphon_uac::UserAgentClient;
 use std::time::Duration;
 
 fn main() {

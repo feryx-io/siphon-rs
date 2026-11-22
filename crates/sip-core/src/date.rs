@@ -61,7 +61,7 @@ impl DateHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::DateHeader;
+    /// use siphon_core::DateHeader;
     ///
     /// let date = DateHeader::new("Mon, 01 Jan 2024 00:00:00 GMT").unwrap();
     /// assert_eq!(date.raw(), "Mon, 01 Jan 2024 00:00:00 GMT");

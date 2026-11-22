@@ -17,7 +17,7 @@
 //! # Examples
 //!
 //! ```
-//! use sip_core::multipart::{BodyPart, MultipartBody};
+//! use siphon_core::multipart::{BodyPart, MultipartBody};
 //!
 //! let body = MultipartBody::mixed()
 //!     .with_part(BodyPart::new("application/sdp", "v=0\r\n").unwrap())

@@ -19,7 +19,7 @@
 /// # Examples
 ///
 /// ```
-/// use sip_core::{AcceptContact, FeatureTag, FeatureValue};
+/// use siphon_core::{AcceptContact, FeatureTag, FeatureValue};
 ///
 /// // Prefer video-capable UAs, require audio
 /// let accept = AcceptContact::new()

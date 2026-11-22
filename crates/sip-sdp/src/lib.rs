@@ -12,7 +12,7 @@
 //!
 //! # Example
 //! ```
-//! use sip_sdp::{SessionDescription, MediaDescription, MediaType, RtpMap};
+//! use siphon_sdp::{SessionDescription, MediaDescription, MediaType, RtpMap};
 //!
 //! // Create an audio-only SDP offer
 //! let sdp = SessionDescription::builder()
@@ -412,7 +412,7 @@ impl SessionDescription {
     ///
     /// # Example
     /// ```
-    /// use sip_sdp::SessionDescription;
+    /// use siphon_sdp::SessionDescription;
     ///
     /// let sdp_text = "v=0\r\n\
     ///                 o=alice 123456 0 IN IP4 192.168.1.100\r\n\
@@ -435,7 +435,7 @@ impl SessionDescription {
     ///
     /// # Example
     /// ```
-    /// use sip_sdp::{SessionDescription, MediaDescription};
+    /// use siphon_sdp::{SessionDescription, MediaDescription};
     ///
     /// let sdp = SessionDescription::builder()
     ///     .origin("alice", "123456", "192.168.1.100").unwrap()
@@ -461,7 +461,7 @@ impl SessionDescription {
     ///
     /// # Example
     /// ```
-    /// use sip_sdp::{SessionDescription, MediaDescription, MediaType};
+    /// use siphon_sdp::{SessionDescription, MediaDescription, MediaType};
     ///
     /// let sdp = SessionDescription::builder()
     ///     .origin("bob", "456", "10.0.0.1").unwrap()
@@ -484,7 +484,7 @@ impl SessionDescription {
     ///
     /// # Example
     /// ```
-    /// use sip_sdp::{SessionDescription, MediaDescription, MediaType};
+    /// use siphon_sdp::{SessionDescription, MediaDescription, MediaType};
     ///
     /// let sdp = SessionDescription::builder()
     ///     .origin("charlie", "789", "172.16.0.1").unwrap()

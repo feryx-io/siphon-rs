@@ -61,7 +61,7 @@ impl std::error::Error for SipFragError {}
 /// Per RFC 3420, if a body is present, appropriate MIME headers must be included:
 ///
 /// ```
-/// use sip_core::SipFrag;
+/// use siphon_core::SipFrag;
 /// use smol_str::SmolStr;
 ///
 /// // Correct order: headers before body
@@ -78,7 +78,7 @@ impl std::error::Error for SipFragError {}
 /// # Example
 ///
 /// ```
-/// use sip_core::{SipFrag, StatusLine};
+/// use siphon_core::{SipFrag, StatusLine};
 /// use smol_str::SmolStr;
 ///
 /// // Status-only fragment (common for REFER notifications)
@@ -123,7 +123,7 @@ impl SipFrag {
     /// # Example
     ///
     /// ```
-    /// use sip_core::SipFrag;
+    /// use siphon_core::SipFrag;
     /// use smol_str::SmolStr;
     ///
     /// let frag = SipFrag::status_only(200, SmolStr::new("OK".to_owned())).unwrap();

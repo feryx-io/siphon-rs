@@ -1,4 +1,4 @@
-# sip-ratelimit
+# siphon-ratelimit
 
 Configurable rate limiting for SIP applications to prevent abuse and resource exhaustion.
 
@@ -14,7 +14,7 @@ Configurable rate limiting for SIP applications to prevent abuse and resource ex
 ## Quick Start
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // Configure: 10 requests per minute with burst of 20
 let config = RateLimitConfig::new(10, 60).with_burst_capacity(20);
@@ -37,7 +37,7 @@ The crate provides preset configurations for common SIP use cases:
 Prevents brute force authentication attacks:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // 10 attempts per 5 minutes, burst capacity of 3
 let config = RateLimitConfig::auth_preset();
@@ -56,7 +56,7 @@ let limiter = RateLimiter::new(config);
 Prevents registration flooding:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // 60 registrations per hour
 let config = RateLimitConfig::register_preset();
@@ -75,7 +75,7 @@ let limiter = RateLimiter::new(config);
 Prevents connection exhaustion:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // 100 connections per minute
 let config = RateLimitConfig::connection_preset();
@@ -94,7 +94,7 @@ let limiter = RateLimiter::new(config);
 Prevents call flooding:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // 30 INVITE requests per minute
 let config = RateLimitConfig::invite_preset();
@@ -113,7 +113,7 @@ let limiter = RateLimiter::new(config);
 Create custom rate limit configurations for specific needs:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // Custom: 100 requests per 5 minutes, burst of 50
 let config = RateLimitConfig::new(100, 300)
@@ -141,9 +141,9 @@ let limiter = RateLimiter::new(config);
 ### Registrar with Rate Limiting
 
 ```rust
-use sip_registrar::{BasicRegistrar, MemoryLocationStore};
-use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_registrar::{BasicRegistrar, MemoryLocationStore};
+use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // Create registrar with rate limiting
 let store = MemoryLocationStore::new();
@@ -161,8 +161,8 @@ let registrar = BasicRegistrar::new(store, Some(auth))
 ### Authentication with Rate Limiting
 
 ```rust
-use sip_auth::{DigestAuthenticator, MemoryCredentialStore};
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_auth::{DigestAuthenticator, MemoryCredentialStore};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // Create authenticator with rate limiting
 let store = MemoryCredentialStore::new();
@@ -180,7 +180,7 @@ let auth = DigestAuthenticator::new("example.com", store)
 Use `RateLimiterSet` to manage different rate limits for different purposes:
 
 ```rust
-use sip_ratelimit::{RateLimiterSet, RateLimitConfig};
+use siphon_ratelimit::{RateLimiterSet, RateLimitConfig};
 
 // Create a set with default presets
 let limiters = RateLimiterSet::new();
@@ -202,7 +202,7 @@ if !limiters.invite.check_rate_limit("192.168.1.100") {
 Or create custom configurations:
 
 ```rust
-use sip_ratelimit::{RateLimiterSet, RateLimitConfig};
+use siphon_ratelimit::{RateLimiterSet, RateLimitConfig};
 
 let limiters = RateLimiterSet::with_configs(
     RateLimitConfig::new(5, 60),    // Auth: 5 per minute
@@ -217,7 +217,7 @@ let limiters = RateLimiterSet::with_configs(
 Rate limiters automatically clean up idle entries to prevent memory leaks:
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 let config = RateLimitConfig::new(100, 60);
 let limiter = RateLimiter::new(config);
@@ -235,7 +235,7 @@ println!("Active rate limiters: {}", limiter.active_count());
 To disable rate limiting (useful for testing or development):
 
 ```rust
-use sip_ratelimit::{RateLimiter, RateLimitConfig};
+use siphon_ratelimit::{RateLimiter, RateLimitConfig};
 
 // Create disabled rate limiter (allows all requests)
 let limiter = RateLimiter::disabled();

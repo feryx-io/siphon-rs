@@ -415,7 +415,7 @@ async fn server_non_invite_timer_j_termination() {
 ### Client: Handling Non-INVITE Transaction Timeout
 
 ```rust
-use sip_transaction::{TransactionManager, ClientTransactionUser, TransactionKey};
+use siphon_transaction::{TransactionManager, ClientTransactionUser, TransactionKey};
 
 #[async_trait]
 impl ClientTransactionUser for MyApp {
@@ -447,7 +447,7 @@ impl ClientTransactionUser for MyApp {
 ### Server: Strategic 100 Trying (RFC 4320 §3.2)
 
 ```rust
-use sip_transaction::{TransactionManager, ServerTransactionHandle};
+use siphon_transaction::{TransactionManager, ServerTransactionHandle};
 
 impl MyServer {
     /// Monitors Timer E and sends 100 Trying when it reaches T2
@@ -486,7 +486,7 @@ impl MyServer {
 ### Proxy: Late Response Absorption (RFC 4320 §4.1)
 
 ```rust
-use sip_transaction::{TransactionManager, ServerNonInviteState};
+use siphon_transaction::{TransactionManager, ServerNonInviteState};
 
 impl MyProxy {
     /// RFC 4320 compliant response forwarding

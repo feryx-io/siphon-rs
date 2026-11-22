@@ -1,19 +1,18 @@
 [package]
-name = "sip-dns"
+name = "siphon-dns"
 version = "0.3.0"
 edition = "2021"
 license.workspace = true
 description = "RFC 3263 DNS resolution for SIP."
-readme = "../../README.md"
+readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-documentation.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
 smol_str = { workspace = true }
-sip-core = { path = "../sip-core" }
+siphon-core = { workspace = true }
 hickory-resolver = { version = "0.26", default-features = false, features = ["tokio", "system-config"] }
 tokio = { workspace = true }
 rand = { workspace = true }

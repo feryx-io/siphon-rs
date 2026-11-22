@@ -79,7 +79,7 @@ impl std::error::Error for RSeqError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::RSeqHeader;
+/// use siphon_core::RSeqHeader;
 ///
 /// let rseq = RSeqHeader::new(1).unwrap();
 /// assert_eq!(rseq.sequence(), 1);
@@ -103,7 +103,7 @@ impl RSeqHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RSeqHeader;
+    /// use siphon_core::RSeqHeader;
     ///
     /// let rseq = RSeqHeader::new(1).unwrap();
     /// assert_eq!(rseq.sequence(), 1);
@@ -130,7 +130,7 @@ impl RSeqHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RSeqHeader;
+    /// use siphon_core::RSeqHeader;
     ///
     /// let rseq = RSeqHeader::new(1).unwrap();
     /// let next = rseq.next().unwrap();
@@ -145,7 +145,7 @@ impl RSeqHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::RSeqHeader;
+    /// use siphon_core::RSeqHeader;
     ///
     /// let rseq = RSeqHeader::parse("42").unwrap();
     /// assert_eq!(rseq.sequence(), 42);
@@ -192,7 +192,7 @@ impl fmt::Display for RSeqHeader {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{RAckHeader, Method};
+/// use siphon_core::{RAckHeader, Method};
 ///
 /// let rack = RAckHeader::new(1, 314159, Method::Invite).unwrap();
 /// assert_eq!(rack.to_string(), "1 314159 INVITE");
@@ -225,7 +225,7 @@ impl RAckHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{RAckHeader, Method};
+    /// use siphon_core::{RAckHeader, Method};
     ///
     /// let rack = RAckHeader::new(1, 314159, Method::Invite).unwrap();
     /// assert_eq!(rack.rseq(), 1);
@@ -268,7 +268,7 @@ impl RAckHeader {
     /// # Examples
     ///
     /// ```
-    /// use sip_core::{RAckHeader, Method};
+    /// use siphon_core::{RAckHeader, Method};
     ///
     /// let rack = RAckHeader::parse("1 314159 INVITE").unwrap();
     /// assert_eq!(rack.rseq(), 1);

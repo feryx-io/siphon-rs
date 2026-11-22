@@ -30,7 +30,7 @@ use crate::cancel_ack::{AckForwarder, CancelForwarder};
 use crate::ProxyHelpers;
 use anyhow::Result;
 use dashmap::DashMap;
-use sip_core::{Request, Response, SipUri};
+use siphon_core::{Request, Response, SipUri};
 use smol_str::SmolStr;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -729,7 +729,7 @@ impl ProxyContext {
         // source of the headers we need to echo; this matches the shape
         // `build_error_response` produces for the registrar / dispatcher.
         use bytes::Bytes;
-        use sip_core::{Headers, Response, StatusLine};
+        use siphon_core::{Headers, Response, StatusLine};
         let req = &self.original_request;
         let mut headers = Headers::new();
         for name in ["Via", "From", "To", "Call-ID", "CSeq"] {
@@ -795,7 +795,7 @@ impl ProxyContext {
         }
 
         use bytes::Bytes;
-        use sip_core::{Headers, Response, StatusLine};
+        use siphon_core::{Headers, Response, StatusLine};
         let req = &self.original_request;
         let mut headers = Headers::new();
         for name in ["Via", "From", "To", "Call-ID", "CSeq"] {
@@ -1048,7 +1048,7 @@ pub mod forwarding {
 mod tests {
     use super::*;
     use bytes::Bytes;
-    use sip_core::{Headers, Method, RequestLine, StatusLine};
+    use siphon_core::{Headers, Method, RequestLine, StatusLine};
 
     fn make_request() -> Request {
         let mut headers = Headers::new();

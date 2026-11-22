@@ -130,7 +130,7 @@ impl Direction {
 ///
 /// # Example
 /// ```
-/// use sip_sdp::{SessionDescription, MediaDescription, negotiate};
+/// use siphon_sdp::{SessionDescription, MediaDescription, negotiate};
 ///
 /// // Remote offer with PCMU and PCMA
 /// let offer = SessionDescription::builder()

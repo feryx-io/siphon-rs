@@ -83,7 +83,7 @@ jobs:
         run: |
           set -eo pipefail
           SIPHON_FUZZ_SEED_DIR="$PWD/fuzz/corpus" \
-            cargo test -p sip-parse -p sip-sdp --test fuzz_seeds
+            cargo test -p siphon-parse -p siphon-sdp --test fuzz_seeds
           find fuzz/corpus -type f | wc -l | xargs echo "corpus entries:"
 
       - name: Fuzz

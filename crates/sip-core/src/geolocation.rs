@@ -77,7 +77,7 @@ impl std::error::Error for GeolocationError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{GeolocationValue, Uri};
+/// use siphon_core::{GeolocationValue, Uri};
 ///
 /// let uri = Uri::parse("https://example.com/location.xml").unwrap();
 /// let geo = GeolocationValue::new(uri)
@@ -162,7 +162,7 @@ impl GeolocationValue {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{GeolocationHeader, GeolocationValue, Uri};
+/// use siphon_core::{GeolocationHeader, GeolocationValue, Uri};
 ///
 /// let uri = Uri::parse("https://example.com/location.xml").unwrap();
 /// let value = GeolocationValue::new(uri);
@@ -271,7 +271,7 @@ fn write_params(
 /// # Examples
 ///
 /// ```
-/// use sip_core::GeolocationErrorHeader;
+/// use siphon_core::GeolocationErrorHeader;
 ///
 /// let error = GeolocationErrorHeader::new()
 ///     .with_code("404")
@@ -402,7 +402,7 @@ impl std::fmt::Display for GeolocationErrorHeader {
 /// # Examples
 ///
 /// ```
-/// use sip_core::GeolocationRoutingHeader;
+/// use siphon_core::GeolocationRoutingHeader;
 ///
 /// let routing = GeolocationRoutingHeader::allowed(true);
 /// assert_eq!(routing.to_string(), "yes");

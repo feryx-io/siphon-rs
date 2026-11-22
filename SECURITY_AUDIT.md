@@ -35,7 +35,7 @@ The real issues cluster in three areas:
 | 12 | MEDIUM | DialogManager exhaustion (no eviction, terminated retained) | `sip-dialog/src/lib.rs:702` | Open |
 | 13 | MEDIUM | Insecure-by-default full-uas posture | `siphond/src/config.rs:77` | Open |
 | 14 | LOW | Username enumeration (Err vs Ok(false) + timing) | `sip-auth/src/lib.rs:1287` | Open |
-| 15 | LOW | sip-identity latent gaps (iat freshness, orig/dest binding, x5u) | `sip-identity/*` | Open |
+| 15 | LOW | siphon-identity latent gaps (iat freshness, orig/dest binding, x5u) | `sip-identity/*` | Open |
 | 16 | LOW | DNS: uncapped NAPTR fan-out; hostname validation bypass | `sip-dns/src/lib.rs:436,651` | Open |
 | 17 | LOW | Proxy: Max-Forwards-exhausted target silently dropped, no 483 | `sip-proxy/src/service.rs:145` | Open |
 | 18 | LOW | Server transaction key omits top-Via sent-by | `sip-transaction/src/lib.rs:224` | Open |
@@ -283,7 +283,7 @@ Unknown user returns `Err` (short-circuit, no hash computed) vs wrong password r
 existence oracle; the presence/absence of the digest computation is also a timing side-channel.
 **Fix:** Return `Ok(false)` for unknown users and compute a dummy digest to equalize timing.
 
-### 15. LOW — sip-identity latent gaps (crate not yet wired into any caller)
+### 15. LOW — siphon-identity latent gaps (crate not yet wired into any caller)
 
 **Location:** `crates/sip-identity/*`
 
@@ -344,11 +344,11 @@ accommodation, but weakens strict replay protection for non-idempotent methods o
 
 ## Verified sound (no action needed)
 
-- **Parser core** (`sip-parse` framer, URI/Via/tel/version/header-value parsers): Content-Length
+- **Parser core** (`siphon-parse` framer, URI/Via/tel/version/header-value parsers): Content-Length
   bounded to 64 MB, body slice bounded, CSeq bounded to 2^31-1, singleton-header dedup,
   folded-line rejection, UTF-8-checked head/body split, `MAX_PARAMS`/`MAX_ROUTES` caps. ASCII-anchored
   slice indices.
-- **SDP parser** (`sip-sdp`): `ParseLimits` caps bytes/lines/line-length and per-section attribute
+- **SDP parser** (`siphon-sdp`): `ParseLimits` caps bytes/lines/line-length and per-section attribute
   counts; ports/payloads parse without overflow or panic; no unbounded allocation.
 - **Digest comparison path**: constant-time via `subtle::ConstantTimeEq`; nonce validation, nc
   replay protection, opaque/realm/uri/qop all enforced before accept; algorithm pinned; no
@@ -364,7 +364,7 @@ accommodation, but weakens strict replay protection for non-idempotent methods o
   blocks loopback/RFC1918/link-local/multicast, bounds-safe percent-decode, Replaces requires
   both tags and authorizes the initiator against dialog participants.
 - **Client TLS config** (`siphond`): proper `webpki_roots` verification, no `dangerous()` override.
-- **HEP** (`sip-hep`): emit-only, no untrusted-packet parser; payload truncation and bounds-safe
+- **HEP** (`siphon-hep`): emit-only, no untrusted-packet parser; payload truncation and bounds-safe
   Call-ID extraction.
 - **CANCEL matching**: correctly compares Call-ID/From-tag/CSeq/Request-URI, ignores To-tag per
   §9.2.

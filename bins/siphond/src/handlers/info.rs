@@ -7,10 +7,10 @@
 /// Accepts INFO requests and validates dialog when present.
 use anyhow::Result;
 use async_trait::async_trait;
-use sip_core::Request;
-use sip_parse::header;
-use sip_transaction::{ServerTransactionHandle, TransportContext};
-use sip_uas::UserAgentServer;
+use siphon_core::Request;
+use siphon_parse::header;
+use siphon_transaction::{ServerTransactionHandle, TransportContext};
+use siphon_uas::UserAgentServer;
 use tracing::{info, warn};
 
 use super::RequestHandler;

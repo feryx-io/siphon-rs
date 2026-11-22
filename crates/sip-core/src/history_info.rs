@@ -71,7 +71,7 @@ impl std::error::Error for HistoryInfoError {}
 /// # Examples
 ///
 /// ```
-/// use sip_core::{HistoryInfoEntry, Uri};
+/// use siphon_core::{HistoryInfoEntry, Uri};
 ///
 /// let uri = Uri::parse("sip:alice@example.com").unwrap();
 /// let entry = HistoryInfoEntry::new(uri)
@@ -182,7 +182,7 @@ impl HistoryInfoEntry {
 /// # Examples
 ///
 /// ```
-/// use sip_core::{HistoryInfoHeader, HistoryInfoEntry, Uri};
+/// use siphon_core::{HistoryInfoHeader, HistoryInfoEntry, Uri};
 ///
 /// let uri1 = Uri::parse("sip:alice@example.com").unwrap();
 /// let entry1 = HistoryInfoEntry::new(uri1)

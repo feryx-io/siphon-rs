@@ -9,8 +9,8 @@
 /// 2. Process responses to create a dialog
 /// 3. Send ACK for 200 OK
 /// 4. Send BYE to terminate the call
-use sip_core::SipUri;
-use sip_uac::UserAgentClient;
+use siphon_core::SipUri;
+use siphon_uac::UserAgentClient;
 
 fn main() {
     println!("=== UAC INVITE Call Flow Example ===\n");

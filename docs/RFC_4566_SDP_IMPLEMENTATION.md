@@ -180,7 +180,7 @@ pub struct Fmtp {
 ### Example 1: Parsing SDP
 
 ```rust
-use sip_core::sdp::{SdpSession, Direction};
+use siphon_core::sdp::{SdpSession, Direction};
 
 let sdp_text = "v=0\r\n\
                 o=alice 2890844526 2890842807 IN IP4 192.0.2.1\r\n\
@@ -223,7 +223,7 @@ assert_eq!(rtpmaps[0].clock_rate, 8000);
 ### Example 2: Generating SDP
 
 ```rust
-use sip_core::sdp::{SdpSession, Origin, Connection, MediaDescription, Attribute, RtpMap};
+use siphon_core::sdp::{SdpSession, Origin, Connection, MediaDescription, Attribute, RtpMap};
 
 // Create session
 let origin = Origin {
@@ -292,8 +292,8 @@ println!("{}", sdp_string);
 ### Example 3: SIP INVITE with SDP Offer
 
 ```rust
-use sip_core::sdp::{SdpSession, Origin, Connection};
-use sip_core::{Request, Method, SipUri, RequestLine};
+use siphon_core::sdp::{SdpSession, Origin, Connection};
+use siphon_core::{Request, Method, SipUri, RequestLine};
 
 // Create SDP offer
 let origin = Origin {
@@ -365,7 +365,7 @@ invite.headers.push(
 ### Example 4: Parsing All Field Types
 
 ```rust
-use sip_core::sdp::SdpSession;
+use siphon_core::sdp::SdpSession;
 
 // Complete SDP with all optional fields
 let sdp = "v=0\r\n\
@@ -419,7 +419,7 @@ for (i, media) in session.media.iter().enumerate() {
 ### Example 5: Video Call with Multiple Codecs
 
 ```rust
-use sip_core::sdp::{SdpSession, Origin, Connection, MediaDescription, Attribute, Direction};
+use siphon_core::sdp::{SdpSession, Origin, Connection, MediaDescription, Attribute, Direction};
 
 let origin = Origin {
     username: "-".to_string(),
@@ -489,7 +489,7 @@ println!("{}", generated);
 ### Example 6: Hold Scenarios
 
 ```rust
-use sip_core::sdp::{SdpSession, Direction, Attribute};
+use siphon_core::sdp::{SdpSession, Direction, Attribute};
 
 // Parsing a hold request (sendonly)
 let hold_sdp = "v=0\r\n\
@@ -932,7 +932,7 @@ for fmtp in fmtps {
 ## Error Handling
 
 ```rust
-use sip_core::sdp::{SdpSession, SdpError};
+use siphon_core::sdp::{SdpSession, SdpError};
 
 let result = SdpSession::parse(sdp_text);
 
@@ -963,7 +963,7 @@ match result {
 Comprehensive test coverage with 25 tests:
 
 ```bash
-$ cargo test --package sip-core sdp::
+$ cargo test --package siphon-core sdp::
 running 25 tests
 test sdp::tests::parse_minimal_sdp ... ok
 test sdp::tests::parse_session_info_line ... ok
@@ -1001,8 +1001,8 @@ test sdp::tests::validate_connection_in_media ... ok
 SDP is typically used in SIP message bodies:
 
 ```rust
-use sip_core::{Request, Response, Method};
-use sip_core::sdp::SdpSession;
+use siphon_core::{Request, Response, Method};
+use siphon_core::sdp::SdpSession;
 
 // INVITE with SDP offer
 let invite = /* ... */;
