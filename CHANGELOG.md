@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   alongside its git source. The per-crate `documentation` link to the
   non-existent `docs.rs/siphon-rs` is gone, so each crate links to its own
   docs.rs page.
+- **siphon-hep 0.1.0** (was 0.0.1), with no code change: a `0.0.x`
+  requirement matches only that exact version, so dependents on crates.io
+  could not have picked up a patch release.
 
 ## [2026-11-22] — workspace release
 
