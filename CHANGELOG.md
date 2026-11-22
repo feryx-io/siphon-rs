@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `siphon_transport=debug`. Consumers can keep their code unchanged with
   `sip-core = { package = "siphon-core", … }`.
 - Inter-crate dependencies now carry versions, declared once in the root
-  `[workspace.dependencies]`; `hep-rs` gains a version requirement (`0.0.1`)
+  `[workspace.dependencies]`; `hep-rs` gains a version requirement (`0.1`)
   alongside its git source. The per-crate `documentation` link to the
   non-existent `docs.rs/siphon-rs` is gone, so each crate links to its own
   docs.rs page.
