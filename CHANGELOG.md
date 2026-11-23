@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026-11-22.1] — workspace release
+
+Crate versions in this release: siphon-hep 0.1.0 (was sip-hep 0.0.1). Every
+other crate keeps its version under its new name: siphon-core 0.7.8,
+siphon-parse 0.4.0, siphon-transport 0.7.2, siphon-transaction 0.9.1,
+siphon-dns 0.3.0, siphon-dialog 0.4.0, siphon-auth 0.4.0, siphon-identity
+0.3.0, siphon-registrar 0.3.2, siphon-proxy 0.3.0, siphon-uas 0.5.2,
+siphon-uac 0.9.6, siphon-sdp 0.3.2, siphon-observe 0.3.0, siphon-testkit
+0.1.1, siphon-ratelimit 0.3.0, siphond 0.7.3.
+
+This is the first release published to crates.io, at exactly these versions.
+
+**Breaking changes:** every library crate is renamed from `sip-*` to
+`siphon-*` (#171). A consumer either renames its dependencies and `use`
+paths, or keeps its code as it is with
+`sip-core = { package = "siphon-core", … }`. Log targets change with the
+crate names. No API changed.
+
 ### Changed
 
 - **Breaking — every crate renamed from `sip-*` to `siphon-*`** (`sip-core` →
@@ -15,18 +33,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   taken. `siphond` keeps its name and crate directories keep theirs. Log
   targets follow the crate names, so `RUST_LOG=sip_transport=debug` becomes
   `siphon_transport=debug`. Consumers can keep their code unchanged with
-  `sip-core = { package = "siphon-core", … }`.
+  `sip-core = { package = "siphon-core", … }`. (#171)
 - Inter-crate dependencies now carry versions, declared once in the root
-  `[workspace.dependencies]`; `hep-rs` gains a version requirement (`0.1`)
-  alongside its git source. The per-crate `documentation` link to the
+  `[workspace.dependencies]`. The per-crate `documentation` link to the
   non-existent `docs.rs/siphon-rs` is gone, so each crate links to its own
-  docs.rs page.
+  docs.rs page. (#171)
+- `hep-rs` is taken from crates.io (`0.1`) rather than from git `main`, now
+  that it is published there. The published crates already required it from
+  the registry; this makes a workspace build use the same source.
 - **siphon-hep 0.1.0** (was 0.0.1), with no code change: a `0.0.x`
   requirement matches only that exact version, so dependents on crates.io
-  could not have picked up a patch release.
+  could not have picked up a patch release. (#172)
 - Every published package now carries `LICENSE-MIT` and `LICENSE-APACHE`
   (symlinks to the root files, which cargo packages as regular files), and
-  `siphon-hep` ships the README. Neither was in the packages before.
+  `siphon-hep` ships the README. Neither was in the packages before. (#172)
 
 ## [2026-11-22] — workspace release
 

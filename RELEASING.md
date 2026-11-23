@@ -122,7 +122,7 @@ siphon-uac = { git = "https://github.com/feryx-io/siphon-rs", tag = "vYYYY.MM.DD
 ```
 
 Tags up to and including `v2026.11.22` carry the old package names
-(`sip-core`, `sip-uac`, …); the `siphon-` names start with the first tag after
+(`sip-core`, `sip-uac`, …); the `siphon-` names start with `v2026.11.22.1`, the tag after
 it. A consumer that wants to keep `use sip_uac::…` in its code can alias:
 
 ```toml
@@ -141,21 +141,30 @@ sip-uac = { package = "siphon-uac", git = "https://github.com/feryx-io/siphon-rs
 
 ## Publishing to crates.io
 
-The workspace is publishable as `siphon-*` (plus `siphond`). `sip-core` was
-already taken on crates.io, hence the prefix.
+Every crate is on crates.io as `siphon-*` (plus `siphond`), first published
+from the `v2026.11.22.1` release. `sip-core` was already taken there, hence
+the prefix.
 
-1. `hep-rs` must be on crates.io first — `siphon-hep` and `siphon-transport`
-   require it, and crates.io rejects a crate whose dependency it cannot find.
-2. Dry run (the `--config` patch is only needed while `hep-rs` is unpublished):
+After a release is tagged, publish each crate whose version was bumped, in
+dependency order (a crate before its dependents):
 
-   ```bash
-   cargo publish --workspace --dry-run \
-     --config 'patch.crates-io.hep-rs.git="https://github.com/feryx-io/hep-rs"' \
-     --config 'patch.crates-io.hep-rs.branch="main"'
-   ```
-3. `cargo publish --workspace` — publishes in dependency order. New-crate rate
-   limits may stop it partway; re-run to continue.
+```bash
+cargo publish -p siphon-core --dry-run
+cargo publish -p siphon-core
+```
 
-A published version can be yanked but never replaced. Once published,
-per-crate tags (`siphon-uac-v0.9.6`) and `release-plz`/`cargo-release` become
-useful; the dated workspace tags remain valid alongside.
+- Do not use `cargo publish --workspace` for this: it stops as soon as it
+  meets a crate whose version is already on crates.io, which is every crate
+  the release left unchanged.
+- A bump must also be made in the root `[workspace.dependencies]`, or the
+  dependents' published manifests will require the old version.
+- A published version can be yanked but never replaced. If a publish turns
+  out wrong, bump and publish again.
+- A crate published for the first time counts against crates.io's new-crate
+  rate limit (a burst of five, then about one every ten minutes). New
+  versions of existing crates have a much higher limit.
+- `hep-rs` is published from its own repository and must be on crates.io at
+  a version the workspace requires before anything here is.
+
+Per-crate tags (`siphon-uac-v0.9.6`) and `release-plz`/`cargo-release` can
+automate this; the dated workspace tags remain valid alongside.
