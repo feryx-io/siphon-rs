@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026-11-24] — workspace release
+
+Crate versions in this release: sip-transport 0.8.0. (Every other crate is
+unchanged.)
+
+No breaking changes.
+
+### Added
+
+- **sip-transport 0.8.0**: `set_ingress_block`, a predicate naming sources
+  whose every UDP packet and stream frame is dropped unread, before the rate
+  limiter and the parser, whatever exemption they have from the rate. FCP
+  uses it to stop answering a source that keeps failing digest
+  authentication: a credential scanner sent one D8 node 35 million REGISTERs
+  in 17 days, all under the per-source rate and every one answered.
+
 ## [2026-11-22] — workspace release
 
 Crate versions in this release: sip-transport 0.7.2. (Every other crate is

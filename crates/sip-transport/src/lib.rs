@@ -552,6 +552,34 @@ fn ingress_exempt(ip: IpAddr) -> bool {
     exemption.is_some_and(|exempt| exempt(ip))
 }
 
+/// Decides whether a source address is refused outright: every message
+/// from it is dropped unread, before the rate limiter and the parser. The
+/// caller keeps its own list (a source that failed authentication too
+/// often, say) and counts what it refuses.
+pub type IngressBlock = Arc<dyn Fn(IpAddr) -> bool + Send + Sync>;
+
+static INGRESS_BLOCK: std::sync::RwLock<Option<IngressBlock>> = std::sync::RwLock::new(None);
+
+/// Sets which sources are refused outright (UDP packets and stream frames),
+/// replacing any earlier setting; `None` refuses nobody. May be called at
+/// any time. The predicate is asked about every message received, so it
+/// must be cheap, and is asked outside the lock, so it may itself call
+/// this.
+pub fn set_ingress_block(block: Option<IngressBlock>) {
+    let mut slot = INGRESS_BLOCK
+        .write()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    *slot = block;
+}
+
+fn ingress_blocked(ip: IpAddr) -> bool {
+    let block = INGRESS_BLOCK
+        .read()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+        .clone();
+    block.is_some_and(|blocked| blocked(ip))
+}
+
 /// Whether a message from `peer` gets past `limiter`: under its rate, or
 /// from an exempt source.
 fn admit_by_rate(limiter: &RateLimiter, peer: SocketAddr) -> bool {
@@ -600,6 +628,9 @@ fn note_rate_limited(peer: SocketAddr, label: TransportLabel, limiter: &RateLimi
 /// the per-IP rate limit is exceeded. Callers should drop the frame on
 /// `false` — the drop has already been counted against `label`.
 pub(crate) fn check_stream_rate(peer: SocketAddr, label: TransportLabel) -> bool {
+    if ingress_blocked(peer.ip()) {
+        return false;
+    }
     let limiter = stream_rate_limiter();
     if admit_by_rate(limiter, peer) {
         return true;
@@ -622,6 +653,9 @@ pub async fn run_udp(socket: Arc<UdpSocket>, tx: mpsc::Sender<InboundPacket>) ->
             Ok((n, peer)) => {
                 // Per-source rate limiting. Dropped packets are counted
                 // via TransportMetrics::on_rate_limited before we bail.
+                if ingress_blocked(peer.ip()) {
+                    continue;
+                }
                 let limiter = udp_rate_limiter();
                 if !admit_by_rate(limiter, peer) {
                     note_rate_limited(peer, TransportLabel::Udp, limiter);
@@ -2682,6 +2716,26 @@ mod tests {
         let asked = done_rx.recv_timeout(std::time::Duration::from_secs(2));
         assert_eq!(asked, Ok(true), "the predicate deadlocked");
         assert!(!ingress_exempt("203.0.113.92".parse().unwrap()));
+    }
+
+    /// A blocked source gets nothing through, whatever its rate, and is
+    /// let through again once the block is lifted.
+    #[test]
+    fn a_blocked_source_is_dropped_until_unblocked() {
+        let _serial = EXEMPTION_TEST_LOCK
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let blocked: SocketAddr = "203.0.113.93:5060".parse().unwrap();
+        let other: SocketAddr = "203.0.113.94:5060".parse().unwrap();
+        set_ingress_block(Some(Arc::new(move |ip| ip == blocked.ip())));
+        assert!(!check_stream_rate(blocked, TransportLabel::Tcp));
+        assert!(check_stream_rate(other, TransportLabel::Tcp));
+        // Blocked even when it is also exempt from the rate.
+        set_ingress_rate_exemption(Some(Arc::new(move |ip| ip == blocked.ip())));
+        assert!(!check_stream_rate(blocked, TransportLabel::Tcp));
+        set_ingress_rate_exemption(None);
+        set_ingress_block(None);
+        assert!(check_stream_rate(blocked, TransportLabel::Tcp));
     }
 
     #[test]
