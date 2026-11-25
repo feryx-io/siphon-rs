@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026-11-25] — workspace release
+
+Crate versions in this release: siphon-transport 0.8.0. Every other crate is
+unchanged: siphon-core 0.7.8, siphon-parse 0.4.0, siphon-transaction 0.9.1,
+siphon-dns 0.3.0, siphon-dialog 0.4.0, siphon-auth 0.4.0, siphon-identity
+0.3.0, siphon-registrar 0.3.2, siphon-proxy 0.3.0, siphon-uas 0.5.2,
+siphon-uac 0.9.6, siphon-sdp 0.3.2, siphon-observe 0.3.0, siphon-testkit
+0.1.1, siphon-ratelimit 0.3.0, siphon-hep 0.1.0, siphond 0.7.3.
+
+**Breaking changes:** none. siphon-transport's minor version moves because
+it adds API.
+
+### Added
+
+- **siphon-transport 0.8.0**: `set_ingress_block`, a predicate naming
+  sources that are refused outright. Their UDP packets and stream frames
+  are dropped unread, before the rate limiter and the parser, and whatever
+  exemption they have from the rate; their TCP, TLS, WS and WSS
+  connections are closed as they are accepted, before a TLS handshake. The
+  caller keeps the list and counts what it refuses. FCP uses it to stop
+  hearing a source that keeps failing digest authentication: a credential
+  scanner sent one node 35 million REGISTERs in 17 days, all under the
+  per-source rate, and every one was parsed, answered and recorded.
+
 ## [2026-11-22.1] — workspace release
 
 Crate versions in this release: siphon-hep 0.1.0 (was sip-hep 0.0.1). Every

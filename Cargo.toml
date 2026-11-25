@@ -47,7 +47,7 @@ httpdate = "1.0"
 # version means updating its line here too (see RELEASING.md).
 siphon-core = { path = "crates/sip-core", version = "0.7.8" }
 siphon-parse = { path = "crates/sip-parse", version = "0.4.0" }
-siphon-transport = { path = "crates/sip-transport", version = "0.7.2" }
+siphon-transport = { path = "crates/sip-transport", version = "0.8.0" }
 siphon-transaction = { path = "crates/sip-transaction", version = "0.9.1" }
 siphon-dns = { path = "crates/sip-dns", version = "0.3.0" }
 siphon-dialog = { path = "crates/sip-dialog", version = "0.4.0" }

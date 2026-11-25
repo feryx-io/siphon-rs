@@ -543,7 +543,10 @@ warning (at most one per second per source IP, independently per limiter) logs
 the peer's drop count and the cumulative drop count. siphond exposes the limits as
 `--udp-rate-limit` / `--stream-rate-limit` (0 disables). Sources a deployment trusts
 to carry many parties' traffic are exempted with `set_ingress_rate_exemption()` (a
-predicate over the source IP, replaceable at any time).
+predicate over the source IP, replaceable at any time). Sources refused outright
+(a source that keeps failing authentication, say) are named with
+`set_ingress_block()`: their messages are dropped unread before the limiter and
+their connections closed at accept; the caller keeps the list and counts the drops.
 
 ## Development Guidelines
 
