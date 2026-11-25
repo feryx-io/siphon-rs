@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Manifest tidy-up, with no code change and no crate bumped; it reaches
+  crates.io with each crate's next release. Unused dependencies are gone:
+  `serde` from siphon-core, `serde` and `tracing` from siphon-parse, `tokio`
+  from siphon-ratelimit and `sha1` from siphon-uac. `homepage` is dropped
+  everywhere, since it only repeated `repository`.
+
 ## [2026-11-25] — workspace release
 
 Crate versions in this release: siphon-transport 0.8.0. Every other crate is

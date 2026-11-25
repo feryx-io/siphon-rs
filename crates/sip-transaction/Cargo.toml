@@ -7,7 +7,6 @@ description = "RFC 3261 transaction state machines and timers."
 readme = "README.md"
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }

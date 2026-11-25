@@ -7,13 +7,10 @@ description = "SIP message parser and serializer."
 readme = "README.md"
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
 
 [dependencies]
 bytes = { workspace = true }
 smol_str = { workspace = true }
-serde = { workspace = true }
-tracing = { workspace = true }
 siphon-core = { workspace = true }
 httpdate = { workspace = true }
 nom = "7"

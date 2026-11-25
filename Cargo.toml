@@ -26,7 +26,6 @@ license = "MIT OR Apache-2.0"
 edition = "2021"
 authors = ["siphon-rs contributors"]
 repository = "https://github.com/feryx-io/siphon-rs"
-homepage = "https://github.com/feryx-io/siphon-rs"
 
 [workspace.dependencies]
 anyhow = "1"

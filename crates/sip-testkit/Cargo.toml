@@ -7,7 +7,6 @@ description = "Testing utilities and fixtures for SIP components."
 readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
 
 [dependencies]
 bytes = { workspace = true }

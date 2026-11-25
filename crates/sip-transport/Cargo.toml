@@ -7,7 +7,6 @@ description = "SIP transport layer for UDP, TCP, and TLS."
 readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
 
 [dependencies]
 tokio = { workspace = true }
