@@ -7,7 +7,6 @@ description = "SIP proxy primitives and routing helpers."
 readme = "../../README.md"
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
